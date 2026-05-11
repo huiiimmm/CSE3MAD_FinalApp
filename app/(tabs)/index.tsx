@@ -1,15 +1,23 @@
-import { Image } from "expo-image";
-import { Platform, StyleSheet } from "react-native";
-
-import { HelloWave } from "@/components/hello-wave";
-import ParallaxScrollView from "@/components/parallax-scroll-view";
-import { ThemedText } from "@/components/themed-text";
-import { ThemedView } from "@/components/themed-view";
-import { Link } from "expo-router";
+import { useState } from "react";
+import {
+  Button,
+  SafeAreaView,
+  StyleSheet,
+  Text,
+  TextInput,
+  View
+} from "react-native";
+import { SafeAreaProvider } from "react-native-safe-area-context";
 
 // Import the functions you need from the SDKs you need
-import { getAnalytics } from "firebase/analytics";
 import { initializeApp } from "firebase/app";
+import {
+  createUserWithEmailAndPassword,
+  deleteUser,
+  getAuth,
+  signInWithEmailAndPassword,
+  signOut,
+} from "firebase/auth";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -17,105 +25,146 @@ import "../../firebase.js";
 
 const { firebaseConfig } = require("../../firebase.js");
 
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
-
 export default function HomeScreen() {
-  return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: "#A1CEDC", dark: "#1D3D47" }}
-      headerImage={
-        <Image
-          source={require("@/assets/images/partial-react-logo.png")}
-          style={styles.reactLogo}
-        />
-      }
-    >
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome!</ThemedText>
-        <HelloWave />
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 1: Try it</ThemedText>
-        <ThemedText>
-          Edit{" "}
-          <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText>{" "}
-          to see changes. Press{" "}
-          <ThemedText type="defaultSemiBold">
-            {Platform.select({
-              ios: "cmd + d",
-              android: "cmd + m",
-              web: "F12",
-            })}
-          </ThemedText>{" "}
-          to open developer tools.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <Link href="/modal">
-          <Link.Trigger>
-            <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-          </Link.Trigger>
-          <Link.Preview />
-          <Link.Menu>
-            <Link.MenuAction
-              title="Action"
-              icon="cube"
-              onPress={() => alert("Action pressed")}
-            />
-            <Link.MenuAction
-              title="Share"
-              icon="square.and.arrow.up"
-              onPress={() => alert("Share pressed")}
-            />
-            <Link.Menu title="More" icon="ellipsis">
-              <Link.MenuAction
-                title="Delete"
-                icon="trash"
-                destructive
-                onPress={() => alert("Delete pressed")}
-              />
-            </Link.Menu>
-          </Link.Menu>
-        </Link>
+  const [loginout, setloginout] = useState("Login");
+  const [created, setCreate] = useState("create");
+  const [pword, setPword] = useState("password");
+  const [email, setEmail] = useState("email@mail.com");
+  // Initialize Firebase
+  const app = initializeApp(firebaseConfig);
+  // const analytics = getAnalytics(app);
+  const auth = getAuth(app);
+  let n = 0;
 
-        <ThemedText>
-          {`Tap the Explore tab to learn more about what's included in this starter app.`}
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-        <ThemedText>
-          {`When you're ready, run `}
-          <ThemedText type="defaultSemiBold">
-            npm run reset-project
-          </ThemedText>{" "}
-          to get a fresh <ThemedText type="defaultSemiBold">app</ThemedText>{" "}
-          directory. This will move the current{" "}
-          <ThemedText type="defaultSemiBold">app</ThemedText> to{" "}
-          <ThemedText type="defaultSemiBold">app-example</ThemedText>.
-        </ThemedText>
-      </ThemedView>
-    </ParallaxScrollView>
+  async function debug(tag: String, str: String) {
+    console.log(tag + "No. " + n.toString(), str);
+    n++;
+  }
+
+  function loginA() {
+    setEmail(email);
+    setPword(pword);
+
+    signInWithEmailAndPassword(auth, email, pword)
+      .then((userCredential) => {
+        // signed in
+        const user = userCredential.user;
+        debug("signinEmailPassword: ", "success: " + user.email);
+        setloginout("login: " + user.email);
+      })
+      .catch((error) => {
+        const errorCode = error.code;
+        const errorMessage = error.message;
+        setloginout("login unsuccessful");
+        debug("SignInEmailPassword: ", errorCode + " " + errorMessage);
+      });
+    debug("loginA", "login: " + email + " password: " + pword + "success");
+  }
+
+  function createA() {
+    setEmail(email);
+    setPword(pword);
+    setCreate("created");
+    createUserWithEmailAndPassword(auth, email, pword)
+      .then((userCredential) => {
+        // signed in
+        const user = userCredential.user;
+        debug("createEmailPassword: ", "success: " + user.email);
+        setloginout("created + login: " + user.email);
+      })
+      .catch((error) => {
+        const errorCode = error.code;
+        const errorMessage = error.message;
+        setloginout("create unsuccessful");
+        debug("createEmailPassword: ", errorCode + " " + errorMessage);
+      });
+    debug("createA", "created: " + email + " password: " + pword);
+  }
+
+  function logoutA() {
+    setEmail(email);
+    setPword(pword);
+    signOut(auth)
+      .then((userCredential) => {
+        // signed in
+        debug("singoutEmailPassword: ", "success: " + email);
+        setloginout("signout + login: " + email);
+      })
+      .catch((error) => {
+        const errorCode = error.code;
+        const errorMessage = error.message;
+        setloginout("signout unsuccessful");
+        debug("SignOutEmailPassword: ", errorCode + " " + errorMessage);
+      });
+    debug("createA", "created: " + email + " password: " + pword);
+  }
+
+  function deleteA() {
+    setEmail(email);
+    setPword(pword);
+    deleteUser(auth.currentUser!)
+      .then((userCredential) => {
+        // signed in
+        debug("DeleteEmailPassword: ", "success: " + email);
+        setloginout("login: " + email);
+      })
+      .catch((error) => {
+        const errorCode = error.code;
+        const errorMessage = error.message;
+        setloginout("delete unsuccessful");
+        debug("DeleteEmailPassword: ", errorCode + " " + errorMessage);
+      });
+    debug("deleteA", "Delete: " + email + " password: " + pword);
+  }
+
+  return (
+    <SafeAreaProvider>
+      <SafeAreaView style={styles.header}>
+        <View style={styles.colContainer}>
+          <View style={styles.rowContainer}>
+            <Text>{loginout}</Text>
+            <Text>{created}</Text>
+          </View>
+          <View style={styles.rowContainer}>
+            <TextInput
+              style={styles.sUser}
+              onChangeText={setEmail}
+              value={email}
+            />
+            <TextInput
+              style={styles.sUser}
+              secureTextEntry={true}
+              onChangeText={setPword}
+              value={pword}
+            />
+          </View>
+
+          <View style={styles.rowContainer}>
+            <Button title="login" onPress={() => loginA()}></Button>
+            <Button title="Create" onPress={() => createA()}></Button>
+            <Button title="Logout" onPress={() => logoutA()}></Button>
+            <Button title="Delete" onPress={() => deleteA()}></Button>
+          </View>
+        </View>
+      </SafeAreaView>
+    </SafeAreaProvider>
   );
 }
 
 const styles = StyleSheet.create({
-  titleContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 8,
-  },
-  stepContainer: {
-    gap: 8,
+  header: {
+    padding: 40,
     marginBottom: 8,
   },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: "absolute",
+  rowContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 30,
   },
+  colContainer: {
+    flexDirection: "column",
+    alignItems: "center",
+    gap: 30,
+  },
+  sUser: {},
 });
