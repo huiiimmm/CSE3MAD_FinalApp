@@ -5,7 +5,7 @@ import {
   StyleSheet,
   Text,
   TextInput,
-  View
+  View,
 } from "react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 
@@ -18,6 +18,7 @@ import {
   signInWithEmailAndPassword,
   signOut,
 } from "firebase/auth";
+import { addDoc, Firestore, getFirestore } from "firebase/firestore";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -34,11 +35,21 @@ export default function HomeScreen() {
   const app = initializeApp(firebaseConfig);
   // const analytics = getAnalytics(app);
   const auth = getAuth(app);
+
+  const db = getFirestore(app);
   let n = 0;
 
   async function debug(tag: String, str: String) {
     console.log(tag + "No. " + n.toString(), str);
     n++;
+    try {
+      const docRef = await addDoc(collection(db, "Debug"), {
+        Tag: tag + "No. " + n.toString(),
+        Str: str,
+      });
+    } catch (e) {
+      console.error("Error adding document: ", e);
+    }
   }
 
   function loginA() {
@@ -168,3 +179,12 @@ const styles = StyleSheet.create({
   },
   sUser: {},
 });
+function collection(
+  db: Firestore,
+  arg1: string,
+): import("@firebase/firestore").CollectionReference<
+  { Tag: string; Str: String },
+  import("@firebase/firestore").DocumentData
+> {
+  throw new Error("Function not implemented.");
+}
