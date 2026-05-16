@@ -6,6 +6,16 @@ export default function Layout() {
       <Stack.Screen name="index" options={{ title: "Login" }} />
 
       <Stack.Screen name="menu" options={{ title: "Menu" }} />
+
+      <Stack.Screen name="info" options={{ title: "Info" }} />
+
+      <Stack.Screen name="test1" options={{ title: "Test1" }} />
+
+      <Stack.Screen name="test2" options={{ title: "Test2" }} />
+
+      <Stack.Screen name="results" options={{ title: "Results" }} />
+
+      <Stack.Screen name="leaderboard" options={{ title: "Leaderboard" }} />
     </Stack>
   );
 }
