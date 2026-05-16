@@ -1,4 +1,6 @@
+import { router } from "expo-router";
 import { useState } from "react";
+
 import {
   Button,
   SafeAreaView,
@@ -7,125 +9,122 @@ import {
   TextInput,
   View,
 } from "react-native";
+
 import { SafeAreaProvider } from "react-native-safe-area-context";
 
-// Import the functions you need from the SDKs you need
-import { initializeApp } from "firebase/app";
 import {
   createUserWithEmailAndPassword,
   deleteUser,
-  getAuth,
   signInWithEmailAndPassword,
   signOut,
 } from "firebase/auth";
-import { addDoc, Firestore, getFirestore } from "firebase/firestore";
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
 
-import "../../firebase.js";
+import { addDoc, collection } from "firebase/firestore";
 
-const { firebaseConfig } = require("../../firebase.js");
+import { auth, db } from "./firebase";
+
+let n = 0;
 
 export default function HomeScreen() {
   const [loginout, setloginout] = useState("Login");
-  const [created, setCreate] = useState("create");
-  const [pword, setPword] = useState("password");
-  const [email, setEmail] = useState("email@mail.com");
-  // Initialize Firebase
-  const app = initializeApp(firebaseConfig);
-  // const analytics = getAnalytics(app);
-  const auth = getAuth(app);
+  const [created, setCreate] = useState("Create");
+  const [pword, setPword] = useState("");
+  const [email, setEmail] = useState("");
 
-  const db = getFirestore(app);
-  let n = 0;
+  async function debug(tag: string, str: string) {
+    const id = n++;
 
-  async function debug(tag: String, str: String) {
-    console.log(tag + "No. " + n.toString(), str);
-    n++;
+    console.log(`${tag} No. ${id}`, str);
+
     try {
-      const docRef = await addDoc(collection(db, "Debug"), {
-        Tag: tag + "No. " + n.toString(),
+      await addDoc(collection(db, "Debug"), {
+        Tag: `${tag} No. ${id}`,
         Str: str,
+        Timestamp: new Date(),
       });
     } catch (e) {
-      console.error("Error adding document: ", e);
+      console.error("Error adding document:", e);
     }
   }
 
-  function loginA() {
-    setEmail(email);
-    setPword(pword);
+  async function loginA() {
+    try {
+      const userCredential = await signInWithEmailAndPassword(
+        auth,
+        email,
+        pword,
+      );
 
-    signInWithEmailAndPassword(auth, email, pword)
-      .then((userCredential) => {
-        // signed in
-        const user = userCredential.user;
-        debug("signinEmailPassword: ", "success: " + user.email);
-        setloginout("login: " + user.email);
-      })
-      .catch((error) => {
-        const errorCode = error.code;
-        const errorMessage = error.message;
-        setloginout("login unsuccessful");
-        debug("SignInEmailPassword: ", errorCode + " " + errorMessage);
-      });
-    debug("loginA", "login: " + email + " password: " + pword + "success");
+      const user = userCredential.user;
+
+      await debug("signinEmailPassword", "success: " + user.email);
+
+      setloginout("login: " + user.email);
+
+      router.push("/menu");
+    } catch (error: any) {
+      setloginout("login unsuccessful");
+
+      await debug("SignInEmailPassword", error.code + " " + error.message);
+    }
   }
 
-  function createA() {
-    setEmail(email);
-    setPword(pword);
-    setCreate("created");
-    createUserWithEmailAndPassword(auth, email, pword)
-      .then((userCredential) => {
-        // signed in
-        const user = userCredential.user;
-        debug("createEmailPassword: ", "success: " + user.email);
-        setloginout("created + login: " + user.email);
-      })
-      .catch((error) => {
-        const errorCode = error.code;
-        const errorMessage = error.message;
-        setloginout("create unsuccessful");
-        debug("createEmailPassword: ", errorCode + " " + errorMessage);
-      });
-    debug("createA", "created: " + email + " password: " + pword);
+  async function createA() {
+    try {
+      const userCredential = await createUserWithEmailAndPassword(
+        auth,
+        email,
+        pword,
+      );
+
+      const user = userCredential.user;
+
+      await debug("createEmailPassword", "success: " + user.email);
+
+      setloginout("created + login: " + user.email);
+
+      setCreate("created");
+    } catch (error: any) {
+      setloginout("create unsuccessful");
+
+      await debug("createEmailPassword", error.code + " " + error.message);
+    }
   }
 
-  function logoutA() {
-    setEmail(email);
-    setPword(pword);
-    signOut(auth)
-      .then((userCredential) => {
-        // signed in
-        debug("singoutEmailPassword: ", "success: " + email);
-        setloginout("signout + login: " + email);
-      })
-      .catch((error) => {
-        const errorCode = error.code;
-        const errorMessage = error.message;
-        setloginout("signout unsuccessful");
-        debug("SignOutEmailPassword: ", errorCode + " " + errorMessage);
-      });
-    debug("createA", "created: " + email + " password: " + pword);
+  async function logoutA() {
+    try {
+      await signOut(auth);
+
+      await debug("signoutEmailPassword", "success: " + email);
+
+      setloginout("signed out");
+    } catch (error: any) {
+      setloginout("signout unsuccessful");
+
+      await debug("SignOutEmailPassword", error.code + " " + error.message);
+    }
   }
 
-  function deleteA() {
-    setEmail(email);
-    setPword(pword);
-    deleteUser(auth.currentUser!)
-      .then((userCredential) => {
-        // signed in
-        debug("DeleteEmailPassword: ", "success: " + email);
-        setloginout("login: " + email);
-      })
-      .catch((error) => {
-        const errorCode = error.code;
-        const errorMessage = error.message;
-        setloginout("delete unsuccessful");
-        debug("DeleteEmailPassword: ", errorCode + " " + errorMessage);
-      });
-    debug("deleteA", "Delete: " + email + " password: " + pword);
+  async function deleteA() {
+    try {
+      if (!auth.currentUser) {
+        await debug("DeleteEmailPassword", "No current user");
+
+        setloginout("no user logged in");
+
+        return;
+      }
+
+      await deleteUser(auth.currentUser);
+
+      await debug("DeleteEmailPassword", "success: " + email);
+
+      setloginout("user deleted");
+    } catch (error: any) {
+      setloginout("delete unsuccessful");
+
+      await debug("DeleteEmailPassword", error.code + " " + error.message);
+    }
   }
 
   return (
@@ -136,25 +135,34 @@ export default function HomeScreen() {
             <Text>{loginout}</Text>
             <Text>{created}</Text>
           </View>
-          <View style={styles.rowContainer}>
+
+          <View style={styles.colContainer}>
             <TextInput
               style={styles.sUser}
+              placeholder="Email"
+              autoCapitalize="none"
+              keyboardType="email-address"
               onChangeText={setEmail}
               value={email}
             />
+
             <TextInput
               style={styles.sUser}
+              placeholder="Password"
               secureTextEntry={true}
               onChangeText={setPword}
               value={pword}
             />
           </View>
 
-          <View style={styles.rowContainer}>
-            <Button title="login" onPress={() => loginA()}></Button>
-            <Button title="Create" onPress={() => createA()}></Button>
-            <Button title="Logout" onPress={() => logoutA()}></Button>
-            <Button title="Delete" onPress={() => deleteA()}></Button>
+          <View style={styles.buttonContainer}>
+            <Button title="Login" onPress={loginA} />
+
+            <Button title="Create" onPress={createA} />
+
+            <Button title="Logout" onPress={logoutA} />
+
+            <Button title="Delete" onPress={deleteA} />
           </View>
         </View>
       </SafeAreaView>
@@ -164,27 +172,35 @@ export default function HomeScreen() {
 
 const styles = StyleSheet.create({
   header: {
+    flex: 1,
+    justifyContent: "center",
     padding: 40,
-    marginBottom: 8,
   },
+
   rowContainer: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 30,
+    gap: 20,
   },
+
   colContainer: {
     flexDirection: "column",
     alignItems: "center",
-    gap: 30,
+    gap: 20,
   },
-  sUser: {},
+
+  buttonContainer: {
+    flexDirection: "column",
+    gap: 12,
+    width: 220,
+  },
+
+  sUser: {
+    width: 220,
+    borderWidth: 1,
+    borderColor: "#999",
+    padding: 12,
+    borderRadius: 8,
+    backgroundColor: "white",
+  },
 });
-function collection(
-  db: Firestore,
-  arg1: string,
-): import("@firebase/firestore").CollectionReference<
-  { Tag: string; Str: String },
-  import("@firebase/firestore").DocumentData
-> {
-  throw new Error("Function not implemented.");
-}
