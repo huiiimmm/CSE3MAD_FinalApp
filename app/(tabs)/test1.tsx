@@ -3,6 +3,7 @@ import React, { useRef, useState } from "react";
 export default function InfoScreen() {
   const [readyText, setReadyText] = useState(true);
   const [bgColor, setBgColor] = useState("#1e1e1e");
+  const [reactionScreen, setReactionScreen] = useState(false);
 
   // stand timer
   const [timerText, setTimerText] = useState(false);
@@ -10,7 +11,7 @@ export default function InfoScreen() {
   // rand timer
   const [randomTime, setRandomTime] = useState(0);
   const [randomNumber, setRandomNumber] = useState(0);
-
+  // timer references
   const timerRef = useRef<number | null>(null);
   const randomTimerRef = useRef<number | null>(null);
 
@@ -29,6 +30,7 @@ export default function InfoScreen() {
           startTimer();
           setTimerText(true);
           setBgColor("green");
+          setReactionScreen(true);
         }
         return prev + 1;
       });
@@ -36,16 +38,10 @@ export default function InfoScreen() {
   };
 
   const startTimer = () => {
-    if (timerRef.current !== null) return; // prevent duplicates
+    const start = performance.now(); // performance is much more accurate
 
     timerRef.current = window.setInterval(() => {
-      setTime((prev) => {
-        if (prev >= 1000) {
-          stopTimer();
-          return prev;
-        }
-        return prev + 1.0;
-      });
+      setTime(Math.floor(performance.now() - start));
     }, 10);
   };
 
@@ -65,7 +61,10 @@ export default function InfoScreen() {
 
   return (
     <div style={{ ...styles.container, backgroundColor: bgColor }}>
-      {readyText && <h1 style={styles.title}>Test 1</h1>}
+      {readyText && <h1 style={styles.title}>Test 1 - Dominant Hand</h1>}
+      {readyText && (
+        <text style={styles.text}>Tap the screen as soon as you see green</text>
+      )}
       {readyText && <h2 style={styles.title}>Are you Ready?</h2>}
 
       {readyText && (
@@ -81,6 +80,17 @@ export default function InfoScreen() {
         </button>
       )}
       {timerText && <h2>{time}ms</h2>}
+      {reactionScreen && (
+        <div
+          style={{
+            top: 0,
+            left: 0,
+            width: "100vw",
+            height: "100vh",
+          }}
+          onClick={stopTimer}
+        />
+      )}
     </div>
   );
 }
@@ -98,6 +108,11 @@ const styles: { [key: string]: React.CSSProperties } = {
     color: "white",
     fontSize: "36px",
     marginBottom: "40px",
+  },
+
+  text: {
+    color: "white",
+    fontSize: "20px",
   },
 
   button: {
