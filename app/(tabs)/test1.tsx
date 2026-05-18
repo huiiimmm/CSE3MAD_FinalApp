@@ -1,9 +1,11 @@
+import { router } from "expo-router";
 import React, { useRef, useState } from "react";
 
 export default function InfoScreen() {
   const [readyText, setReadyText] = useState(true);
   const [bgColor, setBgColor] = useState("#1e1e1e");
   const [reactionScreen, setReactionScreen] = useState(false);
+  const [nextTestButton, setNextTestButton] = useState(false);
 
   // stand timer
   const [timerText, setTimerText] = useState(false);
@@ -80,6 +82,11 @@ export default function InfoScreen() {
         </button>
       )}
       {timerText && <h2>{time}ms</h2>}
+      {nextTestButton && (
+        <button style={styles.button} onClick={() => router.push("./test2")}>
+          Next Test
+        </button>
+      )}
       {reactionScreen && (
         <div
           style={{
@@ -88,7 +95,10 @@ export default function InfoScreen() {
             width: "100vw",
             height: "100vh",
           }}
-          onClick={stopTimer}
+          onClick={() => {
+            stopTimer();
+            setNextTestButton(true);
+          }}
         />
       )}
     </div>
