@@ -1,9 +1,14 @@
 import React from "react";
 
-export default function InfoScreen() {
+type Props = {
+  reactionTime: number;
+};
+
+export default function ResultsScreen({ reactionTime }: Props) {
   return (
     <div style={styles.container}>
       <h1 style={styles.title}>Results</h1>
+      <h2>{reactionTime} ms</h2>
     </div>
   );
 }

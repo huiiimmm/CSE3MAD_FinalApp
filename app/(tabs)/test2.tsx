@@ -1,7 +1,7 @@
 import { router } from "expo-router";
 import React, { useRef, useState } from "react";
 
-export default function InfoScreen() {
+export default function Test2() {
   const [readyText, setReadyText] = useState(true);
   const [bgColor, setBgColor] = useState("#1e1e1e");
   const [reactionScreen, setReactionScreen] = useState(false);

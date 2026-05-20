@@ -1,11 +1,13 @@
 import { router } from "expo-router";
 import React, { useRef, useState } from "react";
+import ResultsScreen from "./results";
 
-export default function InfoScreen() {
+export default function Test1() {
   const [readyText, setReadyText] = useState(true);
   const [bgColor, setBgColor] = useState("#1e1e1e");
   const [reactionScreen, setReactionScreen] = useState(false);
   const [nextTestButton, setNextTestButton] = useState(false);
+  const [showResults, setShowResults] = useState(false);
 
   // stand timer
   const [timerText, setTimerText] = useState(false);
@@ -15,7 +17,10 @@ export default function InfoScreen() {
   const [randomNumber, setRandomNumber] = useState(0);
   // timer references
   const timerRef = useRef<number | null>(null);
+  const startRef = useRef<number | null>(null);
   const randomTimerRef = useRef<number | null>(null);
+
+  const [reactionTime, setReactionTime] = useState(0);
 
   const randomise = () => {
     const randomNumber = Math.random() * (10 - 2 + 1) + 2; // random number between 2 and ten
@@ -40,10 +45,10 @@ export default function InfoScreen() {
   };
 
   const startTimer = () => {
-    const start = performance.now(); // performance is much more accurate
+    startRef.current = performance.now(); // performance is much more accurate
 
     timerRef.current = window.setInterval(() => {
-      setTime(Math.floor(performance.now() - start));
+      setTime(Math.floor(performance.now() - startRef.current!));
     }, 10);
   };
 
@@ -55,9 +60,15 @@ export default function InfoScreen() {
   };
 
   const stopTimer = () => {
-    if (timerRef.current !== null) {
-      clearInterval(timerRef.current);
-      timerRef.current = null;
+    if (startRef.current !== null) {
+      const elapsed = performance.now() - startRef.current;
+      setReactionTime(elapsed);
+
+      if (timerRef.current !== null) {
+        clearInterval(timerRef.current);
+        timerRef.current = null;
+      }
+      startRef.current = null;
     }
   };
 
@@ -98,9 +109,11 @@ export default function InfoScreen() {
           onClick={() => {
             stopTimer();
             setNextTestButton(true);
+            setShowResults(true);
           }}
         />
       )}
+      {showResults && <ResultsScreen reactionTime={reactionTime} />}
     </div>
   );
 }
