@@ -1,4 +1,5 @@
 import React from "react";
+import { StyleSheet, Text, View } from "react-native";
 
 type Props = {
   reactionTime: number;
@@ -6,38 +7,35 @@ type Props = {
 
 export default function ResultsScreen({ reactionTime }: Props) {
   return (
-    <div style={styles.container}>
-      <h1 style={styles.title}>Results</h1>
-      <h2>{reactionTime} ms</h2>
-    </div>
+    <View style={styles.colContainer}>
+      <Text style={styles.header}>Results</Text>
+      <Text>{reactionTime} ms</Text>
+    </View>
   );
 }
 
-const styles: { [key: string]: React.CSSProperties } = {
-  container: {
-    height: "100vh",
-    display: "flex",
-    flexDirection: "column",
+const styles = StyleSheet.create({
+  header: {
+    flex: 1,
     justifyContent: "center",
+    padding: 40,
+  },
+
+  rowContainer: {
+    flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#1e1e1e",
+    gap: 20,
   },
 
-  title: {
-    color: "white",
-    fontSize: "36px",
-    marginBottom: "40px",
+  colContainer: {
+    flexDirection: "column",
+    alignItems: "center",
+    gap: 20,
   },
 
-  button: {
-    width: "200px",
-    padding: "15px",
-    margin: "10px",
-    fontSize: "18px",
-    borderRadius: "10px",
-    border: "none",
-    cursor: "pointer",
-    backgroundColor: "#4a90e2",
-    color: "white",
+  buttonContainer: {
+    flexDirection: "column",
+    gap: 12,
+    width: 220,
   },
-};
+});
