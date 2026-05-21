@@ -79,7 +79,6 @@ export default function Test1() {
         <text style={styles.text}>Tap the screen as soon as you see green</text>
       )}
       {readyText && <h2 style={styles.title}>Are you Ready?</h2>}
-
       {readyText && (
         <button
           style={styles.button}
@@ -114,6 +113,8 @@ export default function Test1() {
         />
       )}
       {showResults && <ResultsScreen reactionTime={reactionTime} />}
+      {reactionTime}{" "}
+      {/* reactionTime is recorded, but not being sent through to results */}
     </div>
   );
 }

@@ -83,7 +83,10 @@ export default function Test2() {
       )}
       {timerText && <h2>{time}ms</h2>}
       {nextTestButton && (
-        <button style={styles.button} onClick={() => router.push("./results")}>
+        <button
+          style={styles.button}
+          onClick={() => router.push("/(tabs)/test3")}
+        >
           Results
         </button>
       )}
