@@ -11,6 +11,12 @@ export default function Test3() {
   const [screenHeight, setScreenHeight] = useState(0);
   const [screenWidth, setScreenWidth] = useState(0);
   const size = 50; // ball size considerations for bounces
+  const MIN_SPEED = 3;
+
+  const randomVelocity = () => {
+    const speed = Math.random() * 3 + MIN_SPEED; // always >= MIN_SPEED
+    return Math.random() < 0.5 ? -speed : speed;
+  };
 
   const [startTest, setStartTest] = useState(false);
   const xAnim = useRef(new Animated.Value(0)).current;
@@ -33,26 +39,26 @@ export default function Test3() {
       if (posX.current < 0) {
         posX.current = 0;
         velX.current *= -1;
-        velY.current = (Math.random() * 2 - 1) * 4;
+        velY.current = randomVelocity();
       }
 
       if (posX.current > screenWidth - size) {
         posX.current = screenWidth - size;
         velX.current *= -1;
-        velY.current = (Math.random() * 2 - 1) * 4;
+        velY.current = randomVelocity();
       }
 
       // Bounce Y
       if (posY.current < 0) {
         posY.current = 0;
         velY.current *= -1;
-        velX.current = (Math.random() * 2 - 1) * 4;
+        velX.current = randomVelocity();
       }
 
       if (posY.current > screenHeight - size) {
         posY.current = screenHeight - size;
         velY.current *= -1;
-        velX.current = (Math.random() * 2 - 1) * 4;
+        velX.current = randomVelocity();
       }
 
       xAnim.setValue(posX.current);
