@@ -26,11 +26,13 @@ export default function Test3() {
         vx *= -1;
         // randomness after bounce
         vx += (Math.random() - 0.5) * 2;
+        vy = (Math.random() * 2 - 1) * 4;
       }
       if (y < 0 || y > height - size) {
         vy *= -1;
         // randomness after bounce
         vy += (Math.random() - 0.5) * 2;
+        vx = (Math.random() * 2 - 1) * 4;
       }
       xAnim.setValue(x);
       yAnim.setValue(y);
