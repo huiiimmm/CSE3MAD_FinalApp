@@ -1,4 +1,5 @@
 import { router } from "expo-router";
+import { addDoc, collection } from "firebase/firestore";
 import React, { useEffect, useRef, useState } from "react";
 import {
     Animated,
@@ -8,6 +9,7 @@ import {
     TouchableOpacity,
     View,
 } from "react-native";
+import { db } from "./firebase";
 
 export default function Test3() {
   const size = 50;
@@ -105,6 +107,23 @@ export default function Test3() {
 
     return () => clearInterval(interval);
   }, [startTest, stopTest, screenWidth, screenHeight]);
+
+  const saveScore = async () => {
+    try {
+      await addDoc(collection(db, "test3_score"), {
+        clicks: clickCount,
+        timestamp: Date.now(),
+      });
+      console.log("score saved!");
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  useEffect(() => {
+    if (stopTest) {
+      saveScore();
+    }
+  }, [stopTest]);
 
   return (
     <View
