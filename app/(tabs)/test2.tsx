@@ -1,142 +1,133 @@
 import { router } from "expo-router";
 import React, { useRef, useState } from "react";
+import {
+  Pressable,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import ResultsScreen from "./results";
 
 export default function Test2() {
   const [readyText, setReadyText] = useState(true);
   const [bgColor, setBgColor] = useState("#1e1e1e");
   const [reactionScreen, setReactionScreen] = useState(false);
   const [nextTestButton, setNextTestButton] = useState(false);
-
-  // stand timer
-  const [timerText, setTimerText] = useState(false);
+  const [showResults, setShowResults] = useState(false);
   const [time, setTime] = useState(0);
-  // rand timer
-  const [randomTime, setRandomTime] = useState(0);
-  const [randomNumber, setRandomNumber] = useState(0);
-  // timer references
-  const timerRef = useRef<number | null>(null);
-  const randomTimerRef = useRef<number | null>(null);
+  const [reactionTime, setReactionTime] = useState(0);
 
-  const randomise = () => {
-    const randomNumber = Math.random() * (10 - 2 + 1) + 2; // random number between 2 and ten
-    setRandomNumber(randomNumber);
-  };
-
-  const startRandomTimer = () => {
-    if (randomTimerRef.current !== null) return;
-    randomise();
-    randomTimerRef.current = window.setInterval(() => {
-      setRandomTime((prev) => {
-        if (prev >= randomNumber) {
-          stopRandomTimer();
-          startTimer();
-          setTimerText(true);
-          setBgColor("green");
-          setReactionScreen(true);
-        }
-        return prev + 1;
-      });
-    }, 1000);
-  };
+  const intervalRef = useRef<number | null>(null);
+  const startRef = useRef<number | null>(null);
 
   const startTimer = () => {
-    const start = performance.now(); // performance is much more accurate
+    startRef.current = Date.now();
 
-    timerRef.current = window.setInterval(() => {
-      setTime(Math.floor(performance.now() - start));
+    intervalRef.current = setInterval(() => {
+      setTime(Date.now() - startRef.current!);
     }, 10);
   };
 
-  const stopRandomTimer = () => {
-    if (randomTimerRef.current !== null) {
-      clearInterval(randomTimerRef.current);
-      randomTimerRef.current = null;
+  const stopTimer = () => {
+    if (startRef.current) {
+      setReactionTime(Date.now() - startRef.current);
+
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+      }
+
+      startRef.current = null;
     }
   };
 
-  const stopTimer = () => {
-    if (timerRef.current !== null) {
-      clearInterval(timerRef.current);
-      timerRef.current = null;
-    }
+  const startRandomTimer = () => {
+    const delay = Math.random() * 8000 + 2000;
+
+    setTimeout(() => {
+      setBgColor("green");
+      setReactionScreen(true);
+      startTimer();
+    }, delay);
   };
 
   return (
-    <div style={{ ...styles.container, backgroundColor: bgColor }}>
-      {readyText && <h1 style={styles.title}>Test 2 - Non-Dominant Hand</h1>}
+    <View style={[styles.container, { backgroundColor: bgColor }]}>
       {readyText && (
-        <text style={styles.text}>Tap the screen as soon as you see green</text>
-      )}
-      {readyText && <h2 style={styles.title}>Are you Ready?</h2>}
+        <>
+          <Text style={styles.title}>Test 2 - Non-Dominant Hand</Text>
+          <Text style={styles.text}>Tap as soon as you see green</Text>
 
-      {readyText && (
-        <button
-          style={styles.button}
-          onClick={() => {
-            startRandomTimer();
-            setReadyText(false);
-            setBgColor("red");
-          }}
-        >
-          Start
-        </button>
+          <TouchableOpacity
+            style={styles.button}
+            onPress={() => {
+              setReadyText(false);
+              setBgColor("red");
+              startRandomTimer();
+            }}
+          >
+            <Text style={styles.buttonText}>Start</Text>
+          </TouchableOpacity>
+        </>
       )}
-      {timerText && <h2>{time}ms</h2>}
-      {nextTestButton && (
-        <button
-          style={styles.button}
-          onClick={() => router.push("/(tabs)/test3")}
-        >
-          Results
-        </button>
-      )}
+
+      <Text style={{ color: "white", fontSize: 30 }}>{time}ms</Text>
+
       {reactionScreen && (
-        <div
-          style={{
-            top: 0,
-            left: 0,
-            width: "100vw",
-            height: "100vh",
-          }}
-          onClick={() => {
+        <Pressable
+          style={StyleSheet.absoluteFill}
+          onPress={() => {
             stopTimer();
             setNextTestButton(true);
+            setShowResults(true);
           }}
         />
       )}
-    </div>
+
+      {nextTestButton && (
+        <TouchableOpacity
+          style={styles.button}
+          onPress={() => router.push("/test3")}
+        >
+          <Text style={styles.buttonText}>Next Test</Text>
+        </TouchableOpacity>
+      )}
+
+      {showResults && <ResultsScreen reactionTime={reactionTime} />}
+    </View>
   );
 }
 
-const styles: { [key: string]: React.CSSProperties } = {
+const styles = StyleSheet.create({
   container: {
-    height: "100vh",
-    display: "flex",
-    flexDirection: "column",
+    flex: 1,
     justifyContent: "center",
     alignItems: "center",
   },
 
   title: {
     color: "white",
-    fontSize: "36px",
-    marginBottom: "40px",
+    fontSize: 32,
+    marginBottom: 20,
   },
 
   text: {
     color: "white",
-    fontSize: "20px",
+    fontSize: 18,
+    marginBottom: 20,
+    textAlign: "center",
   },
 
   button: {
-    width: "200px",
-    padding: "15px",
-    margin: "10px",
-    fontSize: "18px",
-    borderRadius: "10px",
-    border: "none",
-    cursor: "pointer",
     backgroundColor: "#4a90e2",
-    color: "white",
+    paddingVertical: 15,
+    paddingHorizontal: 25,
+    borderRadius: 10,
+    marginTop: 20,
   },
-};
+
+  buttonText: {
+    color: "white",
+    fontSize: 18,
+  },
+});

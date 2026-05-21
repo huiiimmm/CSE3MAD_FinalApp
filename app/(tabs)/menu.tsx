@@ -1,54 +1,48 @@
 import { router } from "expo-router";
 import React from "react";
+import { Button, StyleSheet, Text, View } from "react-native";
 
 export default function MenuScreen() {
   return (
-    <div style={styles.container}>
-      <h1 style={styles.title}>Reaction Tester</h1>
+    <View style={styles.buttonContainer}>
+      <Text style={styles.title}>Reaction Tester</Text>
 
-      <button style={styles.button} onClick={() => router.push("./info")}>
-        Info
-      </button>
+      <Button title="Info" onPress={() => router.push("./info")} />
 
-      <button style={styles.button} onClick={() => router.push("./test1")}>
-        Start
-      </button>
+      <Button title="Start Test" onPress={() => router.push("./test1")} />
 
-      <button
-        style={styles.button}
-        onClick={() => router.push("./leaderboard")}
-      >
-        Leaderboard
-      </button>
-    </div>
+      <Button
+        title="Leaderboard"
+        onPress={() => router.push("./leaderboard")}
+      />
+    </View>
   );
 }
 
-const styles: { [key: string]: React.CSSProperties } = {
-  container: {
-    height: "100vh",
-    display: "flex",
+const styles = StyleSheet.create({
+  buttonContainer: {
     flexDirection: "column",
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "#1e1e1e",
+    gap: 12,
+    width: 220,
   },
 
   title: {
     color: "white",
-    fontSize: "36px",
-    marginBottom: "40px",
+    fontSize: 36,
+    marginBottom: 40,
   },
 
   button: {
-    width: "200px",
-    padding: "15px",
-    margin: "10px",
-    fontSize: "18px",
-    borderRadius: "10px",
-    border: "none",
-    cursor: "pointer",
+    width: 200,
+    paddingVertical: 15,
+    margin: 10,
+    borderRadius: 10,
     backgroundColor: "#4a90e2",
-    color: "white",
+    alignItems: "center",
   },
-};
+
+  buttonText: {
+    color: "white",
+    fontSize: 18,
+  },
+});

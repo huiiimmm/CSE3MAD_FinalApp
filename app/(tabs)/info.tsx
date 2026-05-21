@@ -1,63 +1,71 @@
 import { router } from "expo-router";
 import React from "react";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 export default function InfoScreen() {
   return (
-    <div style={styles.container}>
-      <h1 style={styles.title}>Info Guide</h1>
-      <text style={styles.text}>This is a reaction testing app.</text>
-      <text style={styles.text}>
+    <View style={styles.container}>
+      <Text style={styles.title}>Info Guide</Text>
+
+      <Text style={styles.text}>This is a reaction testing app.</Text>
+
+      <Text style={styles.text}>
         For the first test, tap the screen with your dominant hand as soon as
         the screen goes green.
-      </text>
-      <text style={styles.text}>
+      </Text>
+
+      <Text style={styles.text}>
         The second test is the same as the first, but with your non-dominant
         hand.
-      </text>
-      <text style={styles.text}>
+      </Text>
+
+      <Text style={styles.text}>
         For the last test, you must trace a moving object with your finger
         pressed on the screen.
-      </text>
-      <button style={styles.button} onClick={() => router.push("./test1")}>
-        Start Test
-      </button>
-    </div>
+      </Text>
+
+      <TouchableOpacity
+        style={styles.button}
+        onPress={() => router.push("/test1")}
+      >
+        <Text style={styles.buttonText}>Start Test</Text>
+      </TouchableOpacity>
+    </View>
   );
 }
-
-const styles: { [key: string]: React.CSSProperties } = {
+const styles = StyleSheet.create({
   container: {
-    height: "100vh",
-    display: "flex",
-    flexDirection: "column",
+    flex: 1,
+    backgroundColor: "#1e1e1e",
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#1e1e1e",
+    paddingHorizontal: 20,
   },
 
   title: {
     color: "white",
-    fontSize: "36px",
-    marginBottom: "40px",
+    fontSize: 32,
+    marginBottom: 30,
+    fontWeight: "bold",
   },
 
   text: {
     color: "white",
-    fontSize: "18px",
-    marginLeft: "80px",
-    marginRight: "80px",
-    marginBottom: "40px",
+    fontSize: 16,
+    marginBottom: 15,
+    textAlign: "center",
   },
 
   button: {
-    width: "200px",
-    padding: "15px",
-    margin: "10px",
-    fontSize: "18px",
-    borderRadius: "10px",
-    border: "none",
-    cursor: "pointer",
+    marginTop: 20,
     backgroundColor: "#4a90e2",
-    color: "white",
+    paddingVertical: 15,
+    paddingHorizontal: 30,
+    borderRadius: 10,
   },
-};
+
+  buttonText: {
+    color: "white",
+    fontSize: 18,
+  },
+});

@@ -1,57 +1,85 @@
-import React, { useEffect, useRef } from "react";
-import { Animated, Dimensions, StyleSheet, View } from "react-native";
+import React, { useEffect, useRef, useState } from "react";
+import {
+    Animated,
+    StyleSheet,
+    Text,
+    TouchableOpacity,
+    View,
+    useWindowDimensions
+} from "react-native";
 
-const { width, height } = Dimensions.get("window");
+const { width, height } = useWindowDimensions();
 
 export default function Test3() {
-  const xAnim = useRef(new Animated.Value(100)).current;
-  const yAnim = useRef(new Animated.Value(100)).current;
-
-  let x = 100;
-  let y = 100;
-
-  //random starting velocity
-  let vx = (Math.random() - 0.5) * 12;
-  let vy = (Math.random() - 0.5) * 12;
-
   const size = 50;
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      x += vx;
-      y += vy;
+  const xAnim = useRef(new Animated.Value(width / 2 - size / 2)).current;
+  const yAnim = useRef(new Animated.Value(height / 2 - size / 2)).current;
 
-      // bounce off walls
-      if (x < 0 || x > width - size) {
-        vx *= -1;
-        // randomness after bounce
-        vx += (Math.random() - 0.5) * 2;
-        vy = (Math.random() * 2 - 1) * 4;
+  const [startTest, setStartTest] = useState(false);
+
+  const x = useRef(width / 2).current;
+  const y = useRef(height / 2).current;
+
+  const vx = useRef((Math.random() * 2 - 1) * 6).current;
+  const vy = useRef((Math.random() * 2 - 1) * 6).current;
+
+  const posX = useRef(x);
+  const posY = useRef(y);
+
+  const velX = useRef(vx);
+  const velY = useRef(vy);
+
+  useEffect(() => {
+    if (!startTest) return;
+
+    const interval = setInterval(() => {
+      posX.current += velX.current;
+      posY.current += velY.current;
+
+      // Bounce X
+      if (posX.current < 0 || posX.current > width - size) {
+        velX.current *= -1;
+
+        velX.current += (Math.random() - 0.5) * 2;
+        velY.current = (Math.random() * 2 - 1) * 4;
       }
-      if (y < 0 || y > height - size) {
-        vy *= -1;
-        // randomness after bounce
-        vy += (Math.random() - 0.5) * 2;
-        vx = (Math.random() * 2 - 1) * 4;
+
+      // Bounce Y
+      if (posY.current < 0 || posY.current > height - size) {
+        velY.current *= -1;
+
+        velY.current += (Math.random() - 0.5) * 2;
+        velX.current = (Math.random() * 2 - 1) * 4;
       }
-      xAnim.setValue(x);
-      yAnim.setValue(y);
+
+      xAnim.setValue(posX.current);
+      yAnim.setValue(posY.current);
     }, 16);
+
     return () => clearInterval(interval);
-  }, []);
+  }, [startTest]);
 
   return (
-    <View style={{ flex: 1, backgroundColor: "#111" }}>
-      <Animated.View
-        style={{
-          position: "absolute",
-          width: 50,
-          height: 50,
-          borderRadius: size / 2,
-          backgroundColor: "cyan",
-          transform: [{ translateX: xAnim }, { translateY: yAnim }],
-        }}
-      />
+    <View style={styles.container}>
+      {startTest && (
+        <Animated.View
+          style={[
+            styles.ball,
+            {
+              transform: [{ translateX: xAnim }, { translateY: yAnim }],
+            },
+          ]}
+        />
+      )}
+      {!startTest && (
+        <TouchableOpacity
+          style={styles.button}
+          onPress={() => setStartTest(true)}
+        >
+          <Text style={styles.buttonText}>Start Test</Text>
+        </TouchableOpacity>
+      )}
     </View>
   );
 }
@@ -59,12 +87,31 @@ export default function Test3() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: "#111",
     justifyContent: "center",
+    borderWidth: 2,
+    borderColor: "white",
   },
+
   ball: {
+    position: "absolute",
     width: 50,
     height: 50,
     borderRadius: 25,
-    backgroundColor: "blue",
+    backgroundColor: "cyan",
+  },
+
+  button: {
+    backgroundColor: "#4a90e2",
+    padding: 15,
+    marginHorizontal: 20,
+    borderRadius: 10,
+    alignItems: "center",
+  },
+
+  buttonText: {
+    color: "white",
+    fontSize: 18,
+    fontWeight: "bold",
   },
 });
