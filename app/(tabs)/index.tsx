@@ -132,8 +132,8 @@ export default function HomeScreen() {
       <SafeAreaView style={styles.header}>
         <View style={styles.colContainer}>
           <View style={styles.rowContainer}>
-            <Text>{loginout}</Text>
-            <Text>{created}</Text>
+            <Text style={styles.text}>{loginout}</Text>
+            <Text style={styles.text}>{created}</Text>
           </View>
 
           <View style={styles.colContainer}>
@@ -202,5 +202,10 @@ const styles = StyleSheet.create({
     padding: 12,
     borderRadius: 8,
     backgroundColor: "white",
+  },
+
+  text: {
+    color: "white",
+    fontSize: 18,
   },
 });

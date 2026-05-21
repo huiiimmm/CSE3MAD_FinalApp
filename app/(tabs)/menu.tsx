@@ -1,29 +1,44 @@
 import { router } from "expo-router";
 import React from "react";
-import { Button, StyleSheet, Text, View } from "react-native";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 export default function MenuScreen() {
   return (
-    <View style={styles.buttonContainer}>
+    <View style={styles.container}>
       <Text style={styles.title}>Reaction Tester</Text>
 
-      <Button title="Info" onPress={() => router.push("./info")} />
+      <TouchableOpacity
+        style={styles.button}
+        onPress={() => router.push("./info")}
+      >
+        <Text style={styles.buttonText}>Info</Text>
+      </TouchableOpacity>
 
-      <Button title="Start Test" onPress={() => router.push("./test1")} />
+      <TouchableOpacity
+        style={styles.button}
+        onPress={() => router.push("./test1")}
+      >
+        <Text style={styles.buttonText}>Start Test</Text>
+      </TouchableOpacity>
 
-      <Button
-        title="Leaderboard"
+      <TouchableOpacity
+        style={styles.button}
         onPress={() => router.push("./leaderboard")}
-      />
+      >
+        <Text style={styles.buttonText}>Leaderboard</Text>
+      </TouchableOpacity>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  buttonContainer: {
-    flexDirection: "column",
-    gap: 12,
-    width: 220,
+  container: {
+    flex: 1,
+    backgroundColor: "#1e1e1e",
+    justifyContent: "center",
+    alignItems: "center",
+    paddingHorizontal: 20,
+    paddingVertical: 10,
   },
 
   title: {
@@ -33,12 +48,12 @@ const styles = StyleSheet.create({
   },
 
   button: {
-    width: 200,
-    paddingVertical: 15,
-    margin: 10,
-    borderRadius: 10,
+    marginTop: 20,
     backgroundColor: "#4a90e2",
-    alignItems: "center",
+    paddingVertical: 15,
+    paddingHorizontal: 30,
+    borderRadius: 10,
+    color: "white",
   },
 
   buttonText: {
