@@ -15,6 +15,7 @@ export default function Test3() {
   const [startTest, setStartTest] = useState(false);
   const [screenWidth, setScreenWidth] = useState(0);
   const [screenHeight, setScreenHeight] = useState(0);
+  const [clickCount, setClickCount] = useState(0);
 
   const xAnim = useRef(new Animated.Value(0)).current;
   const yAnim = useRef(new Animated.Value(0)).current;
@@ -96,6 +97,7 @@ export default function Test3() {
         yAnim.setValue(startY);
       }}
     >
+      <Text style={styles.buttonText}>Clicks: {clickCount}</Text>
       {startTest && (
         <Animated.View
           style={{
@@ -104,7 +106,7 @@ export default function Test3() {
           }}
         >
           <Pressable
-            onPress={() => console.log("Ball pressed!")}
+            onPress={() => setClickCount((prev) => prev + 1)}
             style={styles.ball}
           />
         </Animated.View>
