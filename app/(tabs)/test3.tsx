@@ -1,3 +1,4 @@
+import { router } from "expo-router";
 import React, { useEffect, useRef, useState } from "react";
 import {
     Animated,
@@ -10,9 +11,37 @@ import {
 
 export default function Test3() {
   const size = 50;
-  const MIN_SPEED = 3;
+  const MIN_SPEED = 2;
+
+  const [time, setTime] = useState(10);
+  const intervalRef = useRef<number | null>(null);
+
+  const countDown = () => {
+    setTime(10);
+
+    intervalRef.current = setInterval(() => {
+      setTime((prev) => {
+        if (prev <= 1) {
+          clearInterval(intervalRef.current!);
+          intervalRef.current = null;
+          setStopTest(true);
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+  };
+
+  useEffect(() => {
+    return () => {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+      }
+    };
+  }, []);
 
   const [startTest, setStartTest] = useState(false);
+  const [stopTest, setStopTest] = useState(false);
   const [screenWidth, setScreenWidth] = useState(0);
   const [screenHeight, setScreenHeight] = useState(0);
   const [clickCount, setClickCount] = useState(0);
@@ -37,7 +66,7 @@ export default function Test3() {
   };
 
   useEffect(() => {
-    if (!startTest) return;
+    if (!startTest || stopTest) return;
     if (screenWidth === 0 || screenHeight === 0) return;
 
     const interval = setInterval(() => {
@@ -75,7 +104,7 @@ export default function Test3() {
     }, 16);
 
     return () => clearInterval(interval);
-  }, [startTest, screenWidth, screenHeight]);
+  }, [startTest, stopTest, screenWidth, screenHeight]);
 
   return (
     <View
@@ -97,27 +126,56 @@ export default function Test3() {
         yAnim.setValue(startY);
       }}
     >
-      <Text style={styles.buttonText}>Clicks: {clickCount}</Text>
-      {startTest && (
-        <Animated.View
-          style={{
-            position: "absolute",
-            transform: [{ translateX: xAnim }, { translateY: yAnim }],
-          }}
-        >
-          <Pressable
-            onPress={() => setClickCount((prev) => prev + 1)}
-            style={styles.ball}
-          />
-        </Animated.View>
+      {!startTest && (
+        <Text style={styles.buttonText}>
+          Click the moving ball as many times as you can in 10 seconds without
+          missing!
+        </Text>
       )}
+      <Text style={styles.buttonText}>Clicks: {clickCount}</Text>
+      <Pressable
+        style={{ flex: 1 }}
+        onPress={() => {
+          if (stopTest) return;
+          setClickCount((prev) => prev - 1);
+        }}
+      >
+        {startTest && (
+          <Text style={styles.buttonText}> {time > 0 ? time : "Stop!"}</Text>
+        )}
+        {startTest && (
+          <Animated.View
+            style={{
+              position: "absolute",
+              transform: [{ translateX: xAnim }, { translateY: yAnim }],
+            }}
+          >
+            <Pressable
+              onPress={() => {
+                if (stopTest) return;
+                setClickCount((prev) => prev + 1);
+              }}
+              style={styles.ball}
+            />
+          </Animated.View>
+        )}
+      </Pressable>
 
+      {stopTest && (
+        <TouchableOpacity
+          style={styles.button}
+          onPress={() => router.push("/results")}
+        >
+          <Text style={styles.buttonText}>Results</Text>
+        </TouchableOpacity>
+      )}
       {!startTest && (
         <TouchableOpacity
           style={styles.button}
           onPress={() => {
             setStartTest(true);
             startPhysics();
+            countDown();
           }}
         >
           <Text style={styles.buttonText}>Start Test</Text>
