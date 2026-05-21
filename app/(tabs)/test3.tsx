@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import {
     Animated,
+    Pressable,
     StyleSheet,
     Text,
     TouchableOpacity,
@@ -8,28 +9,35 @@ import {
 } from "react-native";
 
 export default function Test3() {
-  const [screenHeight, setScreenHeight] = useState(0);
-  const [screenWidth, setScreenWidth] = useState(0);
-  const size = 50; // ball size considerations for bounces
+  const size = 50;
   const MIN_SPEED = 3;
 
-  const randomVelocity = () => {
-    const speed = Math.random() * 3 + MIN_SPEED; // always >= MIN_SPEED
-    return Math.random() < 0.5 ? -speed : speed;
-  };
-
   const [startTest, setStartTest] = useState(false);
+  const [screenWidth, setScreenWidth] = useState(0);
+  const [screenHeight, setScreenHeight] = useState(0);
+
   const xAnim = useRef(new Animated.Value(0)).current;
   const yAnim = useRef(new Animated.Value(0)).current;
 
   const posX = useRef(0);
   const posY = useRef(0);
 
-  const velX = useRef((Math.random() * 2 - 1) * 6);
-  const velY = useRef((Math.random() * 2 - 1) * 6);
+  const velX = useRef(0);
+  const velY = useRef(0);
+
+  const randomVelocity = () => {
+    const speed = Math.random() * 3 + MIN_SPEED;
+    return Math.random() < 0.5 ? -speed : speed;
+  };
+
+  const startPhysics = () => {
+    velX.current = randomVelocity();
+    velY.current = randomVelocity();
+  };
 
   useEffect(() => {
     if (!startTest) return;
+    if (screenWidth === 0 || screenHeight === 0) return;
 
     const interval = setInterval(() => {
       posX.current += velX.current;
@@ -66,44 +74,49 @@ export default function Test3() {
     }, 16);
 
     return () => clearInterval(interval);
-  }, [startTest]);
+  }, [startTest, screenWidth, screenHeight]);
 
   return (
     <View
       style={styles.container}
       onLayout={(e) => {
-        const screenWidth = e.nativeEvent.layout.width;
-        const screenHeight = e.nativeEvent.layout.height;
+        const w = e.nativeEvent.layout.width;
+        const h = e.nativeEvent.layout.height;
 
-        setScreenWidth(screenWidth);
-        setScreenHeight(screenHeight);
+        setScreenWidth(w);
+        setScreenHeight(h);
 
-        const startX = screenWidth / 2 - size / 2;
-        const startY = screenHeight / 2 - size / 2;
+        const startX = w / 2 - size / 2;
+        const startY = h / 2 - size / 2;
 
-        // physics positions
         posX.current = startX;
         posY.current = startY;
 
-        // animated positions
         xAnim.setValue(startX);
         yAnim.setValue(startY);
       }}
     >
       {startTest && (
         <Animated.View
-          style={[
-            styles.ball,
-            {
-              transform: [{ translateX: xAnim }, { translateY: yAnim }],
-            },
-          ]}
-        />
+          style={{
+            position: "absolute",
+            transform: [{ translateX: xAnim }, { translateY: yAnim }],
+          }}
+        >
+          <Pressable
+            onPress={() => console.log("Ball pressed!")}
+            style={styles.ball}
+          />
+        </Animated.View>
       )}
+
       {!startTest && (
         <TouchableOpacity
           style={styles.button}
-          onPress={() => setStartTest(true)}
+          onPress={() => {
+            setStartTest(true);
+            startPhysics();
+          }}
         >
           <Text style={styles.buttonText}>Start Test</Text>
         </TouchableOpacity>
@@ -121,7 +134,6 @@ const styles = StyleSheet.create({
   },
 
   ball: {
-    position: "absolute",
     width: 50,
     height: 50,
     borderRadius: 25,
