@@ -96,12 +96,15 @@ export default function Test1() {
         </>
       )}
 
-      <Text style={{ color: "white", fontSize: 30 }}>{time}ms</Text>
+      {!readyText && (
+        <Text style={{ color: "white", fontSize: 30 }}>{time}ms</Text>
+      )}
 
       {reactionScreen && (
         <Pressable
           style={StyleSheet.absoluteFill}
           onPress={() => {
+            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
             stopTimer();
             setNextTestButton(true);
             setShowResults(true);
