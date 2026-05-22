@@ -21,8 +21,13 @@ export default function InfoScreen() {
       </Text>
 
       <Text style={styles.text}>
-        For the last test, you must trace a moving object with your finger
-        pressed on the screen.
+        For the third test, you must trace a moving object with your finger and
+        tap it as many times as you can without missing.
+      </Text>
+
+      <Text style={styles.text}>
+        For the last test, you must yell into the mic as soon as you hear a
+        beep.
       </Text>
 
       <TouchableOpacity

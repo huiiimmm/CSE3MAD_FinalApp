@@ -150,7 +150,7 @@ export default function Test4() {
       if (!user) return;
 
       await addDoc(collection(db, "scores"), {
-        testType: "test4_sound",
+        testType: "test4",
         userId: user.uid,
         email: user.email,
         score: reactionTime,
@@ -212,7 +212,7 @@ export default function Test4() {
             router.push("/results");
           }}
         >
-          <Text style={styles.buttonText}>Next Test</Text>
+          <Text style={styles.buttonText}>Results</Text>
         </TouchableOpacity>
       )}
     </View>

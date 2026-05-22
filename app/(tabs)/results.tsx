@@ -1,3 +1,4 @@
+import { router } from "expo-router";
 import {
   collection,
   getDocs,
@@ -7,13 +8,21 @@ import {
   where,
 } from "firebase/firestore";
 import React, { useEffect, useState } from "react";
-import { ScrollView, StyleSheet, Text, View } from "react-native";
-import { db } from "./firebase";
+import {
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import { auth, db } from "./firebase";
 
 export default function ResultsScreen() {
   const [test1Scores, setTest1Scores] = useState<any[]>([]);
   const [test2Scores, setTest2Scores] = useState<any[]>([]);
   const [test3Scores, setTest3Scores] = useState<any[]>([]);
+  const [test4Scores, setTest4Scores] = useState<any[]>([]);
+  const currentUser = auth.currentUser;
 
   const getLeaderboard = async (
     testType: string,
@@ -53,6 +62,8 @@ export default function ResultsScreen() {
 
     getLeaderboard("test2", setTest2Scores, true);
 
+    getLeaderboard("test4", setTest4Scores, true);
+
     // highest clicks
     getLeaderboard("test3", setTest3Scores, false);
   }, []);
@@ -60,54 +71,128 @@ export default function ResultsScreen() {
   return (
     <ScrollView style={styles.container}>
       <Text style={styles.title}>Leaderboards</Text>
-
       {/* TEST 1 */}
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Test 1 - Dominant Hand</Text>
 
-        {test1Scores.map((user, index) => (
-          <View key={user.id} style={styles.row}>
-            <Text style={styles.rank}>#{index + 1}</Text>
+        {test1Scores.map((user, index) => {
+          const isCurrentUser = user.userId === currentUser?.uid;
 
-            <Text style={styles.name}>{user.email}</Text>
+          return (
+            <View
+              key={user.id}
+              style={[
+                styles.row,
+                isCurrentUser && {
+                  backgroundColor: "orange",
+                  borderRadius: 10,
+                },
+              ]}
+            >
+              <Text style={styles.rank}>#{index + 1}</Text>
 
-            <Text style={styles.score}>{user.score} ms</Text>
-          </View>
-        ))}
+              <Text style={styles.name}>{user.email}</Text>
+
+              <Text style={styles.score}>{user.score} ms</Text>
+            </View>
+          );
+        })}
       </View>
 
       {/* TEST 2 */}
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Test 2 - Non Dominant Hand</Text>
 
-        {test2Scores.map((user, index) => (
-          <View key={user.id} style={styles.row}>
-            <Text style={styles.rank}>#{index + 1}</Text>
+        {test2Scores.map((user, index) => {
+          const isCurrentUser = user.userId === currentUser?.uid;
 
-            <Text style={styles.name}>{user.email}</Text>
+          return (
+            <View
+              key={user.id}
+              style={[
+                styles.row,
+                isCurrentUser && {
+                  backgroundColor: "orange",
+                  borderRadius: 10,
+                },
+              ]}
+            >
+              <Text style={styles.rank}>#{index + 1}</Text>
 
-            <Text style={styles.score}>{user.score} ms</Text>
-          </View>
-        ))}
+              <Text style={styles.name}>{user.email}</Text>
+
+              <Text style={styles.score}>{user.score} ms</Text>
+            </View>
+          );
+        })}
       </View>
 
       {/* TEST 3 */}
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Test 3 - Tracking</Text>
 
-        {test3Scores.map((user, index) => (
-          <View key={user.id} style={styles.row}>
-            <Text style={styles.rank}>#{index + 1}</Text>
+        {test3Scores.map((user, index) => {
+          const isCurrentUser = user.userId === currentUser?.uid;
 
-            <Text style={styles.name}>{user.email}</Text>
+          return (
+            <View
+              key={user.id}
+              style={[
+                styles.row,
+                isCurrentUser && {
+                  backgroundColor: "orange",
+                  borderRadius: 10,
+                },
+              ]}
+            >
+              <Text style={styles.rank}>#{index + 1}</Text>
 
-            <Text style={styles.score}>{user.score} clicks</Text>
-          </View>
-        ))}
+              <Text style={styles.name}>{user.email}</Text>
+
+              <Text style={styles.score}>{user.score} clicks</Text>
+            </View>
+          );
+        })}
       </View>
+
+      {/* TEST 4 */}
+      <View style={styles.section}>
+        <Text style={styles.sectionTitle}>Test 4 - Audio Reaction</Text>
+
+        {test4Scores.map((user, index) => {
+          const isCurrentUser = user.userId === currentUser?.uid;
+
+          return (
+            <View
+              key={user.id}
+              style={[
+                styles.row,
+                isCurrentUser && {
+                  backgroundColor: "orange",
+                  borderRadius: 10,
+                },
+              ]}
+            >
+              <Text style={styles.rank}>#{index + 1}</Text>
+
+              <Text style={styles.name}>{user.email}</Text>
+
+              <Text style={styles.score}>{user.score} ms</Text>
+            </View>
+          );
+        })}
+      </View>
+
+      <TouchableOpacity
+        style={styles.button}
+        onPress={() => router.push("./menu")}
+      >
+        <Text style={styles.name}>Back To Menu</Text>
+      </TouchableOpacity>
     </ScrollView>
   );
 }
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -131,7 +216,7 @@ const styles = StyleSheet.create({
   },
 
   sectionTitle: {
-    color: "cyan",
+    color: "white",
     fontSize: 22,
     fontWeight: "bold",
     marginBottom: 12,
@@ -159,7 +244,16 @@ const styles = StyleSheet.create({
   },
 
   score: {
-    color: "cyan",
+    color: "white",
     fontSize: 18,
+  },
+
+  button: {
+    backgroundColor: "#4a90e2",
+    paddingVertical: 15,
+    paddingHorizontal: 25,
+    borderRadius: 10,
+    marginTop: 20,
+    justifyContent: "center",
   },
 });
