@@ -1,3 +1,4 @@
+import * as Haptics from "expo-haptics";
 import { router } from "expo-router";
 import { addDoc, collection } from "firebase/firestore";
 import React, { useEffect, useRef, useState } from "react";
@@ -84,6 +85,7 @@ export default function Test1() {
           <TouchableOpacity
             style={styles.button}
             onPress={() => {
+              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
               setReadyText(false);
               setBgColor("red");
               startRandomTimer();
@@ -110,7 +112,10 @@ export default function Test1() {
       {nextTestButton && (
         <TouchableOpacity
           style={styles.button}
-          onPress={() => router.push("/test2")}
+          onPress={() => {
+            router.push("/test2");
+            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+          }}
         >
           <Text style={styles.buttonText}>Next Test</Text>
         </TouchableOpacity>

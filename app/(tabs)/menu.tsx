@@ -1,3 +1,4 @@
+import * as Haptics from "expo-haptics";
 import { router } from "expo-router";
 import React from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
@@ -9,21 +10,30 @@ export default function MenuScreen() {
 
       <TouchableOpacity
         style={styles.button}
-        onPress={() => router.push("./info")}
+        onPress={() => {
+          router.push("./info");
+          Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+        }}
       >
         <Text style={styles.buttonText}>Info</Text>
       </TouchableOpacity>
 
       <TouchableOpacity
         style={styles.button}
-        onPress={() => router.push("./test1")}
+        onPress={() => {
+          router.push("./test1");
+          Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+        }}
       >
         <Text style={styles.buttonText}>Start Test</Text>
       </TouchableOpacity>
 
       <TouchableOpacity
         style={styles.button}
-        onPress={() => router.push("./leaderboard")}
+        onPress={() => {
+          router.push("./results");
+          Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+        }}
       >
         <Text style={styles.buttonText}>Leaderboard</Text>
       </TouchableOpacity>

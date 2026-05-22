@@ -1,3 +1,4 @@
+import * as Haptics from "expo-haptics";
 import { router } from "expo-router";
 import { addDoc, collection } from "firebase/firestore";
 import React, { useEffect, useRef, useState } from "react";
@@ -161,6 +162,7 @@ export default function Test3() {
         style={{ flex: 1 }}
         onPress={() => {
           if (stopTest) return;
+          Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
           setClickCount((prev) => prev - 1);
         }}
       >
@@ -177,6 +179,7 @@ export default function Test3() {
             <Pressable
               onPress={() => {
                 if (stopTest) return;
+                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
                 setClickCount((prev) => prev + 1);
               }}
               style={styles.ball}
@@ -188,7 +191,10 @@ export default function Test3() {
       {stopTest && (
         <TouchableOpacity
           style={styles.button}
-          onPress={() => router.push("/results")}
+          onPress={() => {
+            router.push("/results");
+            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+          }}
         >
           <Text style={styles.buttonText}>Results</Text>
         </TouchableOpacity>
@@ -200,6 +206,7 @@ export default function Test3() {
             setStartTest(true);
             startPhysics();
             countDown();
+            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
           }}
         >
           <Text style={styles.buttonText}>Start Test</Text>

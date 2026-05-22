@@ -1,3 +1,4 @@
+import * as Haptics from "expo-haptics";
 import { router } from "expo-router";
 import React from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
@@ -26,7 +27,10 @@ export default function InfoScreen() {
 
       <TouchableOpacity
         style={styles.button}
-        onPress={() => router.push("/test1")}
+        onPress={() => {
+          router.push("/test1");
+          Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+        }}
       >
         <Text style={styles.buttonText}>Start Test</Text>
       </TouchableOpacity>
