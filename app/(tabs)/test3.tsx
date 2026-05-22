@@ -110,8 +110,9 @@ export default function Test3() {
 
   const saveScore = async () => {
     try {
-      await addDoc(collection(db, "test3_score"), {
-        clicks: clickCount,
+      await addDoc(collection(db, "scores"), {
+        testType: "test3",
+        score: clickCount,
         timestamp: Date.now(),
       });
       console.log("score saved!");

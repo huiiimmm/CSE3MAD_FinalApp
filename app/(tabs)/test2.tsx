@@ -1,5 +1,6 @@
 import { router } from "expo-router";
-import React, { useRef, useState } from "react";
+import { addDoc, collection } from "firebase/firestore";
+import React, { useEffect, useRef, useState } from "react";
 import {
   Pressable,
   StyleSheet,
@@ -7,7 +8,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import ResultsScreen from "./results";
+import { db } from "./firebase";
 
 export default function Test2() {
   const [readyText, setReadyText] = useState(true);
@@ -51,6 +52,24 @@ export default function Test2() {
     }, delay);
   };
 
+  const saveScore = async () => {
+    try {
+      await addDoc(collection(db, "scores"), {
+        testType: "test2",
+        score: reactionTime,
+        timestamp: Date.now(),
+      });
+      console.log("score saved!");
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  useEffect(() => {
+    if (showResults) {
+      saveScore();
+    }
+  }, [showResults]);
+
   return (
     <View style={[styles.container, { backgroundColor: bgColor }]}>
       {readyText && (
@@ -92,8 +111,6 @@ export default function Test2() {
           <Text style={styles.buttonText}>Next Test</Text>
         </TouchableOpacity>
       )}
-
-      {showResults && <ResultsScreen reactionTime={reactionTime} />}
     </View>
   );
 }
