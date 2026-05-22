@@ -9,11 +9,12 @@ import {
     TouchableOpacity,
     View,
 } from "react-native";
-import { db } from "./firebase";
+import { auth, db } from "./firebase";
 
 export default function Test3() {
   const size = 50;
   const MIN_SPEED = 2;
+  const user = auth.currentUser;
 
   const [time, setTime] = useState(10);
   const intervalRef = useRef<number | null>(null);
@@ -110,8 +111,11 @@ export default function Test3() {
 
   const saveScore = async () => {
     try {
+      if (!user) return;
       await addDoc(collection(db, "scores"), {
         testType: "test3",
+        userId: user?.uid,
+        email: user?.email,
         score: clickCount,
         timestamp: Date.now(),
       });

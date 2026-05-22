@@ -8,7 +8,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { db } from "./firebase";
+import { auth, db } from "./firebase";
 
 export default function Test2() {
   const [readyText, setReadyText] = useState(true);
@@ -18,6 +18,7 @@ export default function Test2() {
   const [showResults, setShowResults] = useState(false);
   const [time, setTime] = useState(0);
   const [reactionTime, setReactionTime] = useState(0);
+  const user = auth.currentUser;
 
   const intervalRef = useRef<number | null>(null);
   const startRef = useRef<number | null>(null);
@@ -54,8 +55,11 @@ export default function Test2() {
 
   const saveScore = async () => {
     try {
+      if (!user) return;
       await addDoc(collection(db, "scores"), {
         testType: "test2",
+        userId: user?.uid,
+        email: user?.email,
         score: reactionTime,
         timestamp: Date.now(),
       });

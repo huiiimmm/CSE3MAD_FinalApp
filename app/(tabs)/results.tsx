@@ -1,14 +1,38 @@
-import { collection, getDocs } from "firebase/firestore";
-import React, { useState } from "react";
-import { StyleSheet, Text, View } from "react-native";
+import {
+  collection,
+  getDocs,
+  limit,
+  orderBy,
+  query,
+  where,
+} from "firebase/firestore";
+import React, { useEffect, useState } from "react";
+import { ScrollView, StyleSheet, Text, View } from "react-native";
 import { db } from "./firebase";
 
 export default function ResultsScreen() {
-  const [scores, setScores] = useState<any[]>([]);
+  const [test1Scores, setTest1Scores] = useState<any[]>([]);
+  const [test2Scores, setTest2Scores] = useState<any[]>([]);
+  const [test3Scores, setTest3Scores] = useState<any[]>([]);
 
-  const getScores = async () => {
+  const getLeaderboard = async (
+    testType: string,
+    setFunction: React.Dispatch<React.SetStateAction<any[]>>,
+    ascending: boolean = false,
+  ) => {
     try {
-      const querySnapshot = await getDocs(collection(db, "scores"));
+      const q = query(
+        collection(db, "scores"),
+
+        where("testType", "==", testType),
+
+        orderBy("score", ascending ? "asc" : "desc"),
+
+        limit(10),
+      );
+
+      const querySnapshot = await getDocs(q);
+
       const results: any[] = [];
 
       querySnapshot.forEach((doc) => {
@@ -17,57 +41,73 @@ export default function ResultsScreen() {
           ...doc.data(),
         });
       });
-      setScores(results);
+
+      setFunction(results);
     } catch (error) {
       console.log(error);
     }
   };
-  const test1Scores = scores.filter((score) => score.testType === "test1");
+  useEffect(() => {
+    // fastest reaction times
+    getLeaderboard("test1", setTest1Scores, true);
 
-  const test2Scores = scores.filter((score) => score.testType === "test2");
+    getLeaderboard("test2", setTest2Scores, true);
 
-  const test3Scores = scores.filter((score) => score.testType === "test3");
+    // highest clicks
+    getLeaderboard("test3", setTest3Scores, false);
+  }, []);
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Results</Text>
+    <ScrollView style={styles.container}>
+      <Text style={styles.title}>Leaderboards</Text>
 
       {/* TEST 1 */}
       <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Test 1 Scores</Text>
+        <Text style={styles.sectionTitle}>Test 1 - Dominant Hand</Text>
 
-        {test1Scores.map((score) => (
-          <Text key={score.id} style={styles.scoreText}>
-            {score.reactionTime} ms
-          </Text>
+        {test1Scores.map((user, index) => (
+          <View key={user.id} style={styles.row}>
+            <Text style={styles.rank}>#{index + 1}</Text>
+
+            <Text style={styles.name}>{user.email}</Text>
+
+            <Text style={styles.score}>{user.score} ms</Text>
+          </View>
         ))}
       </View>
 
       {/* TEST 2 */}
       <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Test 2 Scores</Text>
+        <Text style={styles.sectionTitle}>Test 2 - Non Dominant Hand</Text>
 
-        {test2Scores.map((score) => (
-          <Text key={score.id} style={styles.scoreText}>
-            {score.reactionTime} ms
-          </Text>
+        {test2Scores.map((user, index) => (
+          <View key={user.id} style={styles.row}>
+            <Text style={styles.rank}>#{index + 1}</Text>
+
+            <Text style={styles.name}>{user.email}</Text>
+
+            <Text style={styles.score}>{user.score} ms</Text>
+          </View>
         ))}
       </View>
 
       {/* TEST 3 */}
       <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Test 3 Scores</Text>
+        <Text style={styles.sectionTitle}>Test 3 - Tracking</Text>
 
-        {test3Scores.map((score) => (
-          <Text key={score.id} style={styles.scoreText}>
-            {score.clicks} clicks
-          </Text>
+        {test3Scores.map((user, index) => (
+          <View key={user.id} style={styles.row}>
+            <Text style={styles.rank}>#{index + 1}</Text>
+
+            <Text style={styles.name}>{user.email}</Text>
+
+            <Text style={styles.score}>{user.score} clicks</Text>
+          </View>
         ))}
       </View>
-    </View>
+    </ScrollView>
   );
 }
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -79,27 +119,47 @@ const styles = StyleSheet.create({
     color: "white",
     fontSize: 32,
     fontWeight: "bold",
-    marginBottom: 30,
     textAlign: "center",
+    marginBottom: 30,
   },
 
   section: {
-    marginBottom: 30,
-    padding: 20,
     backgroundColor: "#222",
     borderRadius: 12,
+    padding: 16,
+    marginBottom: 24,
   },
 
   sectionTitle: {
     color: "cyan",
     fontSize: 22,
     fontWeight: "bold",
-    marginBottom: 10,
+    marginBottom: 12,
   },
 
-  scoreText: {
+  row: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    paddingVertical: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: "#333",
+  },
+
+  rank: {
+    color: "gold",
+    fontSize: 18,
+    width: 50,
+  },
+
+  name: {
     color: "white",
     fontSize: 18,
-    marginBottom: 6,
+    flex: 1,
+  },
+
+  score: {
+    color: "cyan",
+    fontSize: 18,
   },
 });
