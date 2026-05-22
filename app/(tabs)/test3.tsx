@@ -192,11 +192,11 @@ export default function Test3() {
         <TouchableOpacity
           style={styles.button}
           onPress={() => {
-            router.push("/results");
+            router.push("/test4");
             Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
           }}
         >
-          <Text style={styles.buttonText}>Results</Text>
+          <Text style={styles.buttonText}>Test 4</Text>
         </TouchableOpacity>
       )}
       {!startTest && (
