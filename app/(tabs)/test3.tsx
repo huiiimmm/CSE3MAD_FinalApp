@@ -3,12 +3,12 @@ import { router } from "expo-router";
 import { addDoc, collection } from "firebase/firestore";
 import React, { useEffect, useRef, useState } from "react";
 import {
-    Animated,
-    Pressable,
-    StyleSheet,
-    Text,
-    TouchableOpacity,
-    View,
+  Animated,
+  Pressable,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
 } from "react-native";
 import { auth, db } from "./firebase";
 
@@ -162,6 +162,7 @@ export default function Test3() {
         style={{ flex: 1 }}
         onPress={() => {
           if (stopTest) return;
+          if (!startTest) return;
           Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
           setClickCount((prev) => prev - 1);
         }}
