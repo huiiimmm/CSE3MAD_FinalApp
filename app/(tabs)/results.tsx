@@ -189,6 +189,12 @@ export default function ResultsScreen() {
       >
         <Text style={styles.name}>Back To Menu</Text>
       </TouchableOpacity>
+      <TouchableOpacity
+        style={styles.button}
+        onPress={() => router.push("/(tabs)")}
+      >
+        <Text style={styles.name}>Change User</Text>
+      </TouchableOpacity>
     </ScrollView>
   );
 }
