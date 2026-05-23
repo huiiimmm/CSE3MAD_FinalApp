@@ -48,7 +48,9 @@ export default function Test3() {
   const [stopTest, setStopTest] = useState(false);
   const [screenWidth, setScreenWidth] = useState(0);
   const [screenHeight, setScreenHeight] = useState(0);
+
   const [clickCount, setClickCount] = useState(0);
+  const [totalClicks, setTotalClicks] = useState(0);
 
   const xAnim = useRef(new Animated.Value(0)).current;
   const yAnim = useRef(new Animated.Value(0)).current;
@@ -158,6 +160,10 @@ export default function Test3() {
         </Text>
       )}
       <Text style={styles.buttonText}>Clicks: {clickCount}</Text>
+      <Text style={styles.buttonText}>
+        Accuracy:{" "}
+        {totalClicks ? ((clickCount / totalClicks) * 100).toFixed(1) : 0}%
+      </Text>
       <Pressable
         style={{ flex: 1 }}
         onPress={() => {
@@ -165,6 +171,7 @@ export default function Test3() {
           if (!startTest) return;
           Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
           setClickCount((prev) => prev - 1);
+          setTotalClicks((prev) => prev + 1);
         }}
       >
         {startTest && (
@@ -182,6 +189,7 @@ export default function Test3() {
                 if (stopTest) return;
                 Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
                 setClickCount((prev) => prev + 1);
+                setTotalClicks((prev) => prev + 1);
               }}
               style={styles.ball}
             />
