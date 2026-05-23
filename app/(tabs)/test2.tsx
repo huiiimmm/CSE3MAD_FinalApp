@@ -21,8 +21,12 @@ export default function Test2() {
   const [reactionTime, setReactionTime] = useState(0);
   const user = auth.currentUser;
 
+  const [earlyCheck, setEarlyCheck] = useState(false);
+  const [restartTest, setRestartTest] = useState(false);
+
   const intervalRef = useRef<number | null>(null);
   const startRef = useRef<number | null>(null);
+  const randomRef = useRef<number | null>(null);
 
   const startTimer = () => {
     startRef.current = Date.now();
@@ -46,12 +50,22 @@ export default function Test2() {
 
   const startRandomTimer = () => {
     const delay = Math.random() * 8000 + 2000;
+    setEarlyCheck(true);
+    if (restartTest) return;
+    else {
+      randomRef.current = setTimeout(() => {
+        setBgColor("green");
+        setReactionScreen(true);
+        startTimer();
+      }, delay);
+    }
+  };
+  const restart = () => {
+    setRestartTest(true);
 
-    setTimeout(() => {
-      setBgColor("green");
-      setReactionScreen(true);
-      startTimer();
-    }, delay);
+    if (randomRef.current) {
+      clearTimeout(randomRef.current);
+    }
   };
 
   const saveScore = async () => {
@@ -98,6 +112,33 @@ export default function Test2() {
 
       {!readyText && (
         <Text style={{ color: "white", fontSize: 30 }}>{time}ms</Text>
+      )}
+      {earlyCheck && (
+        <Pressable
+          style={StyleSheet.absoluteFill}
+          onPress={() => {
+            Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+            stopTimer();
+            restart();
+            setRestartTest(true);
+          }}
+        />
+      )}
+      {restartTest && (
+        <>
+          <Text style={styles.text}>Too early!</Text>
+          <TouchableOpacity
+            style={styles.button}
+            onPress={() => {
+              setReadyText(true);
+              setEarlyCheck(false);
+              setRestartTest(false);
+              setBgColor("#1e1e1e");
+            }}
+          >
+            <Text style={styles.buttonText}>Restart Test</Text>
+          </TouchableOpacity>
+        </>
       )}
 
       {reactionScreen && (

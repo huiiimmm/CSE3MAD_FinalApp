@@ -15,15 +15,17 @@ export default function Test1() {
   const [readyText, setReadyText] = useState(true);
   const [bgColor, setBgColor] = useState("#1e1e1e");
   const [reactionScreen, setReactionScreen] = useState(false);
+  const [earlyCheck, setEarlyCheck] = useState(false);
   const [nextTestButton, setNextTestButton] = useState(false);
-  const [showResults, setShowResults] = useState(false);
+  const [recordResults, setRecordResults] = useState(false);
+  const [restartTest, setRestartTest] = useState(false);
   const [time, setTime] = useState(0);
   const [reactionTime, setReactionTime] = useState(0);
   const user = auth.currentUser;
 
   const intervalRef = useRef<number | null>(null);
   const startRef = useRef<number | null>(null);
-
+  const randomRef = useRef<number | null>(null);
   const startTimer = () => {
     startRef.current = Date.now();
 
@@ -46,12 +48,22 @@ export default function Test1() {
 
   const startRandomTimer = () => {
     const delay = Math.random() * 8000 + 2000;
+    setEarlyCheck(true);
+    if (restartTest) return;
+    else {
+      randomRef.current = setTimeout(() => {
+        setBgColor("green");
+        setReactionScreen(true);
+        startTimer();
+      }, delay);
+    }
+  };
+  const restart = () => {
+    setRestartTest(true);
 
-    setTimeout(() => {
-      setBgColor("green");
-      setReactionScreen(true);
-      startTimer();
-    }, delay);
+    if (randomRef.current) {
+      clearTimeout(randomRef.current);
+    }
   };
 
   const saveScore = async () => {
@@ -70,10 +82,10 @@ export default function Test1() {
     }
   };
   useEffect(() => {
-    if (showResults) {
+    if (recordResults) {
       saveScore();
     }
-  }, [showResults]);
+  }, [recordResults]);
 
   return (
     <View style={[styles.container, { backgroundColor: bgColor }]}>
@@ -99,7 +111,33 @@ export default function Test1() {
       {!readyText && (
         <Text style={{ color: "white", fontSize: 30 }}>{time}ms</Text>
       )}
-
+      {earlyCheck && (
+        <Pressable
+          style={StyleSheet.absoluteFill}
+          onPress={() => {
+            Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+            stopTimer();
+            restart();
+            setRestartTest(true);
+          }}
+        />
+      )}
+      {restartTest && (
+        <>
+          <Text style={styles.text}>Too early!</Text>
+          <TouchableOpacity
+            style={styles.button}
+            onPress={() => {
+              setReadyText(true);
+              setEarlyCheck(false);
+              setRestartTest(false);
+              setBgColor("#1e1e1e");
+            }}
+          >
+            <Text style={styles.buttonText}>Restart Test</Text>
+          </TouchableOpacity>
+        </>
+      )}
       {reactionScreen && (
         <Pressable
           style={StyleSheet.absoluteFill}
@@ -107,7 +145,7 @@ export default function Test1() {
             Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
             stopTimer();
             setNextTestButton(true);
-            setShowResults(true);
+            setRecordResults(true);
           }}
         />
       )}
