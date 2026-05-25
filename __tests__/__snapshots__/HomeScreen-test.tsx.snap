@@ -1,0 +1,31 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<HomeScreen /> CustomText renders correctly 1`] = `
+<ViewManagerAdapter_SymbolModule
+  animated={false}
+  colors={[]}
+  name="chevron.left.forwardslash.chevron.right"
+  resizeMode="scaleAspectFit"
+  style={
+    [
+      {
+        "height": 24,
+        "width": 24,
+      },
+      [
+        {
+          "height": 310,
+          "width": 310,
+        },
+        {
+          "backgroundColor": "red",
+        },
+      ],
+    ]
+  }
+  tint={4286611584}
+  tintColor="#808080"
+  type="monochrome"
+  weight="regular"
+/>
+`;

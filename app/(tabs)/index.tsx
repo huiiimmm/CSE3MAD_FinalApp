@@ -13,16 +13,13 @@ import {
 import { SafeAreaProvider } from "react-native-safe-area-context";
 
 import {
-  createUserWithEmailAndPassword,
-  deleteUser,
-  signInWithEmailAndPassword,
-  signOut,
-} from "firebase/auth";
-
-import { addDoc, collection } from "firebase/firestore";
-
-import { auth, db } from "./firebase";
-
+  addDebugDoc,
+  auth,
+  createAccount,
+  login,
+  logout,
+  removeUser
+} from "@/firebase";
 let n = 0;
 
 export default function HomeScreen() {
@@ -37,7 +34,7 @@ export default function HomeScreen() {
     console.log(`${tag} No. ${id}`, str);
 
     try {
-      await addDoc(collection(db, "Debug"), {
+      await addDebugDoc({
         Tag: `${tag} No. ${id}`,
         Str: str,
         Timestamp: new Date(),
@@ -49,11 +46,7 @@ export default function HomeScreen() {
 
   async function loginA() {
     try {
-      const userCredential = await signInWithEmailAndPassword(
-        auth,
-        email,
-        pword,
-      );
+      const userCredential = await login(email, pword);
 
       const user = userCredential.user;
 
@@ -71,11 +64,7 @@ export default function HomeScreen() {
 
   async function createA() {
     try {
-      const userCredential = await createUserWithEmailAndPassword(
-        auth,
-        email,
-        pword,
-      );
+      const userCredential = await createAccount(email, pword);
 
       const user = userCredential.user;
 
@@ -93,7 +82,7 @@ export default function HomeScreen() {
 
   async function logoutA() {
     try {
-      await signOut(auth);
+      await logout;
 
       await debug("signoutEmailPassword", "success: " + email);
 
@@ -115,7 +104,7 @@ export default function HomeScreen() {
         return;
       }
 
-      await deleteUser(auth.currentUser);
+      await removeUser(auth.currentUser);
 
       await debug("DeleteEmailPassword", "success: " + email);
 
@@ -136,7 +125,7 @@ export default function HomeScreen() {
             <Text style={styles.text}>{created}</Text>
           </View>
 
-          <View style={styles.colContainer}>
+          <View testID="t1" style={styles.colContainer}>
             <TextInput
               style={styles.sUser}
               placeholder="Email"
@@ -181,6 +170,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     gap: 20,
+    color: "#fff",
   },
 
   colContainer: {
