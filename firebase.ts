@@ -19,9 +19,16 @@ import {
     signInWithEmailAndPassword,
     signOut,
 } from "firebase/auth";
-import { getFirestore } from "firebase/firestore";
-
-import { addDoc, collection } from "firebase/firestore";
+import {
+    addDoc,
+    collection,
+    getDocs,
+    getFirestore,
+    limit,
+    orderBy,
+    query,
+    where,
+} from "firebase/firestore";
 
 const app = initializeApp(firebaseConfig);
 
@@ -44,4 +51,27 @@ export const removeUser = (user: any) => deleteUser(user);
 
 export const saveScore = (user: any, data: any) => {
   return addDoc(collection(db, "scores"), data);
+};
+
+export const getLeaderboardDocs = async (
+  testType: string,
+  setFunction: React.Dispatch<React.SetStateAction<any[]>>,
+  ascending: boolean = false,
+) => {
+  const q = query(
+    collection(db, "scores"),
+    where("testType", "==", testType),
+    orderBy("score", ascending ? "asc" : "desc"),
+    limit(10),
+  );
+  const querySnapshot = await getDocs(q);
+  const results: any[] = [];
+
+  querySnapshot.forEach((doc) => {
+    results.push({
+      id: doc.id,
+      ...doc.data(),
+    });
+  });
+  setFunction(results);
 };

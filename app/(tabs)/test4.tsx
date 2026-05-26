@@ -1,10 +1,9 @@
+import { auth, saveScore } from "@/firebase";
 import { Audio } from "expo-av";
 import * as Haptics from "expo-haptics";
 import { router } from "expo-router";
-import { addDoc, collection } from "firebase/firestore";
 import React, { useEffect, useRef, useState } from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import { auth, db } from "./firebase";
 
 export default function Test4() {
   const [time, setTime] = useState(0);
@@ -145,17 +144,18 @@ export default function Test4() {
     }
   };
 
-  const saveScore = async () => {
+  const saveTestScore = async () => {
     try {
       if (!user) return;
 
-      await addDoc(collection(db, "scores"), {
+      const scores = {
         testType: "test4",
         userId: user.uid,
         email: user.email,
         score: reactionTime,
         timestamp: Date.now(),
-      });
+      };
+      saveScore(user, scores);
 
       console.log("score saved!");
     } catch (error) {
@@ -165,7 +165,7 @@ export default function Test4() {
 
   useEffect(() => {
     if (nextTestButton) {
-      saveScore();
+      saveTestScore();
     }
   }, [nextTestButton]);
 
@@ -178,7 +178,7 @@ export default function Test4() {
   }, []);
 
   return (
-    <View style={styles.container}>
+    <View testID="test4" style={styles.container}>
       {readyText && (
         <>
           <Text style={styles.title}>Test 4 - Sound Reaction</Text>
@@ -224,6 +224,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
+    color: "#fff",
   },
 
   title: {

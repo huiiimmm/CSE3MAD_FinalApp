@@ -1,12 +1,5 @@
+import { auth, getLeaderboardDocs } from "@/firebase";
 import { router } from "expo-router";
-import {
-  collection,
-  getDocs,
-  limit,
-  orderBy,
-  query,
-  where,
-} from "firebase/firestore";
 import React, { useEffect, useState } from "react";
 import {
   ScrollView,
@@ -15,7 +8,6 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { auth, db } from "./firebase";
 
 export default function ResultsScreen() {
   const [test1Scores, setTest1Scores] = useState<any[]>([]);
@@ -24,52 +16,24 @@ export default function ResultsScreen() {
   const [test4Scores, setTest4Scores] = useState<any[]>([]);
   const currentUser = auth.currentUser;
 
-  const getLeaderboard = async (
-    testType: string,
-    setFunction: React.Dispatch<React.SetStateAction<any[]>>,
-    ascending: boolean = false,
-  ) => {
+  useEffect(() => {
     try {
-      const q = query(
-        collection(db, "scores"),
+      // fastest reaction times
+      getLeaderboardDocs("test1", setTest1Scores, true);
 
-        where("testType", "==", testType),
+      getLeaderboardDocs("test2", setTest2Scores, true);
 
-        orderBy("score", ascending ? "asc" : "desc"),
+      getLeaderboardDocs("test4", setTest4Scores, true);
 
-        limit(10),
-      );
-
-      const querySnapshot = await getDocs(q);
-
-      const results: any[] = [];
-
-      querySnapshot.forEach((doc) => {
-        results.push({
-          id: doc.id,
-          ...doc.data(),
-        });
-      });
-
-      setFunction(results);
+      // highest clicks
+      getLeaderboardDocs("test3", setTest3Scores, false);
     } catch (error) {
       console.log(error);
     }
-  };
-  useEffect(() => {
-    // fastest reaction times
-    getLeaderboard("test1", setTest1Scores, true);
-
-    getLeaderboard("test2", setTest2Scores, true);
-
-    getLeaderboard("test4", setTest4Scores, true);
-
-    // highest clicks
-    getLeaderboard("test3", setTest3Scores, false);
   }, []);
 
   return (
-    <ScrollView style={styles.container}>
+    <ScrollView testID="results" style={styles.container}>
       <Text style={styles.title}>Leaderboards</Text>
       {/* TEST 1 */}
       <View style={styles.section}>
@@ -204,6 +168,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#111",
     padding: 20,
+    color: "#fff",
   },
 
   title: {

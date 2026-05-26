@@ -5,7 +5,7 @@ import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 export default function MenuScreen() {
   return (
-    <View style={styles.container}>
+    <View testID="menu" style={styles.container}>
       <Text style={styles.title}>Reaction Tester</Text>
 
       <TouchableOpacity
@@ -49,6 +49,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingHorizontal: 20,
     paddingVertical: 10,
+    color: "#fff",
   },
 
   title: {

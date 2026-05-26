@@ -5,7 +5,7 @@ import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 export default function InfoScreen() {
   return (
-    <View style={styles.container}>
+    <View testID="info" style={styles.container}>
       <Text style={styles.title}>Info Guide</Text>
 
       <Text style={styles.text}>This is a reaction testing app.</Text>
@@ -49,6 +49,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     paddingHorizontal: 20,
+    color: "#fff",
   },
 
   title: {

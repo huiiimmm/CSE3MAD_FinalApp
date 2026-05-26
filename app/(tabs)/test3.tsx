@@ -1,6 +1,6 @@
+import { auth, saveScore } from "@/firebase";
 import * as Haptics from "expo-haptics";
 import { router } from "expo-router";
-import { addDoc, collection } from "firebase/firestore";
 import React, { useEffect, useRef, useState } from "react";
 import {
   Animated,
@@ -10,7 +10,6 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { auth, db } from "./firebase";
 
 export default function Test3() {
   const size = 50;
@@ -112,16 +111,17 @@ export default function Test3() {
     return () => clearInterval(interval);
   }, [startTest, stopTest, screenWidth, screenHeight]);
 
-  const saveScore = async () => {
+  const saveTestScore = async () => {
     try {
       if (!user) return;
-      await addDoc(collection(db, "scores"), {
+      const scores = {
         testType: "test3",
         userId: user?.uid,
         email: user?.email,
         score: clickCount,
         timestamp: Date.now(),
-      });
+      };
+      saveScore(user, scores);
       console.log("score saved!");
     } catch (error) {
       console.log(error);
@@ -129,12 +129,13 @@ export default function Test3() {
   };
   useEffect(() => {
     if (stopTest) {
-      saveScore();
+      saveTestScore();
     }
   }, [stopTest]);
 
   return (
     <View
+      testID="test3"
       style={styles.container}
       onLayout={(e) => {
         const w = e.nativeEvent.layout.width;
@@ -231,6 +232,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#111",
     borderWidth: 2,
     borderColor: "white",
+    color: "#fff",
   },
 
   ball: {
