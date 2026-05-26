@@ -38,7 +38,7 @@ describe("<HomeScreen />", () => {
 
     //Note: open issue - "ToHaveStyle" and "toHaveStyleRule" doesn't work with props (e.g. <View><View> ...) use "testID" instead (as there is no other way to grab it.)
     const screen = render(<HomeScreen />);
-    const t = await screen.findByTestId("t1");
+    const t = await screen.findByTestId("index");
     expect(t).toHaveStyle({ color: "#fff" });
   });
 

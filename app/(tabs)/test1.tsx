@@ -1,6 +1,6 @@
+import { auth, saveScore } from "@/firebase";
 import * as Haptics from "expo-haptics";
 import { router } from "expo-router";
-import { addDoc, collection } from "firebase/firestore";
 import React, { useEffect, useRef, useState } from "react";
 import {
   Pressable,
@@ -9,7 +9,6 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { auth, db } from "./firebase";
 
 export default function Test1() {
   const [readyText, setReadyText] = useState(true);
@@ -66,29 +65,34 @@ export default function Test1() {
     }
   };
 
-  const saveScore = async () => {
+  async function saveTestScore() {
     try {
       if (!user) return;
-      await addDoc(collection(db, "scores"), {
+      const scores = {
         testType: "test1",
         userId: user?.uid,
         email: user?.email,
         score: reactionTime,
         timestamp: Date.now(),
-      });
+      };
+      saveScore(user, scores);
       console.log("score saved!");
     } catch (error) {
       console.log(error);
     }
-  };
+  }
+
   useEffect(() => {
     if (recordResults) {
-      saveScore();
+      saveTestScore();
     }
   }, [recordResults]);
 
   return (
-    <View style={[styles.container, { backgroundColor: bgColor }]}>
+    <View
+      testID="test1"
+      style={[styles.container, { backgroundColor: bgColor }]}
+    >
       {readyText && (
         <>
           <Text style={styles.title}>Test 1 - Dominant Hand</Text>
@@ -170,6 +174,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
+    color: "#fff",
   },
 
   title: {

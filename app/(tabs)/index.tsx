@@ -18,7 +18,7 @@ import {
   createAccount,
   login,
   logout,
-  removeUser
+  removeUser,
 } from "@/firebase";
 let n = 0;
 
@@ -125,7 +125,7 @@ export default function HomeScreen() {
             <Text style={styles.text}>{created}</Text>
           </View>
 
-          <View testID="t1" style={styles.colContainer}>
+          <View testID="index" style={styles.colContainer}>
             <TextInput
               style={styles.sUser}
               placeholder="Email"
@@ -170,13 +170,13 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     gap: 20,
-    color: "#fff",
   },
 
   colContainer: {
     flexDirection: "column",
     alignItems: "center",
     gap: 20,
+    color: "#fff",
   },
 
   buttonContainer: {

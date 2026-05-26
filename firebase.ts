@@ -14,8 +14,10 @@ module.exports = { firebaseConfig };
 import { initializeApp } from "firebase/app";
 import {
     createUserWithEmailAndPassword,
-    deleteUser, getAuth, signInWithEmailAndPassword,
-    signOut
+    deleteUser,
+    getAuth,
+    signInWithEmailAndPassword,
+    signOut,
 } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 
@@ -39,3 +41,7 @@ export const createAccount = (email: string, password: string) =>
 export const logout = () => signOut(auth);
 
 export const removeUser = (user: any) => deleteUser(user);
+
+export const saveScore = (user: any, data: any) => {
+  return addDoc(collection(db, "scores"), data);
+};
