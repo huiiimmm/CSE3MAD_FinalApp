@@ -199,15 +199,36 @@ export default function Test3() {
       </Pressable>
 
       {stopTest && (
-        <TouchableOpacity
-          style={styles.button}
-          onPress={() => {
-            router.push("/test4");
-            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-          }}
-        >
-          <Text style={styles.buttonText}>Test 4</Text>
-        </TouchableOpacity>
+        <>
+          <TouchableOpacity
+            style={styles.button}
+            onPress={() => {
+              router.push("/test4");
+              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+            }}
+          >
+            <Text style={styles.buttonText}>Next Test</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={styles.button}
+            onPress={() => {
+              router.push("./directory");
+              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+            }}
+          >
+            <Text style={styles.buttonText}>All Tests</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.button}
+            onPress={() => {
+              router.push("./menu");
+              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+            }}
+          >
+            <Text style={styles.buttonText}>Back to Menu</Text>
+          </TouchableOpacity>
+        </>
       )}
       {!startTest && (
         <TouchableOpacity

@@ -25,7 +25,17 @@ export default function MenuScreen() {
           Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
         }}
       >
-        <Text style={styles.buttonText}>Start Test</Text>
+        <Text style={styles.buttonText}>Start Test 1</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity
+        style={styles.button}
+        onPress={() => {
+          router.push("./directory");
+          Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+        }}
+      >
+        <Text style={styles.buttonText}>All Tests</Text>
       </TouchableOpacity>
 
       <TouchableOpacity
