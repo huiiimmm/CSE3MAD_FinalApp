@@ -1,3 +1,4 @@
+import { globalStyles } from "@/app/Styles/globalStyles";
 import { auth, saveScore } from "@/firebase";
 import * as Haptics from "expo-haptics";
 import { router } from "expo-router";
@@ -91,15 +92,15 @@ export default function Test1() {
   return (
     <View
       testID="test1"
-      style={[styles.container, { backgroundColor: bgColor }]}
+      style={[globalStyles.container, { backgroundColor: bgColor }]}
     >
       {readyText && (
         <>
-          <Text style={styles.title}>Test 1 - Dominant Hand</Text>
-          <Text style={styles.text}>Tap as soon as you see green</Text>
+          <Text style={globalStyles.title}>Test 1 - Dominant Hand</Text>
+          <Text style={globalStyles.text}>Tap as soon as you see green</Text>
 
           <TouchableOpacity
-            style={styles.button}
+            style={globalStyles.button}
             onPress={() => {
               Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
               setReadyText(false);
@@ -107,7 +108,7 @@ export default function Test1() {
               startRandomTimer();
             }}
           >
-            <Text style={styles.buttonText}>Start</Text>
+            <Text style={globalStyles.buttonText}>Start</Text>
           </TouchableOpacity>
         </>
       )}
@@ -128,9 +129,9 @@ export default function Test1() {
       )}
       {restartTest && (
         <>
-          <Text style={styles.text}>Too early!</Text>
+          <Text style={globalStyles.text}>Too early!</Text>
           <TouchableOpacity
-            style={styles.button}
+            style={globalStyles.button}
             onPress={() => {
               setReadyText(true);
               setEarlyCheck(false);
@@ -138,7 +139,7 @@ export default function Test1() {
               setBgColor("#1e1e1e");
             }}
           >
-            <Text style={styles.buttonText}>Restart Test</Text>
+            <Text style={globalStyles.buttonText}>Restart Test</Text>
           </TouchableOpacity>
         </>
       )}
@@ -157,70 +158,35 @@ export default function Test1() {
       {nextTestButton && (
         <>
           <TouchableOpacity
-            style={styles.button}
+            style={globalStyles.button}
             onPress={() => {
               router.push("/test2");
               Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
             }}
           >
-            <Text style={styles.buttonText}>Next Test</Text>
+            <Text style={globalStyles.buttonText}>Next Test</Text>
           </TouchableOpacity>
 
           <TouchableOpacity
-            style={styles.button}
+            style={globalStyles.button}
             onPress={() => {
               router.push("./directory");
               Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
             }}
           >
-            <Text style={styles.buttonText}>All Tests</Text>
+            <Text style={globalStyles.buttonText}>All Tests</Text>
           </TouchableOpacity>
           <TouchableOpacity
-            style={styles.button}
+            style={globalStyles.button}
             onPress={() => {
               router.push("./menu");
               Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
             }}
           >
-            <Text style={styles.buttonText}>Back to Menu</Text>
+            <Text style={globalStyles.buttonText}>Back to Menu</Text>
           </TouchableOpacity>
         </>
       )}
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    color: "#fff",
-  },
-
-  title: {
-    color: "white",
-    fontSize: 32,
-    marginBottom: 20,
-  },
-
-  text: {
-    color: "white",
-    fontSize: 18,
-    marginBottom: 20,
-    textAlign: "center",
-  },
-
-  button: {
-    backgroundColor: "#4a90e2",
-    paddingVertical: 15,
-    paddingHorizontal: 25,
-    borderRadius: 10,
-    marginTop: 20,
-  },
-
-  buttonText: {
-    color: "white",
-    fontSize: 18,
-  },
-});

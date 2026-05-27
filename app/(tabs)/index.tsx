@@ -1,13 +1,12 @@
+import { globalStyles } from "@/app/Styles/globalStyles";
 import { router } from "expo-router";
 import { useState } from "react";
-
 import {
   Button,
   SafeAreaView,
-  StyleSheet,
   Text,
   TextInput,
-  View,
+  View
 } from "react-native";
 
 import { SafeAreaProvider } from "react-native-safe-area-context";
@@ -132,16 +131,16 @@ export default function HomeScreen() {
 
   return (
     <SafeAreaProvider>
-      <SafeAreaView style={styles.header}>
-        <View style={styles.colContainer}>
-          <View style={styles.rowContainer}>
-            <Text style={styles.text}>{loginout}</Text>
-            <Text style={styles.text}>{created}</Text>
+      <SafeAreaView style={globalStyles.header}>
+        <View style={globalStyles.colContainer}>
+          <View style={globalStyles.rowContainer}>
+            <Text style={globalStyles.text}>{loginout}</Text>
+            <Text style={globalStyles.text}>{created}</Text>
           </View>
 
-          <View testID="index" style={styles.colContainer}>
+          <View testID="index" style={globalStyles.colContainer}>
             <TextInput
-              style={styles.sUser}
+              style={globalStyles.sUser}
               placeholder="Email"
               autoCapitalize="none"
               keyboardType="email-address"
@@ -150,14 +149,14 @@ export default function HomeScreen() {
             />
 
             <TextInput
-              style={styles.sUser}
+              style={globalStyles.sUser}
               placeholder="Password"
               onChangeText={setPword}
               value={pword}
             />
           </View>
 
-          <View style={styles.buttonContainer}>
+          <View style={globalStyles.buttonContainer}>
             <Button title="Login" onPress={loginA} />
 
             <Button title="Create" onPress={createA} />
@@ -171,44 +170,3 @@ export default function HomeScreen() {
     </SafeAreaProvider>
   );
 }
-
-const styles = StyleSheet.create({
-  header: {
-    flex: 1,
-    justifyContent: "center",
-    padding: 40,
-  },
-
-  rowContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 20,
-  },
-
-  colContainer: {
-    flexDirection: "column",
-    alignItems: "center",
-    gap: 20,
-    color: "#fff",
-  },
-
-  buttonContainer: {
-    flexDirection: "column",
-    gap: 12,
-    width: 220,
-  },
-
-  sUser: {
-    width: 220,
-    borderWidth: 1,
-    borderColor: "#999",
-    padding: 12,
-    borderRadius: 8,
-    backgroundColor: "white",
-  },
-
-  text: {
-    color: "white",
-    fontSize: 18,
-  },
-});

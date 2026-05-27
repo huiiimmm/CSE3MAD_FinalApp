@@ -1,3 +1,4 @@
+import { globalStyles } from "@/app/Styles/globalStyles";
 import { auth, saveScore } from "@/firebase";
 import * as Haptics from "expo-haptics";
 import { router } from "expo-router";
@@ -5,10 +6,9 @@ import React, { useEffect, useRef, useState } from "react";
 import {
   Animated,
   Pressable,
-  StyleSheet,
   Text,
   TouchableOpacity,
-  View,
+  View
 } from "react-native";
 
 export default function Test3() {
@@ -136,7 +136,7 @@ export default function Test3() {
   return (
     <View
       testID="test3"
-      style={styles.container}
+      style={globalStyles.container}
       onLayout={(e) => {
         const w = e.nativeEvent.layout.width;
         const h = e.nativeEvent.layout.height;
@@ -155,13 +155,13 @@ export default function Test3() {
       }}
     >
       {!startTest && (
-        <Text style={styles.buttonText}>
+        <Text style={globalStyles.buttonText}>
           Click the moving ball as many times as you can in 10 seconds without
           missing!
         </Text>
       )}
-      <Text style={styles.buttonText}>Clicks: {clickCount}</Text>
-      <Text style={styles.buttonText}>
+      <Text style={globalStyles.buttonText}>Clicks: {clickCount}</Text>
+      <Text style={globalStyles.buttonText}>
         Accuracy:{" "}
         {totalClicks ? ((clickCount / totalClicks) * 100).toFixed(1) : 0}%
       </Text>
@@ -176,7 +176,10 @@ export default function Test3() {
         }}
       >
         {startTest && (
-          <Text style={styles.buttonText}> {time > 0 ? time : "Stop!"}</Text>
+          <Text style={globalStyles.buttonText}>
+            {" "}
+            {time > 0 ? time : "Stop!"}
+          </Text>
         )}
         {startTest && (
           <Animated.View
@@ -192,7 +195,7 @@ export default function Test3() {
                 setClickCount((prev) => prev + 1);
                 setTotalClicks((prev) => prev + 1);
               }}
-              style={styles.ball}
+              style={globalStyles.ball}
             />
           </Animated.View>
         )}
@@ -201,38 +204,38 @@ export default function Test3() {
       {stopTest && (
         <>
           <TouchableOpacity
-            style={styles.button}
+            style={globalStyles.button}
             onPress={() => {
               router.push("/test4");
               Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
             }}
           >
-            <Text style={styles.buttonText}>Next Test</Text>
+            <Text style={globalStyles.buttonText}>Next Test</Text>
           </TouchableOpacity>
 
           <TouchableOpacity
-            style={styles.button}
+            style={globalStyles.button}
             onPress={() => {
               router.push("./directory");
               Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
             }}
           >
-            <Text style={styles.buttonText}>All Tests</Text>
+            <Text style={globalStyles.buttonText}>All Tests</Text>
           </TouchableOpacity>
           <TouchableOpacity
-            style={styles.button}
+            style={globalStyles.button}
             onPress={() => {
               router.push("./menu");
               Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
             }}
           >
-            <Text style={styles.buttonText}>Back to Menu</Text>
+            <Text style={globalStyles.buttonText}>Back to Menu</Text>
           </TouchableOpacity>
         </>
       )}
       {!startTest && (
         <TouchableOpacity
-          style={styles.button}
+          style={globalStyles.button}
           onPress={() => {
             setStartTest(true);
             startPhysics();
@@ -240,41 +243,9 @@ export default function Test3() {
             Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
           }}
         >
-          <Text style={styles.buttonText}>Start Test</Text>
+          <Text style={globalStyles.buttonText}>Start Test</Text>
         </TouchableOpacity>
       )}
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#111",
-    borderWidth: 2,
-    borderColor: "white",
-    color: "#fff",
-  },
-
-  ball: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
-    backgroundColor: "cyan",
-  },
-
-  button: {
-    backgroundColor: "#4a90e2",
-    paddingVertical: 15,
-    paddingHorizontal: 25,
-    borderRadius: 10,
-    marginTop: 20,
-  },
-
-  buttonText: {
-    color: "white",
-    fontSize: 18,
-    marginBottom: 20,
-    textAlign: "center",
-  },
-});

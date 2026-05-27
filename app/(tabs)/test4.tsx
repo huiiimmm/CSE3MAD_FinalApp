@@ -1,10 +1,10 @@
+import { globalStyles } from "@/app/Styles/globalStyles";
 import { auth, saveScore } from "@/firebase";
 import { Audio } from "expo-av";
 import * as Haptics from "expo-haptics";
 import { router } from "expo-router";
 import React, { useEffect, useRef, useState } from "react";
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
-
+import { Text, TouchableOpacity, View } from "react-native";
 export default function Test4() {
   const [time, setTime] = useState(0);
   const [reactionTime, setReactionTime] = useState(0);
@@ -178,24 +178,24 @@ export default function Test4() {
   }, []);
 
   return (
-    <View testID="test4" style={styles.container}>
+    <View testID="test4" style={globalStyles.container}>
       {readyText && (
         <>
-          <Text style={styles.title}>Test 4 - Sound Reaction</Text>
+          <Text style={globalStyles.title}>Test 4 - Sound Reaction</Text>
 
-          <Text style={styles.text}>
+          <Text style={globalStyles.text}>
             Tap start, then react when you hear the sound or make a loud noise
           </Text>
 
           <TouchableOpacity
-            style={styles.button}
+            style={globalStyles.button}
             onPress={() => {
               Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
               setReadyText(false);
               startRandomTimer();
             }}
           >
-            <Text style={styles.buttonText}>Start</Text>
+            <Text style={globalStyles.buttonText}>Start</Text>
           </TouchableOpacity>
         </>
       )}
@@ -207,70 +207,35 @@ export default function Test4() {
       {nextTestButton && (
         <>
           <TouchableOpacity
-            style={styles.button}
+            style={globalStyles.button}
             onPress={() => {
               router.push("/results");
               Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
             }}
           >
-            <Text style={styles.buttonText}>Results</Text>
+            <Text style={globalStyles.buttonText}>Results</Text>
           </TouchableOpacity>
 
           <TouchableOpacity
-            style={styles.button}
+            style={globalStyles.button}
             onPress={() => {
               router.push("./directory");
               Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
             }}
           >
-            <Text style={styles.buttonText}>All Tests</Text>
+            <Text style={globalStyles.buttonText}>All Tests</Text>
           </TouchableOpacity>
           <TouchableOpacity
-            style={styles.button}
+            style={globalStyles.button}
             onPress={() => {
               router.push("./menu");
               Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
             }}
           >
-            <Text style={styles.buttonText}>Back to Menu</Text>
+            <Text style={globalStyles.buttonText}>Back to Menu</Text>
           </TouchableOpacity>
         </>
       )}
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    color: "#fff",
-  },
-
-  title: {
-    color: "white",
-    fontSize: 32,
-    marginBottom: 20,
-  },
-
-  text: {
-    color: "white",
-    fontSize: 18,
-    marginBottom: 20,
-    textAlign: "center",
-  },
-
-  button: {
-    backgroundColor: "#4a90e2",
-    paddingVertical: 15,
-    paddingHorizontal: 25,
-    borderRadius: 10,
-    marginTop: 20,
-  },
-
-  buttonText: {
-    color: "white",
-    fontSize: 18,
-  },
-});

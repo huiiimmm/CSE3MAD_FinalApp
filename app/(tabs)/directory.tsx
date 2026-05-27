@@ -1,88 +1,61 @@
+import { globalStyles } from "@/app/Styles/globalStyles";
 import * as Haptics from "expo-haptics";
 import { router } from "expo-router";
 import React from "react";
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Text, TouchableOpacity, View } from "react-native";
 
 export default function MenuScreen() {
   return (
-    <View testID="menu" style={styles.container}>
-      <Text style={styles.title}>All Tests</Text>
+    <View testID="menu" style={globalStyles.container}>
+      <Text style={globalStyles.title}>All Tests</Text>
 
       <TouchableOpacity
-        style={styles.button}
+        style={globalStyles.button}
         onPress={() => {
           router.push("./test1");
           Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
         }}
       >
-        <Text style={styles.buttonText}>Test 1 - Dominant Hand Reaction</Text>
+        <Text style={globalStyles.buttonText}>
+          Test 1 - Dominant Hand Reaction
+        </Text>
       </TouchableOpacity>
 
       <TouchableOpacity
-        style={styles.button}
+        style={globalStyles.button}
         onPress={() => {
           router.push("./test2");
           Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
         }}
       >
-        <Text style={styles.buttonText}>
+        <Text style={globalStyles.buttonText}>
           Test 2 - Non Dominant Hand Reaction
         </Text>
       </TouchableOpacity>
 
       <TouchableOpacity
-        style={styles.button}
+        style={globalStyles.button}
         onPress={() => {
           router.push("./test3");
           Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
         }}
       >
-        <Text style={styles.buttonText}>Test 3 - Tracking and Accuracy</Text>
+        <Text style={globalStyles.buttonText}>
+          Test 3 - Tracking and Accuracy
+        </Text>
       </TouchableOpacity>
 
       <TouchableOpacity
-        style={styles.button}
+        style={globalStyles.button}
         onPress={() => {
           router.push("./test4");
           Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
         }}
       >
-        <Text style={styles.buttonText}>
+        <Text style={globalStyles.buttonText}>
           Test 4 - Auditory Reaction Response
         </Text>
       </TouchableOpacity>
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#1e1e1e",
-    justifyContent: "center",
-    alignItems: "center",
-    paddingHorizontal: 20,
-    paddingVertical: 10,
-    color: "#fff",
-  },
-
-  title: {
-    color: "white",
-    fontSize: 36,
-    marginBottom: 40,
-  },
-
-  button: {
-    marginTop: 20,
-    backgroundColor: "#4a90e2",
-    paddingVertical: 15,
-    paddingHorizontal: 30,
-    borderRadius: 10,
-    color: "white",
-  },
-
-  buttonText: {
-    color: "white",
-    fontSize: 18,
-  },
-});
