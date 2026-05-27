@@ -1,57 +1,217 @@
+import React from "react";
+
 import "jest-styled-components";
 import "jest-styled-components/native";
 
-jest.mock("@/__mocks__/firebase");
-jest.mock("firebase/app", () => ({}));
-jest.mock("firebase/auth", () => ({}));
-jest.mock("firebase/firestore", () => ({}));
-//this mocks the safe-area-View and Safe-Area-Provider
+import {
+    fireEvent,
+    render,
+    screen,
+    waitFor,
+} from "@testing-library/react-native";
+
+import HomeScreen from "@/app/(tabs)/index";
+
+/* ---------------- SAFE AREA MOCK ---------------- */
+
 jest.mock(
   "react-native-safe-area-context",
   () => require("react-native-safe-area-context/jest/mock").default,
 );
 
-//without this line the test will always fail as it is a provider function (like firebase and others)
-//you could remove the <SafeAreaView \> <SafeAreaProvider \> with Views in Index.tsx
+/* ---------------- ROUTER MOCK ---------------- */
 
-import HomeScreen from "@/app/(tabs)/index";
-import { IconSymbol } from "@/components/ui/icon-symbol";
-import { render, screen } from "@testing-library/react-native";
+const pushMock = jest.fn();
+
+jest.mock("expo-router", () => ({
+  router: {
+    push: pushMock,
+  },
+}));
+
+/* ---------------- FIREBASE WRAPPER MOCK ---------------- */
+
+const loginMock = jest.fn();
+const logoutMock = jest.fn();
+const createAccountMock = jest.fn();
+const removeUserMock = jest.fn();
+const addDebugDocMock = jest.fn();
+
+jest.mock("@/firebase", () => ({
+  auth: {
+    currentUser: {
+      uid: "123",
+      email: "test@test.com",
+    },
+  },
+
+  db: {},
+
+  login: (...args: any[]) => loginMock(...args),
+
+  logout: (...args: any[]) => logoutMock(...args),
+
+  createAccount: (...args: any[]) => createAccountMock(...args),
+
+  removeUser: (...args: any[]) => removeUserMock(...args),
+
+  addDebugDoc: (...args: any[]) => addDebugDocMock(...args),
+}));
 
 describe("<HomeScreen />", () => {
-  //check text output
-
   beforeEach(() => {
-    //before each test
+    jest.clearAllMocks();
   });
 
-  test("Text renders correctly on HomeScreen", () => {
+  /* ------------------------------------------------ */
+  /* RENDER TEST                                      */
+  /* ------------------------------------------------ */
+
+  test("renders login screen correctly", () => {
     render(<HomeScreen />);
-    expect(screen.getAllByText(/Login*/));
+
+    expect(screen.getByText("Login")).toBeTruthy();
+
+    expect(screen.getByText("Create")).toBeTruthy();
+
+    expect(screen.getByPlaceholderText("Email")).toBeTruthy();
+
+    expect(screen.getByPlaceholderText("Password")).toBeTruthy();
   });
 
-  //check text colour
-  test("Text renders check style", async () => {
-    // index.tsx Line 61 add: testID = "t1"
-    // Looks like: <View testID = "t1" style = {styles.rowContainer}>
-    // index.tsx Between Line 101-102 add: color: "#fff",
+  /* ------------------------------------------------ */
+  /* STYLE TEST                                       */
+  /* ------------------------------------------------ */
 
-    //Note: open issue - "ToHaveStyle" and "toHaveStyleRule" doesn't work with props (e.g. <View><View> ...) use "testID" instead (as there is no other way to grab it.)
-    const screen = render(<HomeScreen />);
-    const t = await screen.findByTestId("index");
-    expect(t).toHaveStyle({ color: "#fff" });
+  test("login text has correct style", () => {
+    render(<HomeScreen />);
+
+    const loginText = screen.getByText("Login");
+
+    expect(loginText).toHaveStyle({
+      color: "white",
+      fontSize: 18,
+    });
   });
 
-  //screenshots of a component
-  test("CustomText renders correctly", () => {
-    const tree = render(
-      <IconSymbol
-        size={310}
-        color="#808080"
-        name="chevron.left.forwardslash.chevron.right"
-        style={{ backgroundColor: "red" }}
-      />,
-    ).toJSON();
-    expect(tree).toMatchSnapshot(); //matches previously taken snapshot (if no previous takes one)
+  /* ------------------------------------------------ */
+  /* INPUT TEST                                       */
+  /* ------------------------------------------------ */
+
+  test("updates email and password inputs", () => {
+    render(<HomeScreen />);
+
+    const emailInput = screen.getByPlaceholderText("Email");
+
+    const passwordInput = screen.getByPlaceholderText("Password");
+
+    fireEvent.changeText(emailInput, "hello@test.com");
+
+    fireEvent.changeText(passwordInput, "mypassword");
+
+    expect(emailInput.props.value).toBe("hello@test.com");
+
+    expect(passwordInput.props.value).toBe("mypassword");
+  });
+
+  /* ------------------------------------------------ */
+  /* LOGIN TEST                                       */
+  /* ------------------------------------------------ */
+
+  test("logs user in successfully", async () => {
+    loginMock.mockResolvedValue({
+      user: {
+        email: "hello@test.com",
+      },
+    });
+
+    render(<HomeScreen />);
+
+    fireEvent.changeText(
+      screen.getByPlaceholderText("Email"),
+      "hello@test.com",
+    );
+
+    fireEvent.changeText(
+      screen.getByPlaceholderText("Password"),
+      "password123",
+    );
+
+    fireEvent.press(screen.getByText("Login"));
+
+    await waitFor(() => {
+      expect(loginMock).toHaveBeenCalledWith("hello@test.com", "password123");
+    });
+
+    expect(pushMock).toHaveBeenCalledWith("/menu");
+  });
+
+  /* ------------------------------------------------ */
+  /* CREATE ACCOUNT TEST                              */
+  /* ------------------------------------------------ */
+
+  test("creates account successfully", async () => {
+    createAccountMock.mockResolvedValue({
+      user: {
+        email: "new@test.com",
+      },
+    });
+
+    render(<HomeScreen />);
+
+    fireEvent.changeText(screen.getByPlaceholderText("Email"), "new@test.com");
+
+    fireEvent.changeText(
+      screen.getByPlaceholderText("Password"),
+      "password123",
+    );
+
+    fireEvent.press(screen.getByText("Create"));
+
+    await waitFor(() => {
+      expect(createAccountMock).toHaveBeenCalled();
+    });
+  });
+
+  /* ------------------------------------------------ */
+  /* LOGOUT TEST                                      */
+  /* ------------------------------------------------ */
+
+  test("logs user out successfully", async () => {
+    logoutMock.mockResolvedValue(undefined);
+
+    render(<HomeScreen />);
+
+    fireEvent.press(screen.getByText("Logout"));
+
+    await waitFor(() => {
+      expect(logoutMock).toHaveBeenCalled();
+    });
+  });
+
+  /* ------------------------------------------------ */
+  /* DELETE USER TEST                                 */
+  /* ------------------------------------------------ */
+
+  test("deletes user successfully", async () => {
+    removeUserMock.mockResolvedValue(undefined);
+
+    render(<HomeScreen />);
+
+    fireEvent.press(screen.getByText("Delete"));
+
+    await waitFor(() => {
+      expect(removeUserMock).toHaveBeenCalled();
+    });
+  });
+
+  /* ------------------------------------------------ */
+  /* SNAPSHOT TEST                                    */
+  /* ------------------------------------------------ */
+
+  test("matches snapshot", () => {
+    const tree = render(<HomeScreen />).toJSON();
+
+    expect(tree).toMatchSnapshot();
   });
 });

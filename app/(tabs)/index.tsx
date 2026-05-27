@@ -82,7 +82,7 @@ export default function HomeScreen() {
 
   async function logoutA() {
     try {
-      await logout;
+      await logout();
 
       await debug("signoutEmailPassword", "success: " + email);
 
@@ -138,7 +138,7 @@ export default function HomeScreen() {
             <TextInput
               style={styles.sUser}
               placeholder="Password"
-              secureTextEntry={true}
+              //secureTextEntry={true}
               onChangeText={setPword}
               value={pword}
             />
