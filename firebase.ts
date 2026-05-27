@@ -9,17 +9,17 @@ const firebaseConfig = {
   appId: "1:454741062489:web:179fc1e7492e6fe6371248",
   measurementId: "G-LCNGQBZEQP",
 };
-module.exports = { firebaseConfig };
+export { firebaseConfig };
 
-import { initializeApp } from "firebase/app";
-import {
+  import { initializeApp } from "firebase/app";
+  import {
     createUserWithEmailAndPassword,
     deleteUser,
     getAuth,
     signInWithEmailAndPassword,
     signOut,
-} from "firebase/auth";
-import {
+  } from "firebase/auth";
+  import {
     addDoc,
     collection,
     getDocs,
@@ -28,7 +28,7 @@ import {
     orderBy,
     query,
     where,
-} from "firebase/firestore";
+  } from "firebase/firestore";
 
 const app = initializeApp(firebaseConfig);
 
@@ -39,6 +39,7 @@ export const db = getFirestore(app);
 export const addDebugDoc = (data: any) => {
   return addDoc(collection(db, "Debug"), data);
 };
+
 export const login = (email: string, password: string) =>
   signInWithEmailAndPassword(auth, email, password);
 

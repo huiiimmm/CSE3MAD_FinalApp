@@ -1,57 +1,120 @@
 import "jest-styled-components";
 import "jest-styled-components/native";
 
-jest.mock("@/__mocks__/firebase");
-jest.mock("firebase/app", () => ({}));
-jest.mock("firebase/auth", () => ({}));
-jest.mock("firebase/firestore", () => ({}));
-//this mocks the safe-area-View and Safe-Area-Provider
-jest.mock(
-  "react-native-safe-area-context",
-  () => require("react-native-safe-area-context/jest/mock").default,
-);
-
-//without this line the test will always fail as it is a provider function (like firebase and others)
-//you could remove the <SafeAreaView \> <SafeAreaProvider \> with Views in Index.tsx
+import {
+    fireEvent,
+    render,
+    screen,
+    waitFor,
+} from "@testing-library/react-native";
+import React from "react";
 
 import ResultsScreen from "@/app/(tabs)/results";
-import { IconSymbol } from "@/components/ui/icon-symbol";
-import { render, screen } from "@testing-library/react-native";
+import { router } from "expo-router";
+
+// ---------------- MOCKS ----------------
+
+jest.mock("expo-router", () => ({
+  router: {
+    push: jest.fn(),
+  },
+}));
+
+jest.mock("@/firebase", () => ({
+  auth: {
+    currentUser: {
+      uid: "123",
+    },
+  },
+
+  getLeaderboardDocs: jest.fn(
+    (testName: string, setState: (data: any[]) => void, fastest: boolean) => {
+      const mockData = [
+        {
+          id: `${testName}-1`,
+          userId: "123",
+          email: "current@test.com",
+          score: fastest ? 120 : 25,
+        },
+        {
+          id: `${testName}-2`,
+          userId: "456",
+          email: "other@test.com",
+          score: fastest ? 180 : 18,
+        },
+      ];
+
+      setState(mockData);
+    },
+  ),
+}));
+
+// ---------------- TESTS ----------------
 
 describe("<ResultsScreen />", () => {
-  //check text output
-
   beforeEach(() => {
-    //before each test
+    jest.clearAllMocks();
   });
 
-  test("Text renders correctly on ResultsScreen", () => {
+  test("renders results screen correctly", () => {
     render(<ResultsScreen />);
-    expect(screen.getAllByText(/Login*/));
+
+    expect(screen.getByTestId("results")).toBeTruthy();
+
+    expect(screen.getByText("Leaderboards")).toBeTruthy();
+
+    expect(screen.getByText("Test 1 - Dominant Hand")).toBeTruthy();
+
+    expect(screen.getByText("Test 2 - Non Dominant Hand")).toBeTruthy();
+
+    expect(screen.getByText("Test 3 - Tracking")).toBeTruthy();
+
+    expect(screen.getByText("Test 4 - Audio Reaction")).toBeTruthy();
   });
 
-  //check text colour
-  test("Text renders check style", async () => {
-    // index.tsx Line 61 add: testID = "t1"
-    // Looks like: <View testID = "t1" style = {styles.rowContainer}>
-    // index.tsx Between Line 101-102 add: color: "#fff",
+  test("renders leaderboard users", async () => {
+    render(<ResultsScreen />);
 
-    //Note: open issue - "ToHaveStyle" and "toHaveStyleRule" doesn't work with props (e.g. <View><View> ...) use "testID" instead (as there is no other way to grab it.)
-    const screen = render(<ResultsScreen />);
-    const t = await screen.findByTestId("results");
-    expect(t).toHaveStyle({ color: "#fff" });
+    await waitFor(() => {
+      expect(screen.getAllByText("current@test.com")).toBeTruthy();
+
+      expect(screen.getAllByText("other@test.com")).toBeTruthy();
+    });
   });
 
-  //screenshots of a component
-  test("CustomText renders correctly", () => {
-    const tree = render(
-      <IconSymbol
-        size={310}
-        color="#808080"
-        name="chevron.left.forwardslash.chevron.right"
-        style={{ backgroundColor: "red" }}
-      />,
-    ).toJSON();
-    expect(tree).toMatchSnapshot(); //matches previously taken snapshot (if no previous takes one)
+  test("renders scores correctly", async () => {
+    render(<ResultsScreen />);
+
+    await waitFor(() => {
+      expect(screen.getAllByText(/120 ms/)).toBeTruthy();
+
+      expect(screen.getAllByText(/25 clicks/)).toBeTruthy();
+    });
+  });
+
+  test("navigates back to menu", () => {
+    render(<ResultsScreen />);
+
+    const button = screen.getByText("Back To Menu");
+
+    fireEvent.press(button);
+
+    expect(router.push).toHaveBeenCalledWith("./menu");
+  });
+
+  test("navigates to change user", () => {
+    render(<ResultsScreen />);
+
+    const button = screen.getByText("Change User");
+
+    fireEvent.press(button);
+
+    expect(router.push).toHaveBeenCalledWith("/(tabs)");
+  });
+
+  test("matches snapshot", () => {
+    const tree = render(<ResultsScreen />).toJSON();
+
+    expect(tree).toMatchSnapshot();
   });
 });

@@ -20,7 +20,7 @@ export default function Test4() {
   const soundRef = useRef<Audio.Sound | null>(null);
   const recordingRef = useRef<Audio.Recording | null>(null);
 
-  // 🔥 FIX 1: global locks (prevents duplicate recordings/timers)
+  // global locks
   const recordingLock = useRef(false);
   const timerLock = useRef(false);
 
@@ -56,13 +56,13 @@ export default function Test4() {
     await detectSound();
   };
 
-  // 🔥 FIX 2: fully safe recording lifecycle
+  // sound detection
   const detectSound = async () => {
     if (recordingLock.current) return;
     recordingLock.current = true;
 
     try {
-      // 🧹 hard cleanup before new recording
+      // cleanup
       if (recordingRef.current) {
         await recordingRef.current.stopAndUnloadAsync();
         recordingRef.current = null;

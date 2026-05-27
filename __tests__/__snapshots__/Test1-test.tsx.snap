@@ -29,3 +29,96 @@ exports[`<Test1 /> CustomText renders correctly 1`] = `
   weight="regular"
 />
 `;
+
+exports[`<Test1 /> matches snapshot 1`] = `
+<View
+  style={
+    [
+      {
+        "alignItems": "center",
+        "color": "#fff",
+        "flex": 1,
+        "justifyContent": "center",
+      },
+      {
+        "backgroundColor": "#1e1e1e",
+      },
+    ]
+  }
+  testID="test1"
+>
+  <Text
+    style={
+      {
+        "color": "white",
+        "fontSize": 32,
+        "marginBottom": 20,
+      }
+    }
+  >
+    Test 1 - Dominant Hand
+  </Text>
+  <Text
+    style={
+      {
+        "color": "white",
+        "fontSize": 18,
+        "marginBottom": 20,
+        "textAlign": "center",
+      }
+    }
+  >
+    Tap as soon as you see green
+  </Text>
+  <View
+    accessibilityState={
+      {
+        "busy": undefined,
+        "checked": undefined,
+        "disabled": undefined,
+        "expanded": undefined,
+        "selected": undefined,
+      }
+    }
+    accessibilityValue={
+      {
+        "max": undefined,
+        "min": undefined,
+        "now": undefined,
+        "text": undefined,
+      }
+    }
+    accessible={true}
+    collapsable={false}
+    focusable={true}
+    onClick={[Function]}
+    onResponderGrant={[Function]}
+    onResponderMove={[Function]}
+    onResponderRelease={[Function]}
+    onResponderTerminate={[Function]}
+    onResponderTerminationRequest={[Function]}
+    onStartShouldSetResponder={[Function]}
+    style={
+      {
+        "backgroundColor": "#4a90e2",
+        "borderRadius": 10,
+        "marginTop": 20,
+        "opacity": 1,
+        "paddingHorizontal": 25,
+        "paddingVertical": 15,
+      }
+    }
+  >
+    <Text
+      style={
+        {
+          "color": "white",
+          "fontSize": 18,
+        }
+      }
+    >
+      Start
+    </Text>
+  </View>
+</View>
+`;
