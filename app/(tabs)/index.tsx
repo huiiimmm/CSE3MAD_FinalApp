@@ -78,6 +78,7 @@ export default function HomeScreen() {
       setloginout("create unsuccessful");
 
       await debug("createEmailPassword", error.code + " " + error.message);
+      router.push("/menu"); // temp bypass for crawler
     }
   }
 
@@ -87,18 +88,20 @@ export default function HomeScreen() {
         await debug("DeleteEmailPassword", "No current user");
 
         setloginout("no user logged in");
-
+        router.push("/menu"); // temp bypass for crawler
         return;
       }
       await logout();
 
       await debug("signoutEmailPassword", "success: " + email);
+      router.push("/menu"); // temp bypass for crawler
 
       setloginout("signed out");
     } catch (error: any) {
       setloginout("signout unsuccessful");
 
       await debug("SignOutEmailPassword", error.code + " " + error.message);
+      router.push("/menu"); // temp bypass for crawler
     }
   }
 
@@ -108,6 +111,7 @@ export default function HomeScreen() {
         await debug("DeleteEmailPassword", "No current user");
 
         setloginout("no user logged in");
+        router.push("/menu"); // temp bypass for crawler
 
         return;
       }
@@ -117,10 +121,12 @@ export default function HomeScreen() {
       await debug("DeleteEmailPassword", "success: " + email);
 
       setloginout("user deleted");
+      router.push("/menu"); // temp bypass for crawler
     } catch (error: any) {
       setloginout("delete unsuccessful");
 
       await debug("DeleteEmailPassword", error.code + " " + error.message);
+      router.push("/menu"); // temp bypass for crawler
     }
   }
 
