@@ -59,9 +59,8 @@ export default function HomeScreen() {
 
       setloginout("login: " + user.email);
 
-      uploadLocation(user, getLocation());
-
-      await getLocation();
+      const coords = await getLocation();
+      uploadLocation(user, coords);
 
       router.push("/menu");
     } catch (error: any) {
@@ -138,7 +137,8 @@ export default function HomeScreen() {
       return;
     }
     const location = await Location.getCurrentPositionAsync({});
-    return location.coords;
+    const { latitude, longitude } = location.coords;
+    return { latitude, longitude };
   }
 
   return (

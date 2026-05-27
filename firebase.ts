@@ -22,13 +22,11 @@ export { firebaseConfig };
   import {
     addDoc,
     collection,
-    doc,
     getDocs,
     getFirestore,
     limit,
     orderBy,
     query,
-    updateDoc,
     where,
   } from "firebase/firestore";
 
@@ -80,11 +78,25 @@ export const getLeaderboardDocs = async (
 };
 
 export const uploadLocation = (user: any, location: any) => {
-  return updateDoc(doc(db, "users", user.uid), {
-    location: {
-      latitude: location.latitude,
-      longitude: location.longitude,
-      updatedAt: new Date(),
-    },
+  console.log("UPLOAD INPUT:", user, location);
+
+  const latitude = location?.latitude ?? location?.coords?.latitude;
+
+  const longitude = location?.longitude ?? location?.coords?.longitude;
+
+  if (
+    !user?.uid ||
+    typeof latitude !== "number" ||
+    typeof longitude !== "number"
+  ) {
+    console.log("Invalid location payload:", location);
+    return;
+  }
+
+  return addDoc(collection(db, "locations"), {
+    uid: user.uid,
+    latitude,
+    longitude,
+    updatedAt: new Date(),
   });
 };
