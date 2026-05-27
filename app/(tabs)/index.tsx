@@ -138,7 +138,6 @@ export default function HomeScreen() {
             <TextInput
               style={styles.sUser}
               placeholder="Password"
-              //secureTextEntry={true}
               onChangeText={setPword}
               value={pword}
             />
