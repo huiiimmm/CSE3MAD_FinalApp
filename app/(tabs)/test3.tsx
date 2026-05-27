@@ -1,4 +1,7 @@
 import { globalStyles } from "@/app/Styles/globalStyles";
+
+import { darkTheme } from "@/app/Styles/Themes/dark";
+import { lightTheme } from "@/app/Styles/Themes/light";
 import { auth, saveScore } from "@/firebase";
 import * as Haptics from "expo-haptics";
 import { router } from "expo-router";
@@ -7,9 +10,12 @@ import {
   Animated,
   Pressable,
   Text,
-  TouchableOpacity,
-  View
+  TouchableOpacity, useColorScheme, View
 } from "react-native";
+
+const scheme = useColorScheme();
+const theme = scheme === "dark" ? darkTheme : lightTheme;
+const styles = globalStyles(theme);
 
 export default function Test3() {
   const size = 50;
@@ -136,7 +142,7 @@ export default function Test3() {
   return (
     <View
       testID="test3"
-      style={globalStyles.container}
+      style={styles.container}
       onLayout={(e) => {
         const w = e.nativeEvent.layout.width;
         const h = e.nativeEvent.layout.height;
@@ -155,13 +161,13 @@ export default function Test3() {
       }}
     >
       {!startTest && (
-        <Text style={globalStyles.buttonText}>
+        <Text style={styles.buttonText}>
           Click the moving ball as many times as you can in 10 seconds without
           missing!
         </Text>
       )}
-      <Text style={globalStyles.buttonText}>Clicks: {clickCount}</Text>
-      <Text style={globalStyles.buttonText}>
+      <Text style={styles.buttonText}>Clicks: {clickCount}</Text>
+      <Text style={styles.buttonText}>
         Accuracy:{" "}
         {totalClicks ? ((clickCount / totalClicks) * 100).toFixed(1) : 0}%
       </Text>
@@ -176,10 +182,7 @@ export default function Test3() {
         }}
       >
         {startTest && (
-          <Text style={globalStyles.buttonText}>
-            {" "}
-            {time > 0 ? time : "Stop!"}
-          </Text>
+          <Text style={styles.buttonText}> {time > 0 ? time : "Stop!"}</Text>
         )}
         {startTest && (
           <Animated.View
@@ -195,7 +198,7 @@ export default function Test3() {
                 setClickCount((prev) => prev + 1);
                 setTotalClicks((prev) => prev + 1);
               }}
-              style={globalStyles.ball}
+              style={styles.ball}
             />
           </Animated.View>
         )}
@@ -204,38 +207,38 @@ export default function Test3() {
       {stopTest && (
         <>
           <TouchableOpacity
-            style={globalStyles.button}
+            style={styles.button}
             onPress={() => {
               router.push("/test4");
               Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
             }}
           >
-            <Text style={globalStyles.buttonText}>Next Test</Text>
+            <Text style={styles.buttonText}>Next Test</Text>
           </TouchableOpacity>
 
           <TouchableOpacity
-            style={globalStyles.button}
+            style={styles.button}
             onPress={() => {
               router.push("./directory");
               Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
             }}
           >
-            <Text style={globalStyles.buttonText}>All Tests</Text>
+            <Text style={styles.buttonText}>All Tests</Text>
           </TouchableOpacity>
           <TouchableOpacity
-            style={globalStyles.button}
+            style={styles.button}
             onPress={() => {
               router.push("./menu");
               Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
             }}
           >
-            <Text style={globalStyles.buttonText}>Back to Menu</Text>
+            <Text style={styles.buttonText}>Back to Menu</Text>
           </TouchableOpacity>
         </>
       )}
       {!startTest && (
         <TouchableOpacity
-          style={globalStyles.button}
+          style={styles.button}
           onPress={() => {
             setStartTest(true);
             startPhysics();
@@ -243,7 +246,7 @@ export default function Test3() {
             Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
           }}
         >
-          <Text style={globalStyles.buttonText}>Start Test</Text>
+          <Text style={styles.buttonText}>Start Test</Text>
         </TouchableOpacity>
       )}
     </View>

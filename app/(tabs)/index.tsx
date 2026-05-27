@@ -1,13 +1,16 @@
 import { globalStyles } from "@/app/Styles/globalStyles";
+
+import { darkTheme } from "@/app/Styles/Themes/dark";
+import { lightTheme } from "@/app/Styles/Themes/light";
+import { useColorScheme } from "react-native";
+
+const scheme = useColorScheme();
+const theme = scheme === "dark" ? darkTheme : lightTheme;
+const styles = globalStyles(theme);
+
 import { router } from "expo-router";
 import { useState } from "react";
-import {
-  Button,
-  SafeAreaView,
-  Text,
-  TextInput,
-  View
-} from "react-native";
+import { Button, SafeAreaView, Text, TextInput, View } from "react-native";
 
 import { SafeAreaProvider } from "react-native-safe-area-context";
 
@@ -131,16 +134,16 @@ export default function HomeScreen() {
 
   return (
     <SafeAreaProvider>
-      <SafeAreaView style={globalStyles.header}>
-        <View style={globalStyles.colContainer}>
-          <View style={globalStyles.rowContainer}>
-            <Text style={globalStyles.text}>{loginout}</Text>
-            <Text style={globalStyles.text}>{created}</Text>
+      <SafeAreaView style={styles.header}>
+        <View style={styles.colContainer}>
+          <View style={styles.rowContainer}>
+            <Text style={styles.text}>{loginout}</Text>
+            <Text style={styles.text}>{created}</Text>
           </View>
 
-          <View testID="index" style={globalStyles.colContainer}>
+          <View testID="index" style={styles.colContainer}>
             <TextInput
-              style={globalStyles.sUser}
+              style={styles.sUser}
               placeholder="Email"
               autoCapitalize="none"
               keyboardType="email-address"
@@ -149,14 +152,14 @@ export default function HomeScreen() {
             />
 
             <TextInput
-              style={globalStyles.sUser}
+              style={styles.sUser}
               placeholder="Password"
               onChangeText={setPword}
               value={pword}
             />
           </View>
 
-          <View style={globalStyles.buttonContainer}>
+          <View style={styles.buttonContainer}>
             <Button title="Login" onPress={loginA} />
 
             <Button title="Create" onPress={createA} />

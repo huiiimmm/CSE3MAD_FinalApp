@@ -1,4 +1,7 @@
 import { globalStyles } from "@/app/Styles/globalStyles";
+
+import { darkTheme } from "@/app/Styles/Themes/dark";
+import { lightTheme } from "@/app/Styles/Themes/light";
 import * as Haptics from "expo-haptics";
 import { router } from "expo-router";
 import { addDoc, collection } from "firebase/firestore";
@@ -7,10 +10,13 @@ import {
   Pressable,
   StyleSheet,
   Text,
-  TouchableOpacity,
-  View,
+  TouchableOpacity, useColorScheme, View
 } from "react-native";
 import { auth, db } from "./firebase";
+
+const scheme = useColorScheme();
+const theme = scheme === "dark" ? darkTheme : lightTheme;
+const styles = globalStyles(theme);
 
 export default function Test2() {
   const [readyText, setReadyText] = useState(true);
@@ -91,14 +97,14 @@ export default function Test2() {
   }, [showResults]);
 
   return (
-    <View style={[globalStyles.container, { backgroundColor: bgColor }]}>
+    <View style={[styles.container, { backgroundColor: bgColor }]}>
       {readyText && (
         <>
-          <Text style={globalStyles.title}>Test 2 - Non-Dominant Hand</Text>
-          <Text style={globalStyles.text}>Tap as soon as you see green</Text>
+          <Text style={styles.title}>Test 2 - Non-Dominant Hand</Text>
+          <Text style={styles.text}>Tap as soon as you see green</Text>
 
           <TouchableOpacity
-            style={globalStyles.button}
+            style={styles.button}
             onPress={() => {
               Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
               setReadyText(false);
@@ -106,7 +112,7 @@ export default function Test2() {
               startRandomTimer();
             }}
           >
-            <Text style={globalStyles.buttonText}>Start</Text>
+            <Text style={styles.buttonText}>Start</Text>
           </TouchableOpacity>
         </>
       )}
@@ -127,9 +133,9 @@ export default function Test2() {
       )}
       {restartTest && (
         <>
-          <Text style={globalStyles.text}>Too early!</Text>
+          <Text style={styles.text}>Too early!</Text>
           <TouchableOpacity
-            style={globalStyles.button}
+            style={styles.button}
             onPress={() => {
               setReadyText(true);
               setEarlyCheck(false);
@@ -137,7 +143,7 @@ export default function Test2() {
               setBgColor("#1e1e1e");
             }}
           >
-            <Text style={globalStyles.buttonText}>Restart Test</Text>
+            <Text style={styles.buttonText}>Restart Test</Text>
           </TouchableOpacity>
         </>
       )}
@@ -157,32 +163,32 @@ export default function Test2() {
       {nextTestButton && (
         <>
           <TouchableOpacity
-            style={globalStyles.button}
+            style={styles.button}
             onPress={() => {
               router.push("/test3");
               Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
             }}
           >
-            <Text style={globalStyles.buttonText}>Next Test</Text>
+            <Text style={styles.buttonText}>Next Test</Text>
           </TouchableOpacity>
 
           <TouchableOpacity
-            style={globalStyles.button}
+            style={styles.button}
             onPress={() => {
               router.push("./directory");
               Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
             }}
           >
-            <Text style={globalStyles.buttonText}>All Tests</Text>
+            <Text style={styles.buttonText}>All Tests</Text>
           </TouchableOpacity>
           <TouchableOpacity
-            style={globalStyles.button}
+            style={styles.button}
             onPress={() => {
               router.push("./menu");
               Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
             }}
           >
-            <Text style={globalStyles.buttonText}>Back to Menu</Text>
+            <Text style={styles.buttonText}>Back to Menu</Text>
           </TouchableOpacity>
         </>
       )}

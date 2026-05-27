@@ -1,13 +1,15 @@
 import { globalStyles } from "@/app/Styles/globalStyles";
+
+import { darkTheme } from "@/app/Styles/Themes/dark";
+import { lightTheme } from "@/app/Styles/Themes/light";
 import { auth, getLeaderboardDocs } from "@/firebase";
 import { router } from "expo-router";
 import React, { useEffect, useState } from "react";
-import {
-  ScrollView,
-  Text,
-  TouchableOpacity,
-  View
-} from "react-native";
+import { ScrollView, Text, TouchableOpacity, useColorScheme, View } from "react-native";
+
+const scheme = useColorScheme();
+const theme = scheme === "dark" ? darkTheme : lightTheme;
+const styles = globalStyles(theme);
 
 export default function ResultsScreen() {
   const [test1Scores, setTest1Scores] = useState<any[]>([]);
@@ -33,11 +35,11 @@ export default function ResultsScreen() {
   }, []);
 
   return (
-    <ScrollView testID="results" style={globalStyles.container}>
-      <Text style={globalStyles.title}>Leaderboards</Text>
+    <ScrollView testID="results" style={styles.container}>
+      <Text style={styles.title}>Leaderboards</Text>
       {/* TEST 1 */}
-      <View style={globalStyles.colContainer}>
-        <Text style={globalStyles.header}>Test 1 - Dominant Hand</Text>
+      <View style={styles.colContainer}>
+        <Text style={styles.header}>Test 1 - Dominant Hand</Text>
 
         {test1Scores.map((user, index) => {
           const isCurrentUser = user.userId === currentUser?.uid;
@@ -46,26 +48,26 @@ export default function ResultsScreen() {
             <View
               key={user.id}
               style={[
-                globalStyles.rowContainer,
+                styles.rowContainer,
                 isCurrentUser && {
                   backgroundColor: "orange",
                   borderRadius: 10,
                 },
               ]}
             >
-              <Text style={globalStyles.text}>#{index + 1}</Text>
+              <Text style={styles.text}>#{index + 1}</Text>
 
-              <Text style={globalStyles.text}>{user.email}</Text>
+              <Text style={styles.text}>{user.email}</Text>
 
-              <Text style={globalStyles.text}>{user.score} ms</Text>
+              <Text style={styles.text}>{user.score} ms</Text>
             </View>
           );
         })}
       </View>
 
       {/* TEST 2 */}
-      <View style={globalStyles.colContainer}>
-        <Text style={globalStyles.header}>Test 2 - Non Dominant Hand</Text>
+      <View style={styles.colContainer}>
+        <Text style={styles.header}>Test 2 - Non Dominant Hand</Text>
 
         {test2Scores.map((user, index) => {
           const isCurrentUser = user.userId === currentUser?.uid;
@@ -74,26 +76,26 @@ export default function ResultsScreen() {
             <View
               key={user.id}
               style={[
-                globalStyles.rowContainer,
+                styles.rowContainer,
                 isCurrentUser && {
                   backgroundColor: "orange",
                   borderRadius: 10,
                 },
               ]}
             >
-              <Text style={globalStyles.text}>#{index + 1}</Text>
+              <Text style={styles.text}>#{index + 1}</Text>
 
-              <Text style={globalStyles.text}>{user.email}</Text>
+              <Text style={styles.text}>{user.email}</Text>
 
-              <Text style={globalStyles.text}>{user.score} ms</Text>
+              <Text style={styles.text}>{user.score} ms</Text>
             </View>
           );
         })}
       </View>
 
       {/* TEST 3 */}
-      <View style={globalStyles.colContainer}>
-        <Text style={globalStyles.header}>Test 3 - Tracking</Text>
+      <View style={styles.colContainer}>
+        <Text style={styles.header}>Test 3 - Tracking</Text>
 
         {test3Scores.map((user, index) => {
           const isCurrentUser = user.userId === currentUser?.uid;
@@ -102,26 +104,26 @@ export default function ResultsScreen() {
             <View
               key={user.id}
               style={[
-                globalStyles.rowContainer,
+                styles.rowContainer,
                 isCurrentUser && {
                   backgroundColor: "orange",
                   borderRadius: 10,
                 },
               ]}
             >
-              <Text style={globalStyles.text}>#{index + 1}</Text>
+              <Text style={styles.text}>#{index + 1}</Text>
 
-              <Text style={globalStyles.text}>{user.email}</Text>
+              <Text style={styles.text}>{user.email}</Text>
 
-              <Text style={globalStyles.text}>{user.score} clicks</Text>
+              <Text style={styles.text}>{user.score} clicks</Text>
             </View>
           );
         })}
       </View>
 
       {/* TEST 4 */}
-      <View style={globalStyles.colContainer}>
-        <Text style={globalStyles.header}>Test 4 - Audio Reaction</Text>
+      <View style={styles.colContainer}>
+        <Text style={styles.header}>Test 4 - Audio Reaction</Text>
 
         {test4Scores.map((user, index) => {
           const isCurrentUser = user.userId === currentUser?.uid;
@@ -130,34 +132,34 @@ export default function ResultsScreen() {
             <View
               key={user.id}
               style={[
-                globalStyles.rowContainer,
+                styles.rowContainer,
                 isCurrentUser && {
                   backgroundColor: "orange",
                   borderRadius: 10,
                 },
               ]}
             >
-              <Text style={globalStyles.text}>#{index + 1}</Text>
+              <Text style={styles.text}>#{index + 1}</Text>
 
-              <Text style={globalStyles.text}>{user.email}</Text>
+              <Text style={styles.text}>{user.email}</Text>
 
-              <Text style={globalStyles.text}>{user.score} ms</Text>
+              <Text style={styles.text}>{user.score} ms</Text>
             </View>
           );
         })}
       </View>
 
       <TouchableOpacity
-        style={globalStyles.button}
+        style={styles.button}
         onPress={() => router.push("./menu")}
       >
-        <Text style={globalStyles.text}>Back To Menu</Text>
+        <Text style={styles.text}>Back To Menu</Text>
       </TouchableOpacity>
       <TouchableOpacity
-        style={globalStyles.button}
+        style={styles.button}
         onPress={() => router.push("/(tabs)")}
       >
-        <Text style={globalStyles.text}>Change User</Text>
+        <Text style={styles.text}>Change User</Text>
       </TouchableOpacity>
     </ScrollView>
   );
