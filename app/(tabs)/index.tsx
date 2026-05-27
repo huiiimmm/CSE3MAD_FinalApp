@@ -73,6 +73,7 @@ export default function HomeScreen() {
       setloginout("created + login: " + user.email);
 
       setCreate("created");
+      loginA();
     } catch (error: any) {
       setloginout("create unsuccessful");
 
@@ -82,6 +83,13 @@ export default function HomeScreen() {
 
   async function logoutA() {
     try {
+      if (!auth.currentUser) {
+        await debug("DeleteEmailPassword", "No current user");
+
+        setloginout("no user logged in");
+
+        return;
+      }
       await logout();
 
       await debug("signoutEmailPassword", "success: " + email);

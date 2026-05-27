@@ -4,10 +4,10 @@ import "jest-styled-components";
 import "jest-styled-components/native";
 
 import {
-    fireEvent,
-    render,
-    screen,
-    waitFor,
+  fireEvent,
+  render,
+  screen,
+  waitFor,
 } from "@testing-library/react-native";
 
 import HomeScreen from "@/app/(tabs)/index";
@@ -21,21 +21,23 @@ jest.mock(
 
 /* ---------------- ROUTER MOCK ---------------- */
 
-const pushMock = jest.fn();
-
 jest.mock("expo-router", () => ({
   router: {
-    push: pushMock,
+    push: jest.fn(),
   },
 }));
 
+import { router } from "expo-router";
+
+const mockPush = jest.mocked(router.push);
+
 /* ---------------- FIREBASE WRAPPER MOCK ---------------- */
 
-const loginMock = jest.fn();
-const logoutMock = jest.fn();
-const createAccountMock = jest.fn();
-const removeUserMock = jest.fn();
-const addDebugDocMock = jest.fn();
+const mockLogin = jest.fn();
+const mockLogout = jest.fn();
+const mockCreateAccount = jest.fn();
+const mockRemoveUser = jest.fn();
+const mockAddDebugDoc = jest.fn();
 
 jest.mock("@/firebase", () => ({
   auth: {
@@ -47,15 +49,15 @@ jest.mock("@/firebase", () => ({
 
   db: {},
 
-  login: (...args: any[]) => loginMock(...args),
+  login: (...args: any[]) => mockLogin(...args),
 
-  logout: (...args: any[]) => logoutMock(...args),
+  logout: (...args: any[]) => mockLogout(...args),
 
-  createAccount: (...args: any[]) => createAccountMock(...args),
+  createAccount: (...args: any[]) => mockCreateAccount(...args),
 
-  removeUser: (...args: any[]) => removeUserMock(...args),
+  removeUser: (...args: any[]) => mockRemoveUser(...args),
 
-  addDebugDoc: (...args: any[]) => addDebugDocMock(...args),
+  addDebugDoc: (...args: any[]) => mockAddDebugDoc(...args),
 }));
 
 describe("<HomeScreen />", () => {
@@ -119,7 +121,7 @@ describe("<HomeScreen />", () => {
   /* ------------------------------------------------ */
 
   test("logs user in successfully", async () => {
-    loginMock.mockResolvedValue({
+    mockLogin.mockResolvedValue({
       user: {
         email: "hello@test.com",
       },
@@ -140,10 +142,10 @@ describe("<HomeScreen />", () => {
     fireEvent.press(screen.getByText("Login"));
 
     await waitFor(() => {
-      expect(loginMock).toHaveBeenCalledWith("hello@test.com", "password123");
+      expect(mockLogin).toHaveBeenCalledWith("hello@test.com", "password123");
     });
 
-    expect(pushMock).toHaveBeenCalledWith("/menu");
+    expect(mockPush).toHaveBeenCalledWith("/menu");
   });
 
   /* ------------------------------------------------ */
@@ -151,7 +153,7 @@ describe("<HomeScreen />", () => {
   /* ------------------------------------------------ */
 
   test("creates account successfully", async () => {
-    createAccountMock.mockResolvedValue({
+    mockCreateAccount.mockResolvedValue({
       user: {
         email: "new@test.com",
       },
@@ -169,7 +171,7 @@ describe("<HomeScreen />", () => {
     fireEvent.press(screen.getByText("Create"));
 
     await waitFor(() => {
-      expect(createAccountMock).toHaveBeenCalled();
+      expect(mockCreateAccount).toHaveBeenCalled();
     });
   });
 
@@ -178,14 +180,14 @@ describe("<HomeScreen />", () => {
   /* ------------------------------------------------ */
 
   test("logs user out successfully", async () => {
-    logoutMock.mockResolvedValue(undefined);
+    mockLogout.mockResolvedValue(undefined);
 
     render(<HomeScreen />);
 
     fireEvent.press(screen.getByText("Logout"));
 
     await waitFor(() => {
-      expect(logoutMock).toHaveBeenCalled();
+      expect(mockLogout).toHaveBeenCalled();
     });
   });
 
@@ -194,14 +196,14 @@ describe("<HomeScreen />", () => {
   /* ------------------------------------------------ */
 
   test("deletes user successfully", async () => {
-    removeUserMock.mockResolvedValue(undefined);
+    mockRemoveUser.mockResolvedValue(undefined);
 
     render(<HomeScreen />);
 
     fireEvent.press(screen.getByText("Delete"));
 
     await waitFor(() => {
-      expect(removeUserMock).toHaveBeenCalled();
+      expect(mockRemoveUser).toHaveBeenCalled();
     });
   });
 
