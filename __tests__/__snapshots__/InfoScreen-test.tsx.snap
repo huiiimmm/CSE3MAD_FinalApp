@@ -1,0 +1,140 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<InfoScreen /> matches snapshot 1`] = `
+<View
+  style={
+    {
+      "alignItems": "center",
+      "backgroundColor": "#1e1e1e",
+      "color": "#fff",
+      "flex": 1,
+      "justifyContent": "center",
+      "paddingHorizontal": 20,
+    }
+  }
+  testID="info"
+>
+  <Text
+    style={
+      {
+        "color": "white",
+        "fontSize": 32,
+        "fontWeight": "bold",
+        "marginBottom": 30,
+      }
+    }
+  >
+    Info Guide
+  </Text>
+  <Text
+    style={
+      {
+        "color": "white",
+        "fontSize": 16,
+        "marginBottom": 15,
+        "textAlign": "center",
+      }
+    }
+  >
+    This is a reaction testing app.
+  </Text>
+  <Text
+    style={
+      {
+        "color": "white",
+        "fontSize": 16,
+        "marginBottom": 15,
+        "textAlign": "center",
+      }
+    }
+  >
+    For the first test, tap the screen with your dominant hand as soon as the screen goes green.
+  </Text>
+  <Text
+    style={
+      {
+        "color": "white",
+        "fontSize": 16,
+        "marginBottom": 15,
+        "textAlign": "center",
+      }
+    }
+  >
+    The second test is the same as the first, but with your non-dominant hand.
+  </Text>
+  <Text
+    style={
+      {
+        "color": "white",
+        "fontSize": 16,
+        "marginBottom": 15,
+        "textAlign": "center",
+      }
+    }
+  >
+    For the third test, you must trace a moving object with your finger and tap it as many times as you can without missing.
+  </Text>
+  <Text
+    style={
+      {
+        "color": "white",
+        "fontSize": 16,
+        "marginBottom": 15,
+        "textAlign": "center",
+      }
+    }
+  >
+    For the last test, you must yell into the mic as soon as you hear a beep.
+  </Text>
+  <View
+    accessibilityState={
+      {
+        "busy": undefined,
+        "checked": undefined,
+        "disabled": undefined,
+        "expanded": undefined,
+        "selected": undefined,
+      }
+    }
+    accessibilityValue={
+      {
+        "max": undefined,
+        "min": undefined,
+        "now": undefined,
+        "text": undefined,
+      }
+    }
+    accessible={true}
+    collapsable={false}
+    focusable={true}
+    onClick={[Function]}
+    onResponderGrant={[Function]}
+    onResponderMove={[Function]}
+    onResponderRelease={[Function]}
+    onResponderTerminate={[Function]}
+    onResponderTerminationRequest={[Function]}
+    onStartShouldSetResponder={[Function]}
+    style={
+      {
+        "backgroundColor": "#4a90e2",
+        "borderRadius": 10,
+        "marginTop": 20,
+        "opacity": 1,
+        "paddingHorizontal": 30,
+        "paddingVertical": 15,
+      }
+    }
+  >
+    <Text
+      style={
+        {
+          "color": "white",
+          "fontSize": 18,
+        }
+      }
+    >
+      Start Test
+    </Text>
+  </View>
+</View>
+`;

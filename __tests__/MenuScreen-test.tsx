@@ -4,10 +4,10 @@ import "jest-styled-components";
 import "jest-styled-components/native";
 
 import {
-    fireEvent,
-    render,
-    screen,
-    waitFor,
+  fireEvent,
+  render,
+  screen,
+  waitFor,
 } from "@testing-library/react-native";
 
 import MenuScreen from "@/app/(tabs)/menu";
@@ -16,11 +16,11 @@ import MenuScreen from "@/app/(tabs)/menu";
 /* ROUTER MOCK                                      */
 /* ------------------------------------------------ */
 
-const pushMock = jest.fn();
+const mockPush = jest.fn();
 
 jest.mock("expo-router", () => ({
   router: {
-    push: pushMock,
+    push: mockPush,
   },
 }));
 
@@ -28,10 +28,10 @@ jest.mock("expo-router", () => ({
 /* HAPTICS MOCK                                     */
 /* ------------------------------------------------ */
 
-const impactAsyncMock = jest.fn();
+const mockImpactAsync = jest.fn();
 
 jest.mock("expo-haptics", () => ({
-  impactAsync: (...args: any[]) => impactAsyncMock(...args),
+  impactAsync: (...args: any[]) => mockImpactAsync(...args),
 
   ImpactFeedbackStyle: {
     Light: "Light",
@@ -98,7 +98,7 @@ describe("<MenuScreen />", () => {
     fireEvent.press(screen.getByText("Info"));
 
     await waitFor(() => {
-      expect(pushMock).toHaveBeenCalledWith("./info");
+      expect(mockPush).toHaveBeenCalledWith("./info");
     });
   });
 
@@ -112,7 +112,7 @@ describe("<MenuScreen />", () => {
     fireEvent.press(screen.getByText("Start Test"));
 
     await waitFor(() => {
-      expect(pushMock).toHaveBeenCalledWith("./test1");
+      expect(mockPush).toHaveBeenCalledWith("./test1");
     });
   });
 
@@ -126,7 +126,7 @@ describe("<MenuScreen />", () => {
     fireEvent.press(screen.getByText("Leaderboard"));
 
     await waitFor(() => {
-      expect(pushMock).toHaveBeenCalledWith("./results");
+      expect(mockPush).toHaveBeenCalledWith("./results");
     });
   });
 
@@ -140,7 +140,7 @@ describe("<MenuScreen />", () => {
     fireEvent.press(screen.getByText("Info"));
 
     await waitFor(() => {
-      expect(impactAsyncMock).toHaveBeenCalledWith("Light");
+      expect(mockImpactAsync).toHaveBeenCalledWith("Light");
     });
   });
 

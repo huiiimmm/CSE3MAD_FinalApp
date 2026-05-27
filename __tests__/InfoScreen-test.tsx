@@ -4,10 +4,10 @@ import "jest-styled-components";
 import "jest-styled-components/native";
 
 import {
-    fireEvent,
-    render,
-    screen,
-    waitFor,
+  fireEvent,
+  render,
+  screen,
+  waitFor,
 } from "@testing-library/react-native";
 
 import InfoScreen from "@/app/(tabs)/info";
@@ -16,11 +16,11 @@ import InfoScreen from "@/app/(tabs)/info";
 /* ROUTER MOCK                                      */
 /* ------------------------------------------------ */
 
-const pushMock = jest.fn();
+const mockPush = jest.fn();
 
 jest.mock("expo-router", () => ({
   router: {
-    push: pushMock,
+    push: mockPush,
   },
 }));
 
@@ -28,10 +28,10 @@ jest.mock("expo-router", () => ({
 /* HAPTICS MOCK                                     */
 /* ------------------------------------------------ */
 
-const impactAsyncMock = jest.fn();
+const mockImpactAsync = jest.fn();
 
 jest.mock("expo-haptics", () => ({
-  impactAsync: (...args: any[]) => impactAsyncMock(...args),
+  impactAsync: (...args: any[]) => mockImpactAsync(...args),
 
   ImpactFeedbackStyle: {
     Light: "Light",
@@ -97,7 +97,7 @@ describe("<InfoScreen />", () => {
     fireEvent.press(screen.getByText("Start Test"));
 
     await waitFor(() => {
-      expect(pushMock).toHaveBeenCalledWith("/test1");
+      expect(mockPush).toHaveBeenCalledWith("/test1");
     });
   });
 
@@ -111,7 +111,7 @@ describe("<InfoScreen />", () => {
     fireEvent.press(screen.getByText("Start Test"));
 
     await waitFor(() => {
-      expect(impactAsyncMock).toHaveBeenCalledWith("Light");
+      expect(mockImpactAsync).toHaveBeenCalledWith("Light");
     });
   });
 
