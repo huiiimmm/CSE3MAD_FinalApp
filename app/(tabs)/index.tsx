@@ -10,7 +10,14 @@ const styles = globalStyles(theme);
 
 import { router } from "expo-router";
 import { useRef, useState } from "react";
-import { Button, SafeAreaView, Text, TextInput, View } from "react-native";
+import {
+  Button,
+  SafeAreaView,
+  ScrollView,
+  Text,
+  TextInput,
+  View,
+} from "react-native";
 
 import { SafeAreaProvider } from "react-native-safe-area-context";
 
@@ -142,48 +149,50 @@ export default function HomeScreen() {
   }
 
   return (
-    <SafeAreaProvider>
-      <SafeAreaView style={styles.header}>
-        <View style={styles.colContainer}>
-          <View style={styles.rowContainer}>
-            <Text testID="loginHeader" style={styles.text}>
-              {loginout}
-            </Text>
-            <Text testID="createHeader" style={styles.text}>
-              {created}
-            </Text>
+    <ScrollView>
+      <SafeAreaProvider>
+        <SafeAreaView style={styles.header}>
+          <View style={styles.colContainer}>
+            <View style={styles.rowContainer}>
+              <Text testID="loginHeader" style={styles.text}>
+                {loginout}
+              </Text>
+              <Text testID="createHeader" style={styles.text}>
+                {created}
+              </Text>
+            </View>
+
+            <View testID="index" style={styles.colContainer}>
+              <TextInput
+                style={styles.sUser}
+                placeholder="Email"
+                autoCapitalize="none"
+                keyboardType="email-address"
+                onChangeText={setEmail}
+                value={email}
+              />
+
+              <TextInput
+                style={styles.sUser}
+                placeholder="Password"
+                secureTextEntry={true}
+                onChangeText={setPword}
+                value={pword}
+              />
+            </View>
+
+            <View style={styles.buttonContainer}>
+              <Button title="Login" onPress={loginA} />
+
+              <Button title="Create" onPress={createA} />
+
+              <Button title="Logout" onPress={logoutA} />
+
+              <Button title="Delete" onPress={deleteA} />
+            </View>
           </View>
-
-          <View testID="index" style={styles.colContainer}>
-            <TextInput
-              style={styles.sUser}
-              placeholder="Email"
-              autoCapitalize="none"
-              keyboardType="email-address"
-              onChangeText={setEmail}
-              value={email}
-            />
-
-            <TextInput
-              style={styles.sUser}
-              placeholder="Password"
-              secureTextEntry={true}
-              onChangeText={setPword}
-              value={pword}
-            />
-          </View>
-
-          <View style={styles.buttonContainer}>
-            <Button title="Login" onPress={loginA} />
-
-            <Button title="Create" onPress={createA} />
-
-            <Button title="Logout" onPress={logoutA} />
-
-            <Button title="Delete" onPress={deleteA} />
-          </View>
-        </View>
-      </SafeAreaView>
-    </SafeAreaProvider>
+        </SafeAreaView>
+      </SafeAreaProvider>
+    </ScrollView>
   );
 }
