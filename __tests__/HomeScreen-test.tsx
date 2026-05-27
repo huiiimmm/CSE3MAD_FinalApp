@@ -71,10 +71,11 @@ describe("<HomeScreen />", () => {
 
   test("renders login screen correctly", () => {
     render(<HomeScreen />);
+    screen.debug();
 
-    expect(screen.getByText("Login")).toBeTruthy();
+    expect(screen.getByTestId("loginHeader")).toBeTruthy();
 
-    expect(screen.getByText("Create")).toBeTruthy();
+    expect(screen.getByTestId("createHeader")).toBeTruthy();
 
     expect(screen.getByPlaceholderText("Email")).toBeTruthy();
 
@@ -88,9 +89,7 @@ describe("<HomeScreen />", () => {
   test("login text has correct style", () => {
     render(<HomeScreen />);
 
-    const loginText = screen.getByText("Login");
-
-    expect(loginText).toHaveStyle({
+    expect(screen.getByTestId("loginHeader")).toHaveStyle({
       color: "white",
       fontSize: 18,
     });
@@ -123,7 +122,7 @@ describe("<HomeScreen />", () => {
   test("logs user in successfully", async () => {
     mockLogin.mockResolvedValue({
       user: {
-        email: "hello@test.com",
+        email: "tester@mail.com",
       },
     });
 
@@ -131,21 +130,20 @@ describe("<HomeScreen />", () => {
 
     fireEvent.changeText(
       screen.getByPlaceholderText("Email"),
-      "hello@test.com",
+      "tester@mail.com",
     );
 
-    fireEvent.changeText(
-      screen.getByPlaceholderText("Password"),
-      "password123",
-    );
+    fireEvent.changeText(screen.getByPlaceholderText("Password"), "passpass");
 
     fireEvent.press(screen.getByText("Login"));
 
     await waitFor(() => {
-      expect(mockLogin).toHaveBeenCalledWith("hello@test.com", "password123");
+      expect(mockLogin).toHaveBeenCalledWith("tester@mail.com", "passpass");
     });
 
-    expect(mockPush).toHaveBeenCalledWith("/menu");
+    await waitFor(() => {
+      expect(mockPush).toHaveBeenCalledWith("/menu");
+    });
   });
 
   /* ------------------------------------------------ */

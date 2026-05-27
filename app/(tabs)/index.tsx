@@ -9,7 +9,7 @@ const theme = scheme === "dark" ? darkTheme : lightTheme;
 const styles = globalStyles(theme);
 
 import { router } from "expo-router";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { Button, SafeAreaView, Text, TextInput, View } from "react-native";
 
 import { SafeAreaProvider } from "react-native-safe-area-context";
@@ -21,17 +21,20 @@ import {
   login,
   logout,
   removeUser,
+  uploadLocation,
 } from "@/firebase";
-let n = 0;
+
+import * as Location from "expo-location";
 
 export default function HomeScreen() {
   const [loginout, setloginout] = useState("Login");
   const [created, setCreate] = useState("Create");
   const [pword, setPword] = useState("");
   const [email, setEmail] = useState("");
+  const debugCounter = useRef(0);
 
   async function debug(tag: string, str: string) {
-    const id = n++;
+    const id = ++debugCounter.current;
 
     console.log(`${tag} No. ${id}`, str);
 
@@ -56,6 +59,10 @@ export default function HomeScreen() {
 
       setloginout("login: " + user.email);
 
+      uploadLocation(user, getLocation());
+
+      await getLocation();
+
       router.push("/menu");
     } catch (error: any) {
       setloginout("login unsuccessful");
@@ -75,7 +82,6 @@ export default function HomeScreen() {
       setloginout("created + login: " + user.email);
 
       setCreate("created");
-      loginA();
     } catch (error: any) {
       setloginout("create unsuccessful");
 
@@ -125,13 +131,27 @@ export default function HomeScreen() {
     }
   }
 
+  async function getLocation() {
+    const { status } = await Location.requestForegroundPermissionsAsync();
+    if (status !== "granted") {
+      console.log("Permission denied");
+      return;
+    }
+    const location = await Location.getCurrentPositionAsync({});
+    return location.coords;
+  }
+
   return (
     <SafeAreaProvider>
       <SafeAreaView style={styles.header}>
         <View style={styles.colContainer}>
           <View style={styles.rowContainer}>
-            <Text style={styles.text}>{loginout}</Text>
-            <Text style={styles.text}>{created}</Text>
+            <Text testID="loginHeader" style={styles.text}>
+              {loginout}
+            </Text>
+            <Text testID="createHeader" style={styles.text}>
+              {created}
+            </Text>
           </View>
 
           <View testID="index" style={styles.colContainer}>

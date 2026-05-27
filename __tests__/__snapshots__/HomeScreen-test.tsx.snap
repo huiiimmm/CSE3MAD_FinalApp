@@ -14,7 +14,7 @@ exports[`<HomeScreen /> matches snapshot 1`] = `
     style={
       {
         "alignItems": "center",
-        "color": "#fff",
+        "color": "#ffffff",
         "flexDirection": "column",
         "gap": 20,
       }
@@ -32,8 +32,10 @@ exports[`<HomeScreen /> matches snapshot 1`] = `
       <Text
         style={
           {
-            "color": "white",
+            "color": "#111111",
             "fontSize": 18,
+            "marginBottom": 20,
+            "textAlign": "center",
           }
         }
       >
@@ -42,8 +44,10 @@ exports[`<HomeScreen /> matches snapshot 1`] = `
       <Text
         style={
           {
-            "color": "white",
+            "color": "#111111",
             "fontSize": 18,
+            "marginBottom": 20,
+            "textAlign": "center",
           }
         }
       >
@@ -54,7 +58,7 @@ exports[`<HomeScreen /> matches snapshot 1`] = `
       style={
         {
           "alignItems": "center",
-          "color": "#fff",
+          "color": "#ffffff",
           "flexDirection": "column",
           "gap": 20,
         }
@@ -68,7 +72,7 @@ exports[`<HomeScreen /> matches snapshot 1`] = `
         placeholder="Email"
         style={
           {
-            "backgroundColor": "white",
+            "backgroundColor": "#fff",
             "borderColor": "#999",
             "borderRadius": 8,
             "borderWidth": 1,
@@ -81,9 +85,10 @@ exports[`<HomeScreen /> matches snapshot 1`] = `
       <TextInput
         onChangeText={[Function]}
         placeholder="Password"
+        secureTextEntry={true}
         style={
           {
-            "backgroundColor": "white",
+            "backgroundColor": "#fff",
             "borderColor": "#999",
             "borderRadius": 8,
             "borderWidth": 1,

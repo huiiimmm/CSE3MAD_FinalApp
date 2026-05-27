@@ -2,10 +2,10 @@ import "jest-styled-components";
 import "jest-styled-components/native";
 
 import {
-    fireEvent,
-    render,
-    screen,
-    waitFor,
+  fireEvent,
+  render,
+  screen,
+  waitFor,
 } from "@testing-library/react-native";
 import React from "react";
 import { View } from "react-native";
@@ -75,47 +75,43 @@ describe("<Test1 />", () => {
     expect(screen.getByText(/0ms/i)).toBeTruthy();
   });
 
-  test("shows too early message if pressed early", () => {
+  test("shows too early message if pressed early", async () => {
     render(<Test1 />);
 
     const startButton = screen.getByText("Start");
 
     fireEvent.press(startButton);
 
-    const pressable = screen.UNSAFE_getAllByType(View)[0];
-
-    fireEvent.press(pressable);
-
-    expect(screen.getByText("Too early!")).toBeTruthy();
-
-    expect(screen.getByText("Restart Test")).toBeTruthy();
-  });
-
-  test("restart button resets test", () => {
-    render(<Test1 />);
-
-    fireEvent.press(screen.getByText("Start"));
-
-    const pressable = screen.UNSAFE_getAllByType(View)[0];
-
-    fireEvent.press(pressable);
-
-    fireEvent.press(screen.getByText("Restart Test"));
-
-    expect(screen.getByText("Start")).toBeTruthy();
-  });
-
-  test("moves to next test after successful reaction", async () => {
-    render(<Test1 />);
-
-    fireEvent.press(screen.getByText("Start"));
-
-    jest.useFakeTimers();
+    fireEvent.press(screen.getByTestId("earlyCheck"));
 
     await waitFor(() => {
-      const overlays = screen.UNSAFE_getAllByType(View);
+      expect(screen.getByText("Too early!")).toBeTruthy();
 
-      fireEvent.press(overlays[0]);
+      expect(screen.getByTestId("restartButton")).toBeTruthy();
+    });
+  });
+
+  test("restart button resets test", async () => {
+    render(<Test1 />);
+
+    fireEvent.press(screen.getByTestId("startButton"));
+
+    fireEvent.press(screen.getByTestId("earlyCheck"));
+
+    fireEvent.press(screen.getByTestId("restartButton"));
+    await waitFor(() => {
+      expect(screen.getByTestId("startButton")).toBeTruthy();
+    });
+  });
+
+  test("shows next test after successful reaction", async () => {
+    jest.useFakeTimers();
+    render(<Test1 />);
+
+    fireEvent.press(screen.getByText("Start"));
+
+    await waitFor(() => {
+      fireEvent.press(screen.getByTestId("reactionScreen"));
     });
 
     expect(screen.getByText("Next Test")).toBeTruthy();

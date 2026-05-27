@@ -10,7 +10,9 @@ import {
   Pressable,
   StyleSheet,
   Text,
-  TouchableOpacity, useColorScheme, View
+  TouchableOpacity,
+  useColorScheme,
+  View,
 } from "react-native";
 
 const scheme = useColorScheme();
@@ -106,6 +108,7 @@ export default function Test1() {
           <Text style={styles.text}>Tap as soon as you see green</Text>
 
           <TouchableOpacity
+            testID="startButton"
             style={styles.button}
             onPress={() => {
               Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
@@ -124,6 +127,7 @@ export default function Test1() {
       )}
       {earlyCheck && (
         <Pressable
+          testID="earlyCheck"
           style={StyleSheet.absoluteFill}
           onPress={() => {
             Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
@@ -137,6 +141,7 @@ export default function Test1() {
         <>
           <Text style={styles.text}>Too early!</Text>
           <TouchableOpacity
+            testID="restartButton"
             style={styles.button}
             onPress={() => {
               setReadyText(true);
@@ -151,6 +156,7 @@ export default function Test1() {
       )}
       {reactionScreen && (
         <Pressable
+          testID="reactionScreen"
           style={StyleSheet.absoluteFill}
           onPress={() => {
             Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);

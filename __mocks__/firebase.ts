@@ -2,8 +2,9 @@
 
 export const auth = {
   currentUser: {
-    uid: "test-user",
-    email: "test@email.com",
+    uid: "g3vlCAB3OKRelPh1tWaVKf0vmCz1",
+    email: "tester@email.com",
+    pword: "passpass",
   },
 };
 

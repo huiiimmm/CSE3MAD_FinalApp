@@ -22,11 +22,13 @@ export { firebaseConfig };
   import {
     addDoc,
     collection,
+    doc,
     getDocs,
     getFirestore,
     limit,
     orderBy,
     query,
+    updateDoc,
     where,
   } from "firebase/firestore";
 
@@ -75,4 +77,14 @@ export const getLeaderboardDocs = async (
     });
   });
   setFunction(results);
+};
+
+export const uploadLocation = (user: any, location: any) => {
+  return updateDoc(doc(db, "users", user.uid), {
+    location: {
+      latitude: location.latitude,
+      longitude: location.longitude,
+      updatedAt: new Date(),
+    },
+  });
 };
