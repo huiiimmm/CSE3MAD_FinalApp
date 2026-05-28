@@ -5,7 +5,13 @@ import { lightTheme } from "@/app/Styles/Themes/light";
 import { auth, getLeaderboardDocs } from "@/firebase";
 import { router } from "expo-router";
 import React, { useEffect, useState } from "react";
-import { ScrollView, Text, TouchableOpacity, useColorScheme, View } from "react-native";
+import {
+  ScrollView,
+  Text,
+  TouchableOpacity,
+  useColorScheme,
+  View,
+} from "react-native";
 
 const scheme = useColorScheme();
 const theme = scheme === "dark" ? darkTheme : lightTheme;
@@ -35,13 +41,18 @@ export default function ResultsScreen() {
   }, []);
 
   return (
-    <ScrollView testID="results" style={styles.container}>
+    <ScrollView
+      testID="results"
+      style={styles.container}
+      contentContainerStyle={styles.scrollContent}
+    >
       <Text style={styles.title}>Leaderboards</Text>
+
       {/* TEST 1 */}
       <View style={styles.colContainer}>
         <Text style={styles.header}>Test 1 - Dominant Hand</Text>
 
-        {test1Scores.map((user, index) => {
+        {test1Scores.map((user: any, index: number) => {
           const isCurrentUser = user.userId === currentUser?.uid;
 
           return (
@@ -49,16 +60,11 @@ export default function ResultsScreen() {
               key={user.id}
               style={[
                 styles.rowContainer,
-                isCurrentUser && {
-                  backgroundColor: "orange",
-                  borderRadius: 10,
-                },
+                isCurrentUser && styles.highlightRow,
               ]}
             >
               <Text style={styles.text}>#{index + 1}</Text>
-
               <Text style={styles.text}>{user.email}</Text>
-
               <Text style={styles.text}>{user.score} ms</Text>
             </View>
           );
@@ -69,7 +75,7 @@ export default function ResultsScreen() {
       <View style={styles.colContainer}>
         <Text style={styles.header}>Test 2 - Non Dominant Hand</Text>
 
-        {test2Scores.map((user, index) => {
+        {test2Scores.map((user: any, index: number) => {
           const isCurrentUser = user.userId === currentUser?.uid;
 
           return (
@@ -77,16 +83,11 @@ export default function ResultsScreen() {
               key={user.id}
               style={[
                 styles.rowContainer,
-                isCurrentUser && {
-                  backgroundColor: "orange",
-                  borderRadius: 10,
-                },
+                isCurrentUser && styles.highlightRow,
               ]}
             >
               <Text style={styles.text}>#{index + 1}</Text>
-
               <Text style={styles.text}>{user.email}</Text>
-
               <Text style={styles.text}>{user.score} ms</Text>
             </View>
           );
@@ -97,7 +98,7 @@ export default function ResultsScreen() {
       <View style={styles.colContainer}>
         <Text style={styles.header}>Test 3 - Tracking</Text>
 
-        {test3Scores.map((user, index) => {
+        {test3Scores.map((user: any, index: number) => {
           const isCurrentUser = user.userId === currentUser?.uid;
 
           return (
@@ -105,16 +106,11 @@ export default function ResultsScreen() {
               key={user.id}
               style={[
                 styles.rowContainer,
-                isCurrentUser && {
-                  backgroundColor: "orange",
-                  borderRadius: 10,
-                },
+                isCurrentUser && styles.highlightRow,
               ]}
             >
               <Text style={styles.text}>#{index + 1}</Text>
-
               <Text style={styles.text}>{user.email}</Text>
-
               <Text style={styles.text}>{user.score} clicks</Text>
             </View>
           );
@@ -125,7 +121,7 @@ export default function ResultsScreen() {
       <View style={styles.colContainer}>
         <Text style={styles.header}>Test 4 - Audio Reaction</Text>
 
-        {test4Scores.map((user, index) => {
+        {test4Scores.map((user: any, index: number) => {
           const isCurrentUser = user.userId === currentUser?.uid;
 
           return (
@@ -133,16 +129,11 @@ export default function ResultsScreen() {
               key={user.id}
               style={[
                 styles.rowContainer,
-                isCurrentUser && {
-                  backgroundColor: "orange",
-                  borderRadius: 10,
-                },
+                isCurrentUser && styles.highlightRow,
               ]}
             >
               <Text style={styles.text}>#{index + 1}</Text>
-
               <Text style={styles.text}>{user.email}</Text>
-
               <Text style={styles.text}>{user.score} ms</Text>
             </View>
           );
@@ -151,15 +142,16 @@ export default function ResultsScreen() {
 
       <TouchableOpacity
         style={styles.button}
-        onPress={() => router.push("./menu")}
+        onPress={() => router.push("/menu")}
       >
-        <Text style={styles.text}>Back To Menu</Text>
+        <Text style={styles.buttonText}>Back To Menu</Text>
       </TouchableOpacity>
+
       <TouchableOpacity
         style={styles.button}
         onPress={() => router.push("/(tabs)")}
       >
-        <Text style={styles.text}>Change User</Text>
+        <Text style={styles.buttonText}>Change User</Text>
       </TouchableOpacity>
     </ScrollView>
   );

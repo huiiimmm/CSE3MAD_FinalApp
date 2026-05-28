@@ -144,7 +144,7 @@ export default function Test3() {
   return (
     <View
       testID="test3"
-      style={styles.container}
+      style={styles.bounceContainer}
       onLayout={(e) => {
         const w = e.nativeEvent.layout.width;
         const h = e.nativeEvent.layout.height;
@@ -163,10 +163,13 @@ export default function Test3() {
       }}
     >
       {!startTest && (
-        <Text style={styles.buttonText}>
-          Click the moving ball as many times as you can in 10 seconds without
-          missing!
-        </Text>
+        <>
+          <Text style={styles.title}>Test 3 - Tracking and Tracing</Text>
+          <Text style={styles.buttonText}>
+            Click the moving ball as many times as you can in 10 seconds without
+            missing!
+          </Text>
+        </>
       )}
       <Text style={styles.buttonText}>Clicks: {clickCount}</Text>
       <Text style={styles.buttonText}>
@@ -185,6 +188,19 @@ export default function Test3() {
       >
         {startTest && (
           <Text style={styles.buttonText}> {time > 0 ? time : "Stop!"}</Text>
+        )}
+        {!startTest && (
+          <TouchableOpacity
+            style={styles.button}
+            onPress={() => {
+              setStartTest(true);
+              startPhysics();
+              countDown();
+              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+            }}
+          >
+            <Text style={styles.buttonText}>Start Test</Text>
+          </TouchableOpacity>
         )}
         {startTest && (
           <Animated.View
@@ -237,19 +253,6 @@ export default function Test3() {
             <Text style={styles.buttonText}>Back to Menu</Text>
           </TouchableOpacity>
         </>
-      )}
-      {!startTest && (
-        <TouchableOpacity
-          style={styles.button}
-          onPress={() => {
-            setStartTest(true);
-            startPhysics();
-            countDown();
-            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-          }}
-        >
-          <Text style={styles.buttonText}>Start Test</Text>
-        </TouchableOpacity>
       )}
     </View>
   );

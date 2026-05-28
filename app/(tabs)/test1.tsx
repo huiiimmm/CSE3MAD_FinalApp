@@ -122,9 +122,7 @@ export default function Test1() {
         </>
       )}
 
-      {!readyText && (
-        <Text style={{ color: "white", fontSize: 30 }}>{time}ms</Text>
-      )}
+      {!readyText && <Text style={styles.text}>Reaction Speed: {time}ms</Text>}
       {earlyCheck && (
         <Pressable
           testID="earlyCheck"

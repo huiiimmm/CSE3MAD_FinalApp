@@ -1,4 +1,5 @@
 import { globalStyles } from "@/app/Styles/globalStyles";
+import * as Haptics from "expo-haptics";
 
 import { darkTheme } from "@/app/Styles/Themes/dark";
 import { lightTheme } from "@/app/Styles/Themes/light";
@@ -11,11 +12,11 @@ const styles = globalStyles(theme);
 import { router } from "expo-router";
 import { useRef, useState } from "react";
 import {
-  Button,
   SafeAreaView,
   ScrollView,
   Text,
   TextInput,
+  TouchableOpacity,
   View,
 } from "react-native";
 
@@ -66,11 +67,14 @@ export default function HomeScreen() {
 
       setloginout("login: " + user.email);
 
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+
       const coords = await getLocation();
       uploadLocation(user, coords);
 
       router.push("/menu");
     } catch (error: any) {
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
       setloginout("login unsuccessful");
 
       await debug("SignInEmailPassword", error.code + " " + error.message);
@@ -87,8 +91,12 @@ export default function HomeScreen() {
 
       setloginout("created + login: " + user.email);
 
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+
       setCreate("created");
     } catch (error: any) {
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+
       setloginout("create unsuccessful");
 
       await debug("createEmailPassword", error.code + " " + error.message);
@@ -98,6 +106,8 @@ export default function HomeScreen() {
   async function logoutA() {
     try {
       if (!auth.currentUser) {
+        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+
         await debug("DeleteEmailPassword", "No current user");
 
         setloginout("no user logged in");
@@ -108,7 +118,10 @@ export default function HomeScreen() {
       await debug("signoutEmailPassword", "success: " + email);
 
       setloginout("signed out");
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
     } catch (error: any) {
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+
       setloginout("signout unsuccessful");
 
       await debug("SignOutEmailPassword", error.code + " " + error.message);
@@ -118,6 +131,8 @@ export default function HomeScreen() {
   async function deleteA() {
     try {
       if (!auth.currentUser) {
+        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+
         await debug("DeleteEmailPassword", "No current user");
 
         setloginout("no user logged in");
@@ -130,7 +145,10 @@ export default function HomeScreen() {
       await debug("DeleteEmailPassword", "success: " + email);
 
       setloginout("user deleted");
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
     } catch (error: any) {
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+
       setloginout("delete unsuccessful");
 
       await debug("DeleteEmailPassword", error.code + " " + error.message);
@@ -151,9 +169,9 @@ export default function HomeScreen() {
   return (
     <ScrollView>
       <SafeAreaProvider>
-        <SafeAreaView style={styles.header}>
-          <View style={styles.colContainer}>
-            <View style={styles.rowContainer}>
+        <SafeAreaView>
+          <View style={styles.container}>
+            <View style={styles.colContainer}>
               <Text testID="loginHeader" style={styles.text}>
                 {loginout}
               </Text>
@@ -181,14 +199,22 @@ export default function HomeScreen() {
               />
             </View>
 
-            <View style={styles.buttonContainer}>
-              <Button title="Login" onPress={loginA} />
+            <View style={styles.colContainer}>
+              <TouchableOpacity style={styles.button} onPress={loginA}>
+                <Text style={styles.buttonText}>Login</Text>
+              </TouchableOpacity>
 
-              <Button title="Create" onPress={createA} />
+              <TouchableOpacity style={styles.button} onPress={createA}>
+                <Text style={styles.buttonText}>Create</Text>
+              </TouchableOpacity>
 
-              <Button title="Logout" onPress={logoutA} />
+              <TouchableOpacity style={styles.button} onPress={logoutA}>
+                <Text style={styles.buttonText}>Logout</Text>
+              </TouchableOpacity>
 
-              <Button title="Delete" onPress={deleteA} />
+              <TouchableOpacity style={styles.button} onPress={deleteA}>
+                <Text style={styles.buttonText}>Delete</Text>
+              </TouchableOpacity>
             </View>
           </View>
         </SafeAreaView>

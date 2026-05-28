@@ -4,21 +4,25 @@ export const globalStyles = (theme: any) =>
   StyleSheet.create({
     container: {
       flex: 1,
-      justifyContent: "center",
+      backgroundColor: theme.background,
+    },
+
+    scrollContent: {
+      padding: 20,
       alignItems: "center",
-      color: theme.background,
     },
 
     title: {
       color: theme.text,
       fontSize: 32,
       marginBottom: 20,
+      fontWeight: "bold",
+      textAlign: "center",
     },
 
     text: {
       color: theme.text,
       fontSize: 18,
-      marginBottom: 20,
       textAlign: "center",
     },
 
@@ -33,14 +37,18 @@ export const globalStyles = (theme: any) =>
     buttonText: {
       color: theme.text,
       fontSize: 18,
+      textAlign: "center",
     },
+
     buttonContainer: {
       flexDirection: "column",
       gap: 12,
-      width: 220,
+      width: 200,
+      alignItems: "center",
     },
 
     sUser: {
+      alignItems: "center",
       width: 220,
       borderWidth: 1,
       borderColor: "#999",
@@ -48,35 +56,58 @@ export const globalStyles = (theme: any) =>
       borderRadius: 8,
       backgroundColor: "#fff",
     },
+
     rowContainer: {
       flexDirection: "row",
+      justifyContent: "space-between",
       alignItems: "center",
-      marginTop: 20,
-      gap: 20,
+      width: "100%",
+      paddingHorizontal: 20,
+      paddingVertical: 10,
+      borderColor: theme.border,
+      borderWidth: 4,
+      overflow: "hidden",
     },
 
     colContainer: {
-      flexDirection: "column",
+      width: "100%",
       alignItems: "center",
-      gap: 20,
       marginTop: 20,
-      color: theme.background,
     },
+
     header: {
-      flex: 1,
-      justifyContent: "center",
-      padding: 40,
+      color: theme.text,
+      fontSize: 24,
+      fontWeight: "bold",
       marginTop: 30,
+      marginBottom: 10,
+      textAlign: "center",
     },
+
+    highlightRow: {
+      backgroundColor: "orange",
+      borderRadius: 10,
+    },
+
+    bounceContainer: {
+      flex: 1,
+      backgroundColor: theme.background,
+      borderColor: theme.border,
+      borderWidth: 4,
+      overflow: "hidden",
+    },
+
     ball: {
       width: 50,
       height: 50,
       borderRadius: 25,
       backgroundColor: "cyan",
     },
+
     mapContainer: {
       flex: 1,
     },
+
     map: {
       flex: 1,
     },

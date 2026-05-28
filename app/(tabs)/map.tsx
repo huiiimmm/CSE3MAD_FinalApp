@@ -30,8 +30,9 @@ export default function MapScreen() {
   const { Marker } = require("react-native-maps");
 
   const [locations, setLocations] = useState<any[]>([]);
-  const initialLatitude = -37.8136;
-  const initialLongitude = 144.9631;
+  // ltu-bundoora campus coords
+  const initialLatitude = -37.7217;
+  const initialLongitude = 145.0479;
 
   useEffect(() => {
     async function loadLocations() {
