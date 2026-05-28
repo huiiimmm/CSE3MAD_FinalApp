@@ -11,36 +11,13 @@ import {
 } from "@testing-library/react-native";
 
 import MenuScreen from "@/app/(tabs)/menu";
-
-/* ------------------------------------------------ */
-/* ROUTER MOCK                                      */
-/* ------------------------------------------------ */
-
-const mockPush = jest.fn();
-
-jest.mock("expo-router", () => ({
-  router: {
-    push: (...args: any[]) => mockPush(...args),
-  },
-}));
-
-/* ------------------------------------------------ */
-/* HAPTICS MOCK                                     */
-/* ------------------------------------------------ */
-
-const mockImpactAsync = jest.fn();
-
-jest.mock("expo-haptics", () => ({
-  impactAsync: (...args: any[]) => mockImpactAsync(...args),
-
-  ImpactFeedbackStyle: {
-    Light: "Light",
-  },
-}));
+import { impactAsync } from "expo-haptics";
+import { router } from "expo-router";
 
 describe("<MenuScreen />", () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    render(<MenuScreen />);
   });
 
   /* ------------------------------------------------ */
@@ -48,12 +25,10 @@ describe("<MenuScreen />", () => {
   /* ------------------------------------------------ */
 
   test("navigates to info screen", async () => {
-    render(<MenuScreen />);
-
     fireEvent.press(screen.getByTestId("info"));
 
     await waitFor(() => {
-      expect(mockPush).toHaveBeenCalledWith("./info");
+      expect(router.push).toHaveBeenCalledWith("./info");
     });
   });
 
@@ -62,12 +37,10 @@ describe("<MenuScreen />", () => {
   /* ------------------------------------------------ */
 
   test("navigates to test1 screen", async () => {
-    render(<MenuScreen />);
-
     fireEvent.press(screen.getByTestId("startTest"));
 
     await waitFor(() => {
-      expect(mockPush).toHaveBeenCalledWith("./test1");
+      expect(router.push).toHaveBeenCalledWith("./test1");
     });
   });
 
@@ -81,7 +54,7 @@ describe("<MenuScreen />", () => {
     fireEvent.press(screen.getByTestId("leaderboard"));
 
     await waitFor(() => {
-      expect(mockPush).toHaveBeenCalledWith("./results");
+      expect(router.push).toHaveBeenCalledWith("./results");
     });
   });
 
@@ -95,7 +68,7 @@ describe("<MenuScreen />", () => {
     fireEvent.press(screen.getByTestId("info"));
 
     await waitFor(() => {
-      expect(mockImpactAsync).toHaveBeenCalledWith("Light");
+      expect(impactAsync).toHaveBeenCalledWith("Light");
     });
   });
 

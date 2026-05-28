@@ -66,13 +66,11 @@ export default function HomeScreen() {
       await debug("signinEmailPassword", "success: " + user.email);
 
       setloginout("login: " + user.email);
-
+      router.push("/menu");
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
 
       const coords = await getLocation();
       uploadLocation(user, coords);
-
-      router.push("/menu");
     } catch (error: any) {
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
       setloginout("login unsuccessful");
@@ -180,8 +178,9 @@ export default function HomeScreen() {
               </Text>
             </View>
 
-            <View testID="index" style={styles.colContainer}>
+            <View style={styles.colContainer}>
               <TextInput
+                testID="email"
                 style={styles.sUser}
                 placeholder="Email"
                 autoCapitalize="none"
@@ -191,6 +190,7 @@ export default function HomeScreen() {
               />
 
               <TextInput
+                testID="password"
                 style={styles.sUser}
                 placeholder="Password"
                 secureTextEntry={true}
@@ -200,11 +200,19 @@ export default function HomeScreen() {
             </View>
 
             <View style={styles.colContainer}>
-              <TouchableOpacity style={styles.button} onPress={loginA}>
+              <TouchableOpacity
+                testID="loginButton"
+                style={styles.button}
+                onPress={loginA}
+              >
                 <Text style={styles.buttonText}>Login</Text>
               </TouchableOpacity>
 
-              <TouchableOpacity style={styles.button} onPress={createA}>
+              <TouchableOpacity
+                testID="createButton"
+                style={styles.button}
+                onPress={createA}
+              >
                 <Text style={styles.buttonText}>Create</Text>
               </TouchableOpacity>
 

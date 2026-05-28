@@ -10,45 +10,7 @@ import {
 import React from "react";
 
 import ResultsScreen from "@/app/(tabs)/results";
-
-// ---------------- MOCKS ----------------
-
-const mockPush = jest.fn();
-
-jest.mock("expo-router", () => ({
-  router: {
-    push: (...args: any[]) => mockPush(...args),
-  },
-}));
-
-jest.mock("@/firebase", () => ({
-  auth: {
-    currentUser: {
-      uid: "123",
-    },
-  },
-
-  getLeaderboardDocs: jest.fn(
-    (testName: string, setState: (data: any[]) => void, fastest: boolean) => {
-      const mockData = [
-        {
-          id: `${testName}-1`,
-          userId: "123",
-          email: "current@test.com",
-          score: fastest ? 120 : 25,
-        },
-        {
-          id: `${testName}-2`,
-          userId: "456",
-          email: "other@test.com",
-          score: fastest ? 180 : 18,
-        },
-      ];
-
-      setState(mockData);
-    },
-  ),
-}));
+import { router } from "expo-router";
 
 // ---------------- TESTS ----------------
 
@@ -84,7 +46,7 @@ describe("<ResultsScreen />", () => {
 
     fireEvent.press(button);
 
-    expect(mockPush).toHaveBeenCalledWith("/menu");
+    expect(router.push).toHaveBeenCalledWith("/menu");
   });
 
   test("navigates to change user", () => {
@@ -94,7 +56,7 @@ describe("<ResultsScreen />", () => {
 
     fireEvent.press(button);
 
-    expect(mockPush).toHaveBeenCalledWith("/(tabs)");
+    expect(router.push).toHaveBeenCalledWith("/(tabs)");
   });
 
   test("matches snapshot", () => {

@@ -11,32 +11,8 @@ import {
 } from "@testing-library/react-native";
 
 import DirectoryScreen from "@/app/(tabs)/directory";
-
-/* ------------------------------------------------ */
-/* ROUTER MOCK                                      */
-/* ------------------------------------------------ */
-
-const mockPush = jest.fn();
-
-jest.mock("expo-router", () => ({
-  router: {
-    push: (...args: any[]) => mockPush(...args),
-  },
-}));
-
-/* ------------------------------------------------ */
-/* HAPTICS MOCK                                     */
-/* ------------------------------------------------ */
-
-const mockImpactAsync = jest.fn();
-
-jest.mock("expo-haptics", () => ({
-  impactAsync: (...args: any[]) => mockImpactAsync(...args),
-
-  ImpactFeedbackStyle: {
-    Light: "Light",
-  },
-}));
+import { impactAsync } from "expo-haptics";
+import { router } from "expo-router";
 
 describe("<DirectoryScreen />", () => {
   beforeEach(() => {
@@ -52,7 +28,7 @@ describe("<DirectoryScreen />", () => {
     fireEvent.press(screen.getByTestId("test1"));
 
     await waitFor(() => {
-      expect(mockPush).toHaveBeenCalledWith("/test1");
+      expect(router.push).toHaveBeenCalledWith("/test1");
     });
   });
 
@@ -64,7 +40,7 @@ describe("<DirectoryScreen />", () => {
     fireEvent.press(screen.getByTestId("test1"));
 
     await waitFor(() => {
-      expect(mockImpactAsync).toHaveBeenCalledWith("Light");
+      expect(impactAsync).toHaveBeenCalledWith("Light");
     });
   });
 

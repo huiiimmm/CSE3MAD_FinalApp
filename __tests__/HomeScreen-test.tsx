@@ -12,57 +12,13 @@ import {
 
 import HomeScreen from "@/app/(tabs)/index";
 
-/* ---------------- SAFE AREA MOCK ---------------- */
-
-jest.mock(
-  "react-native-safe-area-context",
-  () => require("react-native-safe-area-context/jest/mock").default,
-);
-
-/* ---------------- ROUTER MOCK ---------------- */
-
-jest.mock("expo-router", () => ({
-  router: {
-    push: jest.fn(),
-  },
-}));
-
+import { createAccount, login, logout, removeUser } from "@/firebase";
 import { router } from "expo-router";
-
-const mockPush = jest.mocked(router.push);
-
-/* ---------------- FIREBASE WRAPPER MOCK ---------------- */
-
-const mockLogin = jest.fn();
-const mockLogout = jest.fn();
-const mockCreateAccount = jest.fn();
-const mockRemoveUser = jest.fn();
-const mockAddDebugDoc = jest.fn();
-
-jest.mock("@/firebase", () => ({
-  auth: {
-    currentUser: {
-      uid: "123",
-      email: "test@test.com",
-    },
-  },
-
-  db: {},
-
-  login: (...args: any[]) => mockLogin(...args),
-
-  logout: (...args: any[]) => mockLogout(...args),
-
-  createAccount: (...args: any[]) => mockCreateAccount(...args),
-
-  removeUser: (...args: any[]) => mockRemoveUser(...args),
-
-  addDebugDoc: (...args: any[]) => mockAddDebugDoc(...args),
-}));
 
 describe("<HomeScreen />", () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    render(<HomeScreen />);
   });
 
   /* ------------------------------------------------ */
@@ -70,8 +26,6 @@ describe("<HomeScreen />", () => {
   /* ------------------------------------------------ */
 
   test("updates email and password inputs", () => {
-    render(<HomeScreen />);
-
     const emailInput = screen.getByPlaceholderText("Email");
 
     const passwordInput = screen.getByPlaceholderText("Password");
@@ -90,29 +44,21 @@ describe("<HomeScreen />", () => {
   /* ------------------------------------------------ */
 
   test("logs user in successfully", async () => {
-    mockLogin.mockResolvedValue({
+    (login as jest.Mock).mockResolvedValue({
       user: {
         email: "tester@mail.com",
       },
     });
 
-    render(<HomeScreen />);
+    fireEvent.changeText(screen.getByTestId("email"), "tester@mail.com");
 
-    fireEvent.changeText(
-      screen.getByPlaceholderText("Email"),
-      "tester@mail.com",
-    );
+    fireEvent.changeText(screen.getByTestId("password"), "passpass");
 
-    fireEvent.changeText(screen.getByPlaceholderText("Password"), "passpass");
-
-    fireEvent.press(screen.getByText("Login"));
+    fireEvent.press(screen.getByTestId("loginButton"));
 
     await waitFor(() => {
-      expect(mockLogin).toHaveBeenCalledWith("tester@mail.com", "passpass");
-    });
-
-    await waitFor(() => {
-      expect(mockPush).toHaveBeenCalledWith("/menu");
+      expect(login).toHaveBeenCalledWith("tester@mail.com", "passpass");
+      expect(router.push).toHaveBeenCalledWith("/menu");
     });
   });
 
@@ -121,25 +67,20 @@ describe("<HomeScreen />", () => {
   /* ------------------------------------------------ */
 
   test("creates account successfully", async () => {
-    mockCreateAccount.mockResolvedValue({
+    (createAccount as jest.Mock).mockResolvedValue({
       user: {
         email: "new@test.com",
       },
     });
 
-    render(<HomeScreen />);
+    fireEvent.changeText(screen.getByTestId("email"), "new@test.com");
 
-    fireEvent.changeText(screen.getByPlaceholderText("Email"), "new@test.com");
+    fireEvent.changeText(screen.getByTestId("password"), "password123");
 
-    fireEvent.changeText(
-      screen.getByPlaceholderText("Password"),
-      "password123",
-    );
-
-    fireEvent.press(screen.getByText("Create"));
+    fireEvent.press(screen.getByTestId("createButton"));
 
     await waitFor(() => {
-      expect(mockCreateAccount).toHaveBeenCalled();
+      expect(createAccount).toHaveBeenCalled();
     });
   });
 
@@ -148,14 +89,12 @@ describe("<HomeScreen />", () => {
   /* ------------------------------------------------ */
 
   test("logs user out successfully", async () => {
-    mockLogout.mockResolvedValue(undefined);
-
-    render(<HomeScreen />);
+    (logout as jest.Mock).mockResolvedValue(undefined);
 
     fireEvent.press(screen.getByText("Logout"));
 
     await waitFor(() => {
-      expect(mockLogout).toHaveBeenCalled();
+      expect(logout).toHaveBeenCalled();
     });
   });
 
@@ -164,14 +103,12 @@ describe("<HomeScreen />", () => {
   /* ------------------------------------------------ */
 
   test("deletes user successfully", async () => {
-    mockRemoveUser.mockResolvedValue(undefined);
-
-    render(<HomeScreen />);
+    (removeUser as jest.Mock).mockResolvedValue(undefined);
 
     fireEvent.press(screen.getByText("Delete"));
 
     await waitFor(() => {
-      expect(mockRemoveUser).toHaveBeenCalled();
+      expect(removeUser).toHaveBeenCalled();
     });
   });
 

@@ -10,45 +10,8 @@ import {
 import React from "react";
 
 import Test3 from "@/app/(tabs)/test3";
-
-// ---------------- MOCKS ----------------
-
-jest.useFakeTimers();
-
-const mockPush = jest.fn();
-
-jest.mock("expo-router", () => ({
-  router: {
-    push: (...args: any[]) => mockPush(...args),
-  },
-}));
-
-jest.mock("expo-haptics", () => ({
-  impactAsync: jest.fn(),
-  notificationAsync: jest.fn(),
-
-  ImpactFeedbackStyle: {
-    Light: "Light",
-    Medium: "Medium",
-  },
-
-  NotificationFeedbackType: {
-    Error: "Error",
-  },
-}));
-
-const mockSaveScore = jest.fn();
-
-jest.mock("@/firebase", () => ({
-  auth: {
-    currentUser: {
-      uid: "123",
-      email: "test@test.com",
-    },
-  },
-
-  saveScore: (...args: any[]) => mockSaveScore(...args),
-}));
+import { saveScore } from "@/firebase";
+import { router } from "expo-router";
 
 // ---------------- TESTS ----------------
 
@@ -113,7 +76,7 @@ describe("<Test3 />", () => {
     const nextTestButton = await screen.findByTestId("nextTest");
     fireEvent.press(nextTestButton);
 
-    expect(mockPush).toHaveBeenCalledWith("/test4");
+    expect(router.push).toHaveBeenCalledWith("/test4");
   });
 
   test("Uploads score correctly", async () => {
@@ -125,16 +88,16 @@ describe("<Test3 />", () => {
     expect(nextTestButton).toBeTruthy;
 
     await waitFor(() => {
-      expect(mockSaveScore).toHaveBeenCalled();
+      expect(saveScore).toHaveBeenCalled();
     });
-    expect(mockSaveScore).toHaveBeenCalledWith(
+    expect(saveScore).toHaveBeenCalledWith(
       expect.objectContaining({
-        uid: "123",
+        uid: "test",
         email: "test@test.com",
       }),
       expect.objectContaining({
         testType: "test3",
-        userId: "123",
+        userId: "test",
         email: "test@test.com",
         score: expect.any(Number),
         timestamp: expect.any(Number),

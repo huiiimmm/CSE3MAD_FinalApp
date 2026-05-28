@@ -11,43 +11,9 @@ import {
 import React from "react";
 
 import Test1 from "@/app/(tabs)/test1";
-
-// ---------------- MOCKS ----------------
-
-jest.useFakeTimers();
-
-jest.spyOn(Math, "random").mockReturnValue(0);
-
-const mockPush = jest.fn();
-
-jest.mock("expo-router", () => ({
-  router: {
-    push: (...args: any[]) => mockPush(...args),
-  },
-}));
-
-const mockImpactAsync = jest.fn();
-
-jest.mock("expo-haptics", () => ({
-  impactAsync: (...args: any[]) => mockImpactAsync(...args),
-
-  ImpactFeedbackStyle: {
-    Medium: "Medium",
-  },
-}));
-
-const mockSaveScore = jest.fn();
-
-jest.mock("@/firebase", () => ({
-  auth: {
-    currentUser: {
-      uid: "123",
-      email: "test@test.com",
-    },
-  },
-
-  saveScore: (...args: any[]) => mockSaveScore(...args),
-}));
+import { saveScore } from "@/firebase";
+import { impactAsync } from "expo-haptics";
+import { router } from "expo-router";
 
 // ---------------- TESTS ----------------
 
@@ -59,7 +25,7 @@ describe("<Test1 />", () => {
   });
 
   test("uploads score after successful reaction", async () => {
-    (mockSaveScore as jest.Mock).mockResolvedValue(undefined);
+    (saveScore as jest.Mock).mockResolvedValue(undefined);
 
     act(() => {
       fireEvent.press(screen.getByTestId("startButton"));
@@ -74,16 +40,16 @@ describe("<Test1 />", () => {
     });
 
     await waitFor(() => {
-      expect(mockSaveScore).toHaveBeenCalled();
+      expect(saveScore).toHaveBeenCalled();
     });
-    expect(mockSaveScore).toHaveBeenCalledWith(
+    expect(saveScore).toHaveBeenCalledWith(
       expect.objectContaining({
-        uid: "123",
+        uid: "test",
         email: "test@test.com",
       }),
       expect.objectContaining({
         testType: "test1",
-        userId: "123",
+        userId: "test",
         email: "test@test.com",
         score: expect.any(Number),
         timestamp: expect.any(Number),
@@ -92,7 +58,7 @@ describe("<Test1 />", () => {
   });
 
   test("navigates to test2", async () => {
-    (mockSaveScore as jest.Mock).mockResolvedValue(undefined);
+    (saveScore as jest.Mock).mockResolvedValue(undefined);
 
     act(() => {
       fireEvent.press(screen.getByTestId("startButton"));
@@ -109,12 +75,12 @@ describe("<Test1 />", () => {
     fireEvent.press(nextTestButton);
 
     await waitFor(() => {
-      expect(mockPush).toHaveBeenCalledWith("/test2");
+      expect(router.push).toHaveBeenCalledWith("/test2");
     });
   });
 
   test("haptics on reaction", async () => {
-    (mockSaveScore as jest.Mock).mockResolvedValue(undefined);
+    (saveScore as jest.Mock).mockResolvedValue(undefined);
 
     act(() => {
       fireEvent.press(screen.getByTestId("startButton"));
@@ -128,7 +94,7 @@ describe("<Test1 />", () => {
       fireEvent.press(reactionScreen);
     });
     await waitFor(() => {
-      expect(mockImpactAsync).toHaveBeenCalledWith("Medium");
+      expect(impactAsync).toHaveBeenCalledWith("Medium");
     });
   });
 

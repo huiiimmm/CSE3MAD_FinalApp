@@ -11,36 +11,13 @@ import {
 } from "@testing-library/react-native";
 
 import InfoScreen from "@/app/(tabs)/info";
-
-/* ------------------------------------------------ */
-/* ROUTER MOCK                                      */
-/* ------------------------------------------------ */
-
-const mockPush = jest.fn();
-
-jest.mock("expo-router", () => ({
-  router: {
-    push: (...args: any[]) => mockPush(...args),
-  },
-}));
-
-/* ------------------------------------------------ */
-/* HAPTICS MOCK                                     */
-/* ------------------------------------------------ */
-
-const mockImpactAsync = jest.fn();
-
-jest.mock("expo-haptics", () => ({
-  impactAsync: (...args: any[]) => mockImpactAsync(...args),
-
-  ImpactFeedbackStyle: {
-    Light: "Light",
-  },
-}));
+import { impactAsync } from "expo-haptics";
+import { router } from "expo-router";
 
 describe("<InfoScreen />", () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    render(<InfoScreen />);
   });
 
   /* ------------------------------------------------ */
@@ -48,12 +25,10 @@ describe("<InfoScreen />", () => {
   /* ------------------------------------------------ */
 
   test("navigates to test1 screen when Start Test is pressed", async () => {
-    render(<InfoScreen />);
-
     fireEvent.press(screen.getByTestId("startTest"));
 
     await waitFor(() => {
-      expect(mockPush).toHaveBeenCalledWith("/test1");
+      expect(router.push).toHaveBeenCalledWith("/test1");
     });
   });
 
@@ -62,12 +37,10 @@ describe("<InfoScreen />", () => {
   /* ------------------------------------------------ */
 
   test("triggers haptic feedback when Start Test is pressed", async () => {
-    render(<InfoScreen />);
-
     fireEvent.press(screen.getByTestId("startTest"));
 
     await waitFor(() => {
-      expect(mockImpactAsync).toHaveBeenCalledWith("Light");
+      expect(impactAsync).toHaveBeenCalledWith("Light");
     });
   });
 

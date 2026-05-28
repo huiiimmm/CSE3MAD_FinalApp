@@ -2,35 +2,6 @@ import Test4 from "@/app/(tabs)/test4";
 import { act, fireEvent, render, screen } from "@testing-library/react-native";
 import React from "react";
 
-// ---------- MOCKS ----------
-
-jest.useFakeTimers();
-
-jest.mock("expo-router", () => ({
-  router: {
-    push: jest.fn(),
-  },
-}));
-
-jest.mock("expo-haptics", () => ({
-  impactAsync: jest.fn(),
-  ImpactFeedbackStyle: {
-    Light: "light",
-    Medium: "medium",
-    Heavy: "heavy",
-  },
-}));
-
-jest.mock("@/firebase", () => ({
-  auth: {
-    currentUser: {
-      uid: "123",
-      email: "test@test.com",
-    },
-  },
-  saveScore: jest.fn(),
-}));
-
 // ---------- TESTS ----------
 
 describe("Test4 Screen", () => {

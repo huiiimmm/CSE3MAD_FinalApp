@@ -67,10 +67,7 @@ exports[`<ResultsScreen /> matches snapshot 1`] = `
               "paddingVertical": 10,
               "width": "100%",
             },
-            {
-              "backgroundColor": "orange",
-              "borderRadius": 10,
-            },
+            false,
           ]
         }
       >
@@ -202,10 +199,7 @@ exports[`<ResultsScreen /> matches snapshot 1`] = `
               "paddingVertical": 10,
               "width": "100%",
             },
-            {
-              "backgroundColor": "orange",
-              "borderRadius": 10,
-            },
+            false,
           ]
         }
       >
@@ -337,10 +331,7 @@ exports[`<ResultsScreen /> matches snapshot 1`] = `
               "paddingVertical": 10,
               "width": "100%",
             },
-            {
-              "backgroundColor": "orange",
-              "borderRadius": 10,
-            },
+            false,
           ]
         }
       >
@@ -472,10 +463,7 @@ exports[`<ResultsScreen /> matches snapshot 1`] = `
               "paddingVertical": 10,
               "width": "100%",
             },
-            {
-              "backgroundColor": "orange",
-              "borderRadius": 10,
-            },
+            false,
           ]
         }
       >
@@ -672,6 +660,57 @@ exports[`<ResultsScreen /> matches snapshot 1`] = `
         }
       >
         Change User
+      </Text>
+    </View>
+    <View
+      accessibilityState={
+        {
+          "busy": undefined,
+          "checked": undefined,
+          "disabled": undefined,
+          "expanded": undefined,
+          "selected": undefined,
+        }
+      }
+      accessibilityValue={
+        {
+          "max": undefined,
+          "min": undefined,
+          "now": undefined,
+          "text": undefined,
+        }
+      }
+      accessible={true}
+      collapsable={false}
+      focusable={true}
+      onClick={[Function]}
+      onResponderGrant={[Function]}
+      onResponderMove={[Function]}
+      onResponderRelease={[Function]}
+      onResponderTerminate={[Function]}
+      onResponderTerminationRequest={[Function]}
+      onStartShouldSetResponder={[Function]}
+      style={
+        {
+          "backgroundColor": "#e28e4a",
+          "borderRadius": 10,
+          "marginTop": 20,
+          "opacity": 1,
+          "paddingHorizontal": 25,
+          "paddingVertical": 15,
+        }
+      }
+    >
+      <Text
+        style={
+          {
+            "color": "#111111",
+            "fontSize": 18,
+            "textAlign": "center",
+          }
+        }
+      >
+        My Results
       </Text>
     </View>
   </View>
