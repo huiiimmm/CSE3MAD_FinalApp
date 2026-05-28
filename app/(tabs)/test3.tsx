@@ -10,7 +10,9 @@ import {
   Animated,
   Pressable,
   Text,
-  TouchableOpacity, useColorScheme, View
+  TouchableOpacity,
+  useColorScheme,
+  View,
 } from "react-native";
 
 const scheme = useColorScheme();
@@ -81,9 +83,6 @@ export default function Test3() {
     if (screenWidth === 0 || screenHeight === 0) return;
 
     const interval = setInterval(() => {
-      posX.current += velX.current;
-      posY.current += velY.current;
-
       // Bounce X
       if (posX.current < 0) {
         posX.current = 0;
@@ -109,6 +108,9 @@ export default function Test3() {
         velY.current *= -1;
         velX.current = randomVelocity();
       }
+
+      posX.current += velX.current;
+      posY.current += velY.current;
 
       xAnim.setValue(posX.current);
       yAnim.setValue(posY.current);

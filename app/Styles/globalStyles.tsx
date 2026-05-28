@@ -51,6 +51,7 @@ export const globalStyles = (theme: any) =>
     rowContainer: {
       flexDirection: "row",
       alignItems: "center",
+      marginTop: 20,
       gap: 20,
     },
 
@@ -58,17 +59,25 @@ export const globalStyles = (theme: any) =>
       flexDirection: "column",
       alignItems: "center",
       gap: 20,
+      marginTop: 20,
       color: theme.background,
     },
     header: {
       flex: 1,
       justifyContent: "center",
       padding: 40,
+      marginTop: 30,
     },
     ball: {
       width: 50,
       height: 50,
       borderRadius: 25,
       backgroundColor: "cyan",
+    },
+    mapContainer: {
+      flex: 1,
+    },
+    map: {
+      flex: 1,
     },
   });

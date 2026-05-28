@@ -100,3 +100,12 @@ export const uploadLocation = (user: any, location: any) => {
     updatedAt: new Date(),
   });
 };
+
+export const getAllLocations = async () => {
+  const querySnapshot = await getDocs(collection(db, "locations"));
+
+  return querySnapshot.docs.map((doc) => ({
+    id: doc.id,
+    ...doc.data(),
+  }));
+};
