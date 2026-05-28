@@ -10,13 +10,11 @@ import {
   Pressable,
   StyleSheet,
   Text,
-  TouchableOpacity, useColorScheme, View
+  TouchableOpacity,
+  useColorScheme,
+  View,
 } from "react-native";
 import { auth, db } from "./firebase";
-
-const scheme = useColorScheme();
-const theme = scheme === "dark" ? darkTheme : lightTheme;
-const styles = globalStyles(theme);
 
 export default function Test2() {
   const [readyText, setReadyText] = useState(true);
@@ -27,6 +25,9 @@ export default function Test2() {
   const [time, setTime] = useState(0);
   const [reactionTime, setReactionTime] = useState(0);
   const user = auth.currentUser;
+  const scheme = useColorScheme();
+  const theme = scheme === "dark" ? darkTheme : lightTheme;
+  const styles = globalStyles(theme);
 
   const [earlyCheck, setEarlyCheck] = useState(false);
   const [restartTest, setRestartTest] = useState(false);

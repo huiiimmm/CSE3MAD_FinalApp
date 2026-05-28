@@ -15,11 +15,10 @@ import {
   View,
 } from "react-native";
 
-const scheme = useColorScheme();
-const theme = scheme === "dark" ? darkTheme : lightTheme;
-const styles = globalStyles(theme);
-
 export default function Test3() {
+  const scheme = useColorScheme();
+  const theme = scheme === "dark" ? darkTheme : lightTheme;
+  const styles = globalStyles(theme);
   const size = 50;
   const MIN_SPEED = 2;
   const user = auth.currentUser;

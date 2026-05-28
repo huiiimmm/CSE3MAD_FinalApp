@@ -13,16 +13,15 @@ import {
   View,
 } from "react-native";
 
-const scheme = useColorScheme();
-const theme = scheme === "dark" ? darkTheme : lightTheme;
-const styles = globalStyles(theme);
-
 export default function ResultsScreen() {
   const [test1Scores, setTest1Scores] = useState<any[]>([]);
   const [test2Scores, setTest2Scores] = useState<any[]>([]);
   const [test3Scores, setTest3Scores] = useState<any[]>([]);
   const [test4Scores, setTest4Scores] = useState<any[]>([]);
   const currentUser = auth.currentUser;
+  const scheme = useColorScheme();
+  const theme = scheme === "dark" ? darkTheme : lightTheme;
+  const styles = globalStyles(theme);
 
   useEffect(() => {
     try {

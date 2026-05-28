@@ -13,11 +13,10 @@ import {
   View,
 } from "react-native";
 
-const scheme = useColorScheme();
-const theme = scheme === "dark" ? darkTheme : lightTheme;
-const styles = globalStyles(theme);
-
 export default function MenuScreen() {
+  const scheme = useColorScheme();
+  const theme = scheme === "dark" ? darkTheme : lightTheme;
+  const styles = globalStyles(theme);
   return (
     <ScrollView>
       <View testID="menu" style={styles.container}>

@@ -3,12 +3,6 @@ import * as Haptics from "expo-haptics";
 
 import { darkTheme } from "@/app/Styles/Themes/dark";
 import { lightTheme } from "@/app/Styles/Themes/light";
-import { useColorScheme } from "react-native";
-
-const scheme = useColorScheme();
-const theme = scheme === "dark" ? darkTheme : lightTheme;
-const styles = globalStyles(theme);
-
 import { router } from "expo-router";
 import { useRef, useState } from "react";
 import {
@@ -16,8 +10,7 @@ import {
   ScrollView,
   Text,
   TextInput,
-  TouchableOpacity,
-  View,
+  TouchableOpacity, useColorScheme, View
 } from "react-native";
 
 import { SafeAreaProvider } from "react-native-safe-area-context";
@@ -40,6 +33,9 @@ export default function HomeScreen() {
   const [pword, setPword] = useState("");
   const [email, setEmail] = useState("");
   const debugCounter = useRef(0);
+  const scheme = useColorScheme();
+  const theme = scheme === "dark" ? darkTheme : lightTheme;
+  const styles = globalStyles(theme);
 
   async function debug(tag: string, str: string) {
     const id = ++debugCounter.current;

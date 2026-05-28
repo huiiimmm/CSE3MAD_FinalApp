@@ -9,14 +9,14 @@ import { router } from "expo-router";
 import React, { useEffect, useRef, useState } from "react";
 import { Text, TouchableOpacity, useColorScheme, View } from "react-native";
 
-const scheme = useColorScheme();
-const theme = scheme === "dark" ? darkTheme : lightTheme;
-const styles = globalStyles(theme);
 export default function Test4() {
   const [time, setTime] = useState(0);
   const [reactionTime, setReactionTime] = useState(0);
   const [readyText, setReadyText] = useState(true);
   const [nextTestButton, setNextTestButton] = useState(false);
+  const scheme = useColorScheme();
+  const theme = scheme === "dark" ? darkTheme : lightTheme;
+  const styles = globalStyles(theme);
 
   const user = auth.currentUser;
 

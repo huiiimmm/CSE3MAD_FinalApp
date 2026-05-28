@@ -9,10 +9,10 @@ import { darkTheme } from "@/app/Styles/Themes/dark";
 import { lightTheme } from "@/app/Styles/Themes/light";
 import { useColorScheme } from "react-native";
 
-const scheme = useColorScheme();
-const theme = scheme === "dark" ? darkTheme : lightTheme;
-const styles = globalStyles(theme);
 export default function InfoScreen() {
+  const scheme = useColorScheme();
+  const theme = scheme === "dark" ? darkTheme : lightTheme;
+  const styles = globalStyles(theme);
   return (
     <View testID="info" style={styles.container}>
       <Text style={styles.title}>Info Guide</Text>
