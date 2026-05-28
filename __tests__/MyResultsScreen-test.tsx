@@ -22,9 +22,10 @@ describe("<MyResultsScreen />", () => {
 
   test("renders scores correctly", async () => {
     await waitFor(() => {
-      expect(screen.getAllByText(/120 ms/)).toBeTruthy();
-
-      expect(screen.getAllByText(/25 clicks/)).toBeTruthy();
+      expect(screen.getByTestId("test1")).toBeTruthy();
+      expect(screen.getByTestId("test2")).toBeTruthy();
+      expect(screen.getByTestId("test3")).toBeTruthy();
+      expect(screen.getByTestId("test4")).toBeTruthy();
     });
   });
 

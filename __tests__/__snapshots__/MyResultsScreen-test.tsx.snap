@@ -88,6 +88,7 @@ exports[`<MyResultsScreen /> matches snapshot 1`] = `
               },
             ]
           }
+          testID="test1"
         >
           ms
         </Text>
@@ -151,6 +152,7 @@ exports[`<MyResultsScreen /> matches snapshot 1`] = `
               },
             ]
           }
+          testID="test2"
         >
           ms
         </Text>
@@ -214,6 +216,7 @@ exports[`<MyResultsScreen /> matches snapshot 1`] = `
               },
             ]
           }
+          testID="test3"
         >
            Total Clicks
         </Text>
@@ -277,6 +280,7 @@ exports[`<MyResultsScreen /> matches snapshot 1`] = `
               },
             ]
           }
+          testID="test4"
         >
           ms
         </Text>

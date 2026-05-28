@@ -55,7 +55,10 @@ export default function MyResultsScreen() {
       <View style={styles.colContainer}>
         <Text style={styles.header}>Test 1 - Dominant Hand</Text>
         <View style={[styles.rowContainer, styles.highlightRow]}>
-          <Text style={[styles.text, { textAlign: "center", width: "100%" }]}>
+          <Text
+            testID="test1"
+            style={[styles.text, { textAlign: "center", width: "100%" }]}
+          >
             {test1Scores}ms
           </Text>
         </View>
@@ -64,7 +67,10 @@ export default function MyResultsScreen() {
       <View style={styles.colContainer}>
         <Text style={styles.header}>Test 2 - Non-Dominant Hand</Text>
         <View style={[styles.rowContainer, styles.highlightRow]}>
-          <Text style={[styles.text, { textAlign: "center", width: "100%" }]}>
+          <Text
+            testID="test2"
+            style={[styles.text, { textAlign: "center", width: "100%" }]}
+          >
             {test2Scores}ms
           </Text>
         </View>
@@ -73,7 +79,10 @@ export default function MyResultsScreen() {
       <View style={styles.colContainer}>
         <Text style={styles.header}>Test 3 - Tracking</Text>
         <View style={[styles.rowContainer, styles.highlightRow]}>
-          <Text style={[styles.text, { textAlign: "center", width: "100%" }]}>
+          <Text
+            testID="test3"
+            style={[styles.text, { textAlign: "center", width: "100%" }]}
+          >
             {test3Scores} Total Clicks
           </Text>
         </View>
@@ -82,7 +91,10 @@ export default function MyResultsScreen() {
       <View style={styles.colContainer}>
         <Text style={styles.header}>Test 4 - Audio Reaction</Text>
         <View style={[styles.rowContainer, styles.highlightRow]}>
-          <Text style={[styles.text, { textAlign: "center", width: "100%" }]}>
+          <Text
+            testID="test4"
+            style={[styles.text, { textAlign: "center", width: "100%" }]}
+          >
             {test4Scores}ms
           </Text>
         </View>
