@@ -10,7 +10,9 @@ import {
   ScrollView,
   Text,
   TextInput,
-  TouchableOpacity, useColorScheme, View
+  TouchableOpacity,
+  useColorScheme,
+  View,
 } from "react-native";
 
 import { SafeAreaProvider } from "react-native-safe-area-context";
@@ -77,9 +79,6 @@ export default function HomeScreen() {
 
   async function createA() {
     try {
-      //crawl bypass
-      router.push("/menu");
-
       const userCredential = await createAccount(email, pword);
 
       const user = userCredential.user;
@@ -103,8 +102,6 @@ export default function HomeScreen() {
   async function logoutA() {
     try {
       if (!auth.currentUser) {
-        //crawl bypass
-        router.push("/menu");
         Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
 
         await debug("DeleteEmailPassword", "No current user");
@@ -112,8 +109,6 @@ export default function HomeScreen() {
         setloginout("no user logged in");
         return;
       }
-      //crawl bypass
-      router.push("/menu");
       await logout();
 
       await debug("signoutEmailPassword", "success: " + email);
@@ -132,8 +127,6 @@ export default function HomeScreen() {
   async function deleteA() {
     try {
       if (!auth.currentUser) {
-        //crawl bypass
-        router.push("/menu");
         Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
 
         await debug("DeleteEmailPassword", "No current user");
@@ -142,8 +135,6 @@ export default function HomeScreen() {
 
         return;
       }
-      //crawl bypass
-      router.push("/menu");
 
       await removeUser(auth.currentUser);
 

@@ -33,7 +33,7 @@ export default function Test4() {
 
   const loadSound = async () => {
     const { sound } = await Audio.Sound.createAsync(
-      require("./audio/beep-07a.mp3"),
+      require("@/features/audio/beep-07a.mp3"),
       { shouldPlay: false, volume: 1.0 },
     );
     soundRef.current = sound;
