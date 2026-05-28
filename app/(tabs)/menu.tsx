@@ -68,7 +68,7 @@ export default function MenuScreen() {
         <TouchableOpacity
           style={styles.button}
           onPress={() => {
-            router.push("./map");
+            router.push("/(tabs)/map");
             Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
           }}
         >
