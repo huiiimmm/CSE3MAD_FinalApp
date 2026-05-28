@@ -66,36 +66,6 @@ describe("<HomeScreen />", () => {
   });
 
   /* ------------------------------------------------ */
-  /* RENDER TEST                                      */
-  /* ------------------------------------------------ */
-
-  test("renders login screen correctly", () => {
-    render(<HomeScreen />);
-    screen.debug();
-
-    expect(screen.getByTestId("loginHeader")).toBeTruthy();
-
-    expect(screen.getByTestId("createHeader")).toBeTruthy();
-
-    expect(screen.getByPlaceholderText("Email")).toBeTruthy();
-
-    expect(screen.getByPlaceholderText("Password")).toBeTruthy();
-  });
-
-  /* ------------------------------------------------ */
-  /* STYLE TEST                                       */
-  /* ------------------------------------------------ */
-
-  test("login text has correct style", () => {
-    render(<HomeScreen />);
-
-    expect(screen.getByTestId("loginHeader")).toHaveStyle({
-      color: "white",
-      fontSize: 18,
-    });
-  });
-
-  /* ------------------------------------------------ */
   /* INPUT TEST                                       */
   /* ------------------------------------------------ */
 

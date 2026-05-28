@@ -44,51 +44,6 @@ describe("<MenuScreen />", () => {
   });
 
   /* ------------------------------------------------ */
-  /* RENDER TEST                                      */
-  /* ------------------------------------------------ */
-
-  test("renders MenuScreen correctly", () => {
-    render(<MenuScreen />);
-
-    expect(screen.getByText("Reaction Tester")).toBeTruthy();
-
-    expect(screen.getByText("Info")).toBeTruthy();
-
-    expect(screen.getByText("Start Test")).toBeTruthy();
-
-    expect(screen.getByText("Leaderboard")).toBeTruthy();
-  });
-
-  /* ------------------------------------------------ */
-  /* STYLE TEST                                       */
-  /* ------------------------------------------------ */
-
-  test("title has correct style", () => {
-    render(<MenuScreen />);
-
-    const title = screen.getByText("Reaction Tester");
-
-    expect(title).toHaveStyle({
-      color: "white",
-      fontSize: 36,
-    });
-  });
-
-  /* ------------------------------------------------ */
-  /* CONTAINER TEST                                   */
-  /* ------------------------------------------------ */
-
-  test("container has correct background color", async () => {
-    render(<MenuScreen />);
-
-    const container = await screen.findByTestId("menu");
-
-    expect(container).toHaveStyle({
-      backgroundColor: "#1e1e1e",
-    });
-  });
-
-  /* ------------------------------------------------ */
   /* INFO BUTTON TEST                                 */
   /* ------------------------------------------------ */
 

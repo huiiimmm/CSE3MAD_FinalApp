@@ -110,3 +110,9 @@ export const getAllLocations = async () => {
     ...doc.data(),
   }));
 };
+
+// export const getUserScores(user: any) => {
+//   return getDocs(collection(db, "scores"), {
+//     uid:
+//   })
+// }

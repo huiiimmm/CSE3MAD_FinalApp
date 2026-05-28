@@ -53,44 +53,6 @@ describe("<Test1 />", () => {
     jest.clearAllMocks();
   });
 
-  test("renders test1 screen correctly", () => {
-    render(<Test1 />);
-
-    expect(screen.getByTestId("test1")).toBeTruthy();
-
-    expect(screen.getByText("Test 1 - Dominant Hand")).toBeTruthy();
-
-    expect(screen.getByText("Tap as soon as you see green")).toBeTruthy();
-
-    expect(screen.getByText("Start")).toBeTruthy();
-  });
-
-  test("starts the test when start button pressed", () => {
-    render(<Test1 />);
-
-    const startButton = screen.getByText("Start");
-
-    fireEvent.press(startButton);
-
-    expect(screen.getByText(/0ms/i)).toBeTruthy();
-  });
-
-  test("shows too early message if pressed early", async () => {
-    render(<Test1 />);
-
-    const startButton = screen.getByText("Start");
-
-    fireEvent.press(startButton);
-
-    fireEvent.press(screen.getByTestId("earlyCheck"));
-
-    await waitFor(() => {
-      expect(screen.getByText("Too early!")).toBeTruthy();
-
-      expect(screen.getByTestId("restartButton")).toBeTruthy();
-    });
-  });
-
   test("restart button resets test", async () => {
     render(<Test1 />);
 

@@ -62,7 +62,8 @@ export default function MapScreen() {
             }}
           >
             <Callout>
-              <Text style={styles.text}>{loc.email}</Text>
+              <Text style={{ color: "black", fontSize: 18 }}>{loc.email}</Text>{" "}
+              {/* want to display users scores as well */}
             </Callout>
           </Marker>
         ))}
