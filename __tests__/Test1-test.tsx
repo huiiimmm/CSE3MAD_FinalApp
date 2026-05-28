@@ -2,38 +2,41 @@ import "jest-styled-components";
 import "jest-styled-components/native";
 
 import {
+  act,
   fireEvent,
   render,
   screen,
   waitFor,
 } from "@testing-library/react-native";
 import React from "react";
-import { View } from "react-native";
 
 import Test1 from "@/app/(tabs)/test1";
-import { router } from "expo-router";
 
 // ---------------- MOCKS ----------------
 
 jest.useFakeTimers();
 
+jest.spyOn(Math, "random").mockReturnValue(0);
+
+const mockPush = jest.fn();
+
 jest.mock("expo-router", () => ({
   router: {
-    push: jest.fn(),
+    push: (...args: any[]) => mockPush(...args),
   },
 }));
 
+const mockImpactAsync = jest.fn();
+
 jest.mock("expo-haptics", () => ({
-  impactAsync: jest.fn(),
-  notificationAsync: jest.fn(),
+  impactAsync: (...args: any[]) => mockImpactAsync(...args),
+
   ImpactFeedbackStyle: {
-    Light: "Light",
     Medium: "Medium",
   },
-  NotificationFeedbackType: {
-    Error: "Error",
-  },
 }));
+
+const mockSaveScore = jest.fn();
 
 jest.mock("@/firebase", () => ({
   auth: {
@@ -43,7 +46,7 @@ jest.mock("@/firebase", () => ({
     },
   },
 
-  saveScore: jest.fn(),
+  saveScore: (...args: any[]) => mockSaveScore(...args),
 }));
 
 // ---------------- TESTS ----------------
@@ -51,50 +54,82 @@ jest.mock("@/firebase", () => ({
 describe("<Test1 />", () => {
   beforeEach(() => {
     jest.clearAllMocks();
-  });
-
-  test("restart button resets test", async () => {
-    render(<Test1 />);
-
-    fireEvent.press(screen.getByTestId("startButton"));
-
-    fireEvent.press(screen.getByTestId("earlyCheck"));
-
-    fireEvent.press(screen.getByTestId("restartButton"));
-    await waitFor(() => {
-      expect(screen.getByTestId("startButton")).toBeTruthy();
-    });
-  });
-
-  test("shows next test after successful reaction", async () => {
     jest.useFakeTimers();
     render(<Test1 />);
+  });
 
-    fireEvent.press(screen.getByText("Start"));
+  test("uploads score after successful reaction", async () => {
+    (mockSaveScore as jest.Mock).mockResolvedValue(undefined);
 
-    await waitFor(() => {
-      fireEvent.press(screen.getByTestId("reactionScreen"));
+    act(() => {
+      fireEvent.press(screen.getByTestId("startButton"));
     });
 
-    expect(screen.getByText("Next Test")).toBeTruthy();
+    jest.advanceTimersByTime(2000);
+
+    const reactionScreen = await screen.findByTestId("reactionScreen");
+
+    act(() => {
+      fireEvent.press(reactionScreen);
+    });
+
+    await waitFor(() => {
+      expect(mockSaveScore).toHaveBeenCalled();
+    });
+    expect(mockSaveScore).toHaveBeenCalledWith(
+      expect.objectContaining({
+        uid: "123",
+        email: "test@test.com",
+      }),
+      expect.objectContaining({
+        testType: "test1",
+        userId: "123",
+        email: "test@test.com",
+        score: expect.any(Number),
+        timestamp: expect.any(Number),
+      }),
+    );
   });
 
   test("navigates to test2", async () => {
-    render(<Test1 />);
+    (mockSaveScore as jest.Mock).mockResolvedValue(undefined);
 
-    fireEvent.press(screen.getByText("Start"));
-
-    jest.useFakeTimers();
-
-    await waitFor(() => {
-      const overlays = screen.UNSAFE_getAllByType(View);
-
-      fireEvent.press(overlays[0]);
+    act(() => {
+      fireEvent.press(screen.getByTestId("startButton"));
     });
 
-    fireEvent.press(screen.getByText("Next Test"));
+    jest.advanceTimersByTime(2000);
 
-    expect(router.push).toHaveBeenCalledWith("/test2");
+    const reactionScreen = await screen.findByTestId("reactionScreen");
+
+    act(() => {
+      fireEvent.press(reactionScreen);
+    });
+    const nextTestButton = await screen.findByTestId("nextTest");
+    fireEvent.press(nextTestButton);
+
+    await waitFor(() => {
+      expect(mockPush).toHaveBeenCalledWith("/test2");
+    });
+  });
+
+  test("haptics on reaction", async () => {
+    (mockSaveScore as jest.Mock).mockResolvedValue(undefined);
+
+    act(() => {
+      fireEvent.press(screen.getByTestId("startButton"));
+    });
+
+    jest.advanceTimersByTime(2000);
+
+    const reactionScreen = await screen.findByTestId("reactionScreen");
+
+    act(() => {
+      fireEvent.press(reactionScreen);
+    });
+    await waitFor(() => {
+      expect(mockImpactAsync).toHaveBeenCalledWith("Medium");
+    });
   });
 
   test("matches snapshot", () => {

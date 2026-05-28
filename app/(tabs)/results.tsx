@@ -141,6 +141,7 @@ export default function ResultsScreen() {
       </View>
 
       <TouchableOpacity
+        testID="menu"
         style={styles.button}
         onPress={() => router.push("/menu")}
       >
@@ -148,6 +149,7 @@ export default function ResultsScreen() {
       </TouchableOpacity>
 
       <TouchableOpacity
+        testID="changeUser"
         style={styles.button}
         onPress={() => router.push("/(tabs)")}
       >

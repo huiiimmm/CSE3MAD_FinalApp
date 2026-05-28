@@ -168,6 +168,7 @@ export default function Test1() {
       {nextTestButton && (
         <>
           <TouchableOpacity
+            testID="nextTest"
             style={styles.button}
             onPress={() => {
               router.push("/test2");

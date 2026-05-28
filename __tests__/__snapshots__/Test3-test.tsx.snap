@@ -5,11 +5,11 @@ exports[`<Test3 /> matches snapshot 1`] = `
   onLayout={[Function]}
   style={
     {
-      "backgroundColor": "#111",
-      "borderColor": "white",
-      "borderWidth": 2,
-      "color": "#fff",
+      "backgroundColor": "#ffffff",
+      "borderColor": "#cccccc",
+      "borderWidth": 4,
       "flex": 1,
+      "overflow": "hidden",
     }
   }
   testID="test3"
@@ -17,9 +17,21 @@ exports[`<Test3 /> matches snapshot 1`] = `
   <Text
     style={
       {
-        "color": "white",
-        "fontSize": 18,
+        "color": "#111111",
+        "fontSize": 32,
+        "fontWeight": "bold",
         "marginBottom": 20,
+        "textAlign": "center",
+      }
+    }
+  >
+    Test 3 - Tracking and Tracing
+  </Text>
+  <Text
+    style={
+      {
+        "color": "#111111",
+        "fontSize": 18,
         "textAlign": "center",
       }
     }
@@ -29,9 +41,8 @@ exports[`<Test3 /> matches snapshot 1`] = `
   <Text
     style={
       {
-        "color": "white",
+        "color": "#111111",
         "fontSize": 18,
-        "marginBottom": 20,
         "textAlign": "center",
       }
     }
@@ -42,9 +53,8 @@ exports[`<Test3 /> matches snapshot 1`] = `
   <Text
     style={
       {
-        "color": "white",
+        "color": "#111111",
         "fontSize": 18,
-        "marginBottom": 20,
         "textAlign": "center",
       }
     }
@@ -89,58 +99,60 @@ exports[`<Test3 /> matches snapshot 1`] = `
         "flex": 1,
       }
     }
-  />
-  <View
-    accessibilityState={
-      {
-        "busy": undefined,
-        "checked": undefined,
-        "disabled": undefined,
-        "expanded": undefined,
-        "selected": undefined,
-      }
-    }
-    accessibilityValue={
-      {
-        "max": undefined,
-        "min": undefined,
-        "now": undefined,
-        "text": undefined,
-      }
-    }
-    accessible={true}
-    collapsable={false}
-    focusable={true}
-    onClick={[Function]}
-    onResponderGrant={[Function]}
-    onResponderMove={[Function]}
-    onResponderRelease={[Function]}
-    onResponderTerminate={[Function]}
-    onResponderTerminationRequest={[Function]}
-    onStartShouldSetResponder={[Function]}
-    style={
-      {
-        "backgroundColor": "#4a90e2",
-        "borderRadius": 10,
-        "marginTop": 20,
-        "opacity": 1,
-        "paddingHorizontal": 25,
-        "paddingVertical": 15,
-      }
-    }
+    testID="background"
   >
-    <Text
-      style={
+    <View
+      accessibilityState={
         {
-          "color": "white",
-          "fontSize": 18,
-          "marginBottom": 20,
-          "textAlign": "center",
+          "busy": undefined,
+          "checked": undefined,
+          "disabled": undefined,
+          "expanded": undefined,
+          "selected": undefined,
         }
       }
+      accessibilityValue={
+        {
+          "max": undefined,
+          "min": undefined,
+          "now": undefined,
+          "text": undefined,
+        }
+      }
+      accessible={true}
+      collapsable={false}
+      focusable={true}
+      onClick={[Function]}
+      onResponderGrant={[Function]}
+      onResponderMove={[Function]}
+      onResponderRelease={[Function]}
+      onResponderTerminate={[Function]}
+      onResponderTerminationRequest={[Function]}
+      onStartShouldSetResponder={[Function]}
+      style={
+        {
+          "backgroundColor": "#e28e4a",
+          "borderRadius": 10,
+          "marginTop": 20,
+          "opacity": 1,
+          "paddingHorizontal": 25,
+          "paddingVertical": 15,
+        }
+      }
+      testID="startButton"
     >
-      Start Test
-    </Text>
+      <Text
+        style={
+          {
+            "color": "#111111",
+            "fontSize": 18,
+            "textAlign": "center",
+          }
+        }
+      >
+        Start Test
+      </Text>
+    </View>
   </View>
 </View>
 `;

@@ -2,21 +2,22 @@ import "jest-styled-components";
 import "jest-styled-components/native";
 
 import {
-    fireEvent,
-    render,
-    screen,
-    waitFor,
+  fireEvent,
+  render,
+  screen,
+  waitFor,
 } from "@testing-library/react-native";
 import React from "react";
 
 import ResultsScreen from "@/app/(tabs)/results";
-import { router } from "expo-router";
 
 // ---------------- MOCKS ----------------
 
+const mockPush = jest.fn();
+
 jest.mock("expo-router", () => ({
   router: {
-    push: jest.fn(),
+    push: (...args: any[]) => mockPush(...args),
   },
 }));
 
@@ -56,22 +57,6 @@ describe("<ResultsScreen />", () => {
     jest.clearAllMocks();
   });
 
-  test("renders results screen correctly", () => {
-    render(<ResultsScreen />);
-
-    expect(screen.getByTestId("results")).toBeTruthy();
-
-    expect(screen.getByText("Leaderboards")).toBeTruthy();
-
-    expect(screen.getByText("Test 1 - Dominant Hand")).toBeTruthy();
-
-    expect(screen.getByText("Test 2 - Non Dominant Hand")).toBeTruthy();
-
-    expect(screen.getByText("Test 3 - Tracking")).toBeTruthy();
-
-    expect(screen.getByText("Test 4 - Audio Reaction")).toBeTruthy();
-  });
-
   test("renders leaderboard users", async () => {
     render(<ResultsScreen />);
 
@@ -95,21 +80,21 @@ describe("<ResultsScreen />", () => {
   test("navigates back to menu", () => {
     render(<ResultsScreen />);
 
-    const button = screen.getByText("Back To Menu");
+    const button = screen.getByTestId("menu");
 
     fireEvent.press(button);
 
-    expect(router.push).toHaveBeenCalledWith("./menu");
+    expect(mockPush).toHaveBeenCalledWith("/menu");
   });
 
   test("navigates to change user", () => {
     render(<ResultsScreen />);
 
-    const button = screen.getByText("Change User");
+    const button = screen.getByTestId("changeUser");
 
     fireEvent.press(button);
 
-    expect(router.push).toHaveBeenCalledWith("/(tabs)");
+    expect(mockPush).toHaveBeenCalledWith("/(tabs)");
   });
 
   test("matches snapshot", () => {

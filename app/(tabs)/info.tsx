@@ -40,6 +40,7 @@ export default function InfoScreen() {
       </Text>
 
       <TouchableOpacity
+        testID="startTest"
         style={styles.button}
         onPress={() => {
           router.push("/test1");

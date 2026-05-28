@@ -165,18 +165,19 @@ export default function Test3() {
       {!startTest && (
         <>
           <Text style={styles.title}>Test 3 - Tracking and Tracing</Text>
-          <Text style={styles.buttonText}>
+          <Text style={styles.text}>
             Click the moving ball as many times as you can in 10 seconds without
             missing!
           </Text>
         </>
       )}
-      <Text style={styles.buttonText}>Clicks: {clickCount}</Text>
-      <Text style={styles.buttonText}>
+      <Text style={styles.text}>Clicks: {clickCount}</Text>
+      <Text style={styles.text}>
         Accuracy:{" "}
         {totalClicks ? ((clickCount / totalClicks) * 100).toFixed(1) : 0}%
       </Text>
       <Pressable
+        testID="background"
         style={{ flex: 1 }}
         onPress={() => {
           if (stopTest) return;
@@ -192,6 +193,7 @@ export default function Test3() {
         {!startTest && (
           <TouchableOpacity
             style={styles.button}
+            testID="startButton"
             onPress={() => {
               setStartTest(true);
               startPhysics();
@@ -210,13 +212,14 @@ export default function Test3() {
             }}
           >
             <Pressable
+              style={styles.ball}
+              testID="ball"
               onPress={() => {
                 if (stopTest) return;
                 Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
                 setClickCount((prev) => prev + 1);
                 setTotalClicks((prev) => prev + 1);
               }}
-              style={styles.ball}
             />
           </Animated.View>
         )}
@@ -225,6 +228,7 @@ export default function Test3() {
       {stopTest && (
         <>
           <TouchableOpacity
+            testID="nextTest"
             style={styles.button}
             onPress={() => {
               router.push("/test4");

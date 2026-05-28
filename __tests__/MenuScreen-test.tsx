@@ -20,7 +20,7 @@ const mockPush = jest.fn();
 
 jest.mock("expo-router", () => ({
   router: {
-    push: mockPush,
+    push: (...args: any[]) => mockPush(...args),
   },
 }));
 
@@ -50,7 +50,7 @@ describe("<MenuScreen />", () => {
   test("navigates to info screen", async () => {
     render(<MenuScreen />);
 
-    fireEvent.press(screen.getByText("Info"));
+    fireEvent.press(screen.getByTestId("info"));
 
     await waitFor(() => {
       expect(mockPush).toHaveBeenCalledWith("./info");
@@ -64,7 +64,7 @@ describe("<MenuScreen />", () => {
   test("navigates to test1 screen", async () => {
     render(<MenuScreen />);
 
-    fireEvent.press(screen.getByText("Start Test"));
+    fireEvent.press(screen.getByTestId("startTest"));
 
     await waitFor(() => {
       expect(mockPush).toHaveBeenCalledWith("./test1");
@@ -78,7 +78,7 @@ describe("<MenuScreen />", () => {
   test("navigates to results screen", async () => {
     render(<MenuScreen />);
 
-    fireEvent.press(screen.getByText("Leaderboard"));
+    fireEvent.press(screen.getByTestId("leaderboard"));
 
     await waitFor(() => {
       expect(mockPush).toHaveBeenCalledWith("./results");
@@ -92,7 +92,7 @@ describe("<MenuScreen />", () => {
   test("triggers haptic feedback", async () => {
     render(<MenuScreen />);
 
-    fireEvent.press(screen.getByText("Info"));
+    fireEvent.press(screen.getByTestId("info"));
 
     await waitFor(() => {
       expect(mockImpactAsync).toHaveBeenCalledWith("Light");

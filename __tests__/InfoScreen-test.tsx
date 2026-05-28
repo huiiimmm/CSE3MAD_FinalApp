@@ -20,7 +20,7 @@ const mockPush = jest.fn();
 
 jest.mock("expo-router", () => ({
   router: {
-    push: mockPush,
+    push: (...args: any[]) => mockPush(...args),
   },
 }));
 
@@ -50,7 +50,7 @@ describe("<InfoScreen />", () => {
   test("navigates to test1 screen when Start Test is pressed", async () => {
     render(<InfoScreen />);
 
-    fireEvent.press(screen.getByText("Start Test"));
+    fireEvent.press(screen.getByTestId("startTest"));
 
     await waitFor(() => {
       expect(mockPush).toHaveBeenCalledWith("/test1");
@@ -64,7 +64,7 @@ describe("<InfoScreen />", () => {
   test("triggers haptic feedback when Start Test is pressed", async () => {
     render(<InfoScreen />);
 
-    fireEvent.press(screen.getByText("Start Test"));
+    fireEvent.press(screen.getByTestId("startTest"));
 
     await waitFor(() => {
       expect(mockImpactAsync).toHaveBeenCalledWith("Light");

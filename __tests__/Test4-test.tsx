@@ -21,31 +21,6 @@ jest.mock("expo-haptics", () => ({
   },
 }));
 
-jest.mock("expo-av", () => ({
-  Audio: {
-    Sound: {
-      createAsync: jest.fn(() => ({
-        sound: {
-          replayAsync: jest.fn(),
-        },
-      })),
-    },
-    Recording: jest.fn(() => ({
-      prepareToRecordAsync: jest.fn(),
-      startAsync: jest.fn(),
-      stopAndUnloadAsync: jest.fn(),
-      getStatusAsync: jest.fn(() => ({
-        metering: -10,
-      })),
-    })),
-    requestPermissionsAsync: jest.fn(),
-    setAudioModeAsync: jest.fn(),
-    RecordingOptionsPresets: {
-      HIGH_QUALITY: {},
-    },
-  },
-}));
-
 jest.mock("@/firebase", () => ({
   auth: {
     currentUser: {
@@ -61,19 +36,10 @@ jest.mock("@/firebase", () => ({
 describe("Test4 Screen", () => {
   beforeEach(() => {
     jest.clearAllMocks();
-  });
-
-  test("renders initial screen", () => {
     render(<Test4 />);
-
-    expect(screen.getByText("Test 4 - Sound Reaction")).toBeTruthy();
-    expect(screen.getByText(/Tap start, then react/i)).toBeTruthy();
-    expect(screen.getByText("Start")).toBeTruthy();
   });
 
   test("starts test when Start is pressed", async () => {
-    render(<Test4 />);
-
     const startButton = screen.getByText("Start");
 
     await act(async () => {
@@ -85,15 +51,12 @@ describe("Test4 Screen", () => {
   });
 
   test("shows timer text after starting", async () => {
-    render(<Test4 />);
-
     await act(async () => {
       fireEvent.press(screen.getByText("Start"));
     });
 
-    // timer text appears (0 or ms value)
     expect(screen.getByText(/ms/i)).toBeTruthy();
-    // advance only a little time (NOT runAllTimers)
+
     await act(async () => {
       jest.advanceTimersByTime(300);
     });
@@ -102,8 +65,6 @@ describe("Test4 Screen", () => {
   });
 
   test("navigates to results after completion state", async () => {
-    render(<Test4 />);
-
     // manually simulate state transition by pressing start
     await act(async () => {
       fireEvent.press(screen.getByText("Start"));

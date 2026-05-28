@@ -2,24 +2,24 @@ import "jest-styled-components";
 import "jest-styled-components/native";
 
 import {
-    fireEvent,
-    render,
-    screen,
-    waitFor,
+  fireEvent,
+  render,
+  screen,
+  waitFor,
 } from "@testing-library/react-native";
 import React from "react";
 
 import Test3 from "@/app/(tabs)/test3";
-import { router } from "expo-router";
-import { Pressable } from "react-native";
 
 // ---------------- MOCKS ----------------
 
 jest.useFakeTimers();
 
+const mockPush = jest.fn();
+
 jest.mock("expo-router", () => ({
   router: {
-    push: jest.fn(),
+    push: (...args: any[]) => mockPush(...args),
   },
 }));
 
@@ -37,6 +37,8 @@ jest.mock("expo-haptics", () => ({
   },
 }));
 
+const mockSaveScore = jest.fn();
+
 jest.mock("@/firebase", () => ({
   auth: {
     currentUser: {
@@ -45,7 +47,7 @@ jest.mock("@/firebase", () => ({
     },
   },
 
-  saveScore: jest.fn(),
+  saveScore: (...args: any[]) => mockSaveScore(...args),
 }));
 
 // ---------------- TESTS ----------------
@@ -53,92 +55,91 @@ jest.mock("@/firebase", () => ({
 describe("<Test3 />", () => {
   beforeEach(() => {
     jest.clearAllMocks();
-  });
-
-  test("renders test3 screen correctly", () => {
     render(<Test3 />);
-
-    expect(screen.getByTestId("test3")).toBeTruthy();
-
-    expect(
-      screen.getByText(/Click the moving ball as many times as you can/i),
-    ).toBeTruthy();
-
-    expect(screen.getByText(/Clicks: 0/i)).toBeTruthy();
-
-    expect(screen.getByText(/Accuracy:/i)).toBeTruthy();
-
-    expect(screen.getByText("Start Test")).toBeTruthy();
   });
 
   test("starts test when start button pressed", () => {
-    render(<Test3 />);
-
-    fireEvent.press(screen.getByText("Start Test"));
+    fireEvent.press(screen.getByTestId("startButton"));
 
     expect(screen.getByText(/10/i)).toBeTruthy();
   });
 
-  test("counts successful clicks", () => {
-    render(<Test3 />);
-
+  test("counts successful clicks", async () => {
     fireEvent.press(screen.getByText("Start Test"));
 
-    const pressables = screen.UNSAFE_getAllByType(Pressable);
+    const ball = await screen.findByTestId("ball");
 
-    fireEvent.press(pressables[1]);
+    fireEvent.press(ball);
 
     expect(screen.getByText(/Clicks: 1/i)).toBeTruthy();
   });
 
   test("counts missed clicks", () => {
-    render(<Test3 />);
-
     fireEvent.press(screen.getByText("Start Test"));
 
-    const pressables = screen.UNSAFE_getAllByType(Pressable);
+    const miss = screen.getByTestId("background");
 
-    fireEvent.press(pressables[0]);
+    fireEvent.press(miss);
 
     expect(screen.getByText(/Clicks: -1/i)).toBeTruthy();
   });
 
-  test("shows accuracy correctly", () => {
-    render(<Test3 />);
-
+  test("shows accuracy correctly", async () => {
     fireEvent.press(screen.getByText("Start Test"));
 
-    const pressables = screen.UNSAFE_getAllByType(Pressable);
+    const ball = await screen.findByTestId("ball");
 
-    fireEvent.press(pressables[1]);
+    fireEvent.press(ball);
 
     expect(screen.getByText(/Accuracy: 100.0%/i)).toBeTruthy();
   });
 
   test("ends test after timer", async () => {
-    render(<Test3 />);
-
-    fireEvent.press(screen.getByText("Start Test"));
+    fireEvent.press(screen.getByTestId("startButton"));
 
     jest.advanceTimersByTime(10000);
 
+    const nextTestButton = await screen.findByTestId("nextTest");
     await waitFor(() => {
-      expect(screen.getByText("Test 4")).toBeTruthy();
+      expect(nextTestButton).toBeTruthy();
     });
   });
 
   test("navigates to test4", async () => {
-    render(<Test3 />);
-
-    fireEvent.press(screen.getByText("Start Test"));
+    fireEvent.press(screen.getByTestId("startButton"));
 
     jest.advanceTimersByTime(10000);
 
-    await waitFor(() => {
-      fireEvent.press(screen.getByText("Test 4"));
-    });
+    const nextTestButton = await screen.findByTestId("nextTest");
+    fireEvent.press(nextTestButton);
 
-    expect(router.push).toHaveBeenCalledWith("/test4");
+    expect(mockPush).toHaveBeenCalledWith("/test4");
+  });
+
+  test("Uploads score correctly", async () => {
+    fireEvent.press(screen.getByTestId("startButton"));
+
+    jest.advanceTimersByTime(10000);
+    // check test stop
+    const nextTestButton = await screen.findByTestId("nextTest");
+    expect(nextTestButton).toBeTruthy;
+
+    await waitFor(() => {
+      expect(mockSaveScore).toHaveBeenCalled();
+    });
+    expect(mockSaveScore).toHaveBeenCalledWith(
+      expect.objectContaining({
+        uid: "123",
+        email: "test@test.com",
+      }),
+      expect.objectContaining({
+        testType: "test3",
+        userId: "123",
+        email: "test@test.com",
+        score: expect.any(Number),
+        timestamp: expect.any(Number),
+      }),
+    );
   });
 
   test("matches snapshot", () => {

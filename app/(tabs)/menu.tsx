@@ -24,6 +24,7 @@ export default function MenuScreen() {
         <Text style={styles.title}>Reaction Tester</Text>
 
         <TouchableOpacity
+          testID="info"
           style={styles.button}
           onPress={() => {
             router.push("./info");
@@ -34,6 +35,7 @@ export default function MenuScreen() {
         </TouchableOpacity>
 
         <TouchableOpacity
+          testID="startTest"
           style={styles.button}
           onPress={() => {
             router.push("./test1");
@@ -54,6 +56,7 @@ export default function MenuScreen() {
         </TouchableOpacity>
 
         <TouchableOpacity
+          testID="leaderboard"
           style={styles.button}
           onPress={() => {
             router.push("./results");

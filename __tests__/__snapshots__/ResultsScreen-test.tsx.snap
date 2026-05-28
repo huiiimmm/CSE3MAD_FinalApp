@@ -2,12 +2,16 @@
 
 exports[`<ResultsScreen /> matches snapshot 1`] = `
 <RCTScrollView
+  contentContainerStyle={
+    {
+      "alignItems": "center",
+      "padding": 20,
+    }
+  }
   style={
     {
-      "backgroundColor": "#111",
-      "color": "#fff",
+      "backgroundColor": "#ffffff",
       "flex": 1,
-      "padding": 20,
     }
   }
   testID="results"
@@ -16,10 +20,10 @@ exports[`<ResultsScreen /> matches snapshot 1`] = `
     <Text
       style={
         {
-          "color": "white",
+          "color": "#111111",
           "fontSize": 32,
           "fontWeight": "bold",
-          "marginBottom": 30,
+          "marginBottom": 20,
           "textAlign": "center",
         }
       }
@@ -29,20 +33,21 @@ exports[`<ResultsScreen /> matches snapshot 1`] = `
     <View
       style={
         {
-          "backgroundColor": "#222",
-          "borderRadius": 12,
-          "marginBottom": 24,
-          "padding": 16,
+          "alignItems": "center",
+          "marginTop": 20,
+          "width": "100%",
         }
       }
     >
       <Text
         style={
           {
-            "color": "white",
-            "fontSize": 22,
+            "color": "#111111",
+            "fontSize": 24,
             "fontWeight": "bold",
-            "marginBottom": 12,
+            "marginBottom": 10,
+            "marginTop": 30,
+            "textAlign": "center",
           }
         }
       >
@@ -53,11 +58,14 @@ exports[`<ResultsScreen /> matches snapshot 1`] = `
           [
             {
               "alignItems": "center",
-              "borderBottomColor": "#333",
-              "borderBottomWidth": 1,
+              "borderColor": "#cccccc",
+              "borderWidth": 4,
               "flexDirection": "row",
               "justifyContent": "space-between",
+              "overflow": "hidden",
+              "paddingHorizontal": 20,
               "paddingVertical": 10,
+              "width": "100%",
             },
             {
               "backgroundColor": "orange",
@@ -69,9 +77,9 @@ exports[`<ResultsScreen /> matches snapshot 1`] = `
         <Text
           style={
             {
-              "color": "gold",
+              "color": "#111111",
               "fontSize": 18,
-              "width": 50,
+              "textAlign": "center",
             }
           }
         >
@@ -81,9 +89,9 @@ exports[`<ResultsScreen /> matches snapshot 1`] = `
         <Text
           style={
             {
-              "color": "white",
-              "flex": 1,
+              "color": "#111111",
               "fontSize": 18,
+              "textAlign": "center",
             }
           }
         >
@@ -92,8 +100,9 @@ exports[`<ResultsScreen /> matches snapshot 1`] = `
         <Text
           style={
             {
-              "color": "white",
+              "color": "#111111",
               "fontSize": 18,
+              "textAlign": "center",
             }
           }
         >
@@ -106,11 +115,14 @@ exports[`<ResultsScreen /> matches snapshot 1`] = `
           [
             {
               "alignItems": "center",
-              "borderBottomColor": "#333",
-              "borderBottomWidth": 1,
+              "borderColor": "#cccccc",
+              "borderWidth": 4,
               "flexDirection": "row",
               "justifyContent": "space-between",
+              "overflow": "hidden",
+              "paddingHorizontal": 20,
               "paddingVertical": 10,
+              "width": "100%",
             },
             false,
           ]
@@ -119,9 +131,9 @@ exports[`<ResultsScreen /> matches snapshot 1`] = `
         <Text
           style={
             {
-              "color": "gold",
+              "color": "#111111",
               "fontSize": 18,
-              "width": 50,
+              "textAlign": "center",
             }
           }
         >
@@ -131,9 +143,9 @@ exports[`<ResultsScreen /> matches snapshot 1`] = `
         <Text
           style={
             {
-              "color": "white",
-              "flex": 1,
+              "color": "#111111",
               "fontSize": 18,
+              "textAlign": "center",
             }
           }
         >
@@ -142,8 +154,9 @@ exports[`<ResultsScreen /> matches snapshot 1`] = `
         <Text
           style={
             {
-              "color": "white",
+              "color": "#111111",
               "fontSize": 18,
+              "textAlign": "center",
             }
           }
         >
@@ -155,20 +168,21 @@ exports[`<ResultsScreen /> matches snapshot 1`] = `
     <View
       style={
         {
-          "backgroundColor": "#222",
-          "borderRadius": 12,
-          "marginBottom": 24,
-          "padding": 16,
+          "alignItems": "center",
+          "marginTop": 20,
+          "width": "100%",
         }
       }
     >
       <Text
         style={
           {
-            "color": "white",
-            "fontSize": 22,
+            "color": "#111111",
+            "fontSize": 24,
             "fontWeight": "bold",
-            "marginBottom": 12,
+            "marginBottom": 10,
+            "marginTop": 30,
+            "textAlign": "center",
           }
         }
       >
@@ -179,11 +193,14 @@ exports[`<ResultsScreen /> matches snapshot 1`] = `
           [
             {
               "alignItems": "center",
-              "borderBottomColor": "#333",
-              "borderBottomWidth": 1,
+              "borderColor": "#cccccc",
+              "borderWidth": 4,
               "flexDirection": "row",
               "justifyContent": "space-between",
+              "overflow": "hidden",
+              "paddingHorizontal": 20,
               "paddingVertical": 10,
+              "width": "100%",
             },
             {
               "backgroundColor": "orange",
@@ -195,9 +212,9 @@ exports[`<ResultsScreen /> matches snapshot 1`] = `
         <Text
           style={
             {
-              "color": "gold",
+              "color": "#111111",
               "fontSize": 18,
-              "width": 50,
+              "textAlign": "center",
             }
           }
         >
@@ -207,9 +224,9 @@ exports[`<ResultsScreen /> matches snapshot 1`] = `
         <Text
           style={
             {
-              "color": "white",
-              "flex": 1,
+              "color": "#111111",
               "fontSize": 18,
+              "textAlign": "center",
             }
           }
         >
@@ -218,8 +235,9 @@ exports[`<ResultsScreen /> matches snapshot 1`] = `
         <Text
           style={
             {
-              "color": "white",
+              "color": "#111111",
               "fontSize": 18,
+              "textAlign": "center",
             }
           }
         >
@@ -232,11 +250,14 @@ exports[`<ResultsScreen /> matches snapshot 1`] = `
           [
             {
               "alignItems": "center",
-              "borderBottomColor": "#333",
-              "borderBottomWidth": 1,
+              "borderColor": "#cccccc",
+              "borderWidth": 4,
               "flexDirection": "row",
               "justifyContent": "space-between",
+              "overflow": "hidden",
+              "paddingHorizontal": 20,
               "paddingVertical": 10,
+              "width": "100%",
             },
             false,
           ]
@@ -245,9 +266,9 @@ exports[`<ResultsScreen /> matches snapshot 1`] = `
         <Text
           style={
             {
-              "color": "gold",
+              "color": "#111111",
               "fontSize": 18,
-              "width": 50,
+              "textAlign": "center",
             }
           }
         >
@@ -257,9 +278,9 @@ exports[`<ResultsScreen /> matches snapshot 1`] = `
         <Text
           style={
             {
-              "color": "white",
-              "flex": 1,
+              "color": "#111111",
               "fontSize": 18,
+              "textAlign": "center",
             }
           }
         >
@@ -268,8 +289,9 @@ exports[`<ResultsScreen /> matches snapshot 1`] = `
         <Text
           style={
             {
-              "color": "white",
+              "color": "#111111",
               "fontSize": 18,
+              "textAlign": "center",
             }
           }
         >
@@ -281,20 +303,21 @@ exports[`<ResultsScreen /> matches snapshot 1`] = `
     <View
       style={
         {
-          "backgroundColor": "#222",
-          "borderRadius": 12,
-          "marginBottom": 24,
-          "padding": 16,
+          "alignItems": "center",
+          "marginTop": 20,
+          "width": "100%",
         }
       }
     >
       <Text
         style={
           {
-            "color": "white",
-            "fontSize": 22,
+            "color": "#111111",
+            "fontSize": 24,
             "fontWeight": "bold",
-            "marginBottom": 12,
+            "marginBottom": 10,
+            "marginTop": 30,
+            "textAlign": "center",
           }
         }
       >
@@ -305,11 +328,14 @@ exports[`<ResultsScreen /> matches snapshot 1`] = `
           [
             {
               "alignItems": "center",
-              "borderBottomColor": "#333",
-              "borderBottomWidth": 1,
+              "borderColor": "#cccccc",
+              "borderWidth": 4,
               "flexDirection": "row",
               "justifyContent": "space-between",
+              "overflow": "hidden",
+              "paddingHorizontal": 20,
               "paddingVertical": 10,
+              "width": "100%",
             },
             {
               "backgroundColor": "orange",
@@ -321,9 +347,9 @@ exports[`<ResultsScreen /> matches snapshot 1`] = `
         <Text
           style={
             {
-              "color": "gold",
+              "color": "#111111",
               "fontSize": 18,
-              "width": 50,
+              "textAlign": "center",
             }
           }
         >
@@ -333,9 +359,9 @@ exports[`<ResultsScreen /> matches snapshot 1`] = `
         <Text
           style={
             {
-              "color": "white",
-              "flex": 1,
+              "color": "#111111",
               "fontSize": 18,
+              "textAlign": "center",
             }
           }
         >
@@ -344,8 +370,9 @@ exports[`<ResultsScreen /> matches snapshot 1`] = `
         <Text
           style={
             {
-              "color": "white",
+              "color": "#111111",
               "fontSize": 18,
+              "textAlign": "center",
             }
           }
         >
@@ -358,11 +385,14 @@ exports[`<ResultsScreen /> matches snapshot 1`] = `
           [
             {
               "alignItems": "center",
-              "borderBottomColor": "#333",
-              "borderBottomWidth": 1,
+              "borderColor": "#cccccc",
+              "borderWidth": 4,
               "flexDirection": "row",
               "justifyContent": "space-between",
+              "overflow": "hidden",
+              "paddingHorizontal": 20,
               "paddingVertical": 10,
+              "width": "100%",
             },
             false,
           ]
@@ -371,9 +401,9 @@ exports[`<ResultsScreen /> matches snapshot 1`] = `
         <Text
           style={
             {
-              "color": "gold",
+              "color": "#111111",
               "fontSize": 18,
-              "width": 50,
+              "textAlign": "center",
             }
           }
         >
@@ -383,9 +413,9 @@ exports[`<ResultsScreen /> matches snapshot 1`] = `
         <Text
           style={
             {
-              "color": "white",
-              "flex": 1,
+              "color": "#111111",
               "fontSize": 18,
+              "textAlign": "center",
             }
           }
         >
@@ -394,8 +424,9 @@ exports[`<ResultsScreen /> matches snapshot 1`] = `
         <Text
           style={
             {
-              "color": "white",
+              "color": "#111111",
               "fontSize": 18,
+              "textAlign": "center",
             }
           }
         >
@@ -407,20 +438,21 @@ exports[`<ResultsScreen /> matches snapshot 1`] = `
     <View
       style={
         {
-          "backgroundColor": "#222",
-          "borderRadius": 12,
-          "marginBottom": 24,
-          "padding": 16,
+          "alignItems": "center",
+          "marginTop": 20,
+          "width": "100%",
         }
       }
     >
       <Text
         style={
           {
-            "color": "white",
-            "fontSize": 22,
+            "color": "#111111",
+            "fontSize": 24,
             "fontWeight": "bold",
-            "marginBottom": 12,
+            "marginBottom": 10,
+            "marginTop": 30,
+            "textAlign": "center",
           }
         }
       >
@@ -431,11 +463,14 @@ exports[`<ResultsScreen /> matches snapshot 1`] = `
           [
             {
               "alignItems": "center",
-              "borderBottomColor": "#333",
-              "borderBottomWidth": 1,
+              "borderColor": "#cccccc",
+              "borderWidth": 4,
               "flexDirection": "row",
               "justifyContent": "space-between",
+              "overflow": "hidden",
+              "paddingHorizontal": 20,
               "paddingVertical": 10,
+              "width": "100%",
             },
             {
               "backgroundColor": "orange",
@@ -447,9 +482,9 @@ exports[`<ResultsScreen /> matches snapshot 1`] = `
         <Text
           style={
             {
-              "color": "gold",
+              "color": "#111111",
               "fontSize": 18,
-              "width": 50,
+              "textAlign": "center",
             }
           }
         >
@@ -459,9 +494,9 @@ exports[`<ResultsScreen /> matches snapshot 1`] = `
         <Text
           style={
             {
-              "color": "white",
-              "flex": 1,
+              "color": "#111111",
               "fontSize": 18,
+              "textAlign": "center",
             }
           }
         >
@@ -470,8 +505,9 @@ exports[`<ResultsScreen /> matches snapshot 1`] = `
         <Text
           style={
             {
-              "color": "white",
+              "color": "#111111",
               "fontSize": 18,
+              "textAlign": "center",
             }
           }
         >
@@ -484,11 +520,14 @@ exports[`<ResultsScreen /> matches snapshot 1`] = `
           [
             {
               "alignItems": "center",
-              "borderBottomColor": "#333",
-              "borderBottomWidth": 1,
+              "borderColor": "#cccccc",
+              "borderWidth": 4,
               "flexDirection": "row",
               "justifyContent": "space-between",
+              "overflow": "hidden",
+              "paddingHorizontal": 20,
               "paddingVertical": 10,
+              "width": "100%",
             },
             false,
           ]
@@ -497,9 +536,9 @@ exports[`<ResultsScreen /> matches snapshot 1`] = `
         <Text
           style={
             {
-              "color": "gold",
+              "color": "#111111",
               "fontSize": 18,
-              "width": 50,
+              "textAlign": "center",
             }
           }
         >
@@ -509,9 +548,9 @@ exports[`<ResultsScreen /> matches snapshot 1`] = `
         <Text
           style={
             {
-              "color": "white",
-              "flex": 1,
+              "color": "#111111",
               "fontSize": 18,
+              "textAlign": "center",
             }
           }
         >
@@ -520,8 +559,9 @@ exports[`<ResultsScreen /> matches snapshot 1`] = `
         <Text
           style={
             {
-              "color": "white",
+              "color": "#111111",
               "fontSize": 18,
+              "textAlign": "center",
             }
           }
         >
@@ -560,22 +600,22 @@ exports[`<ResultsScreen /> matches snapshot 1`] = `
       onStartShouldSetResponder={[Function]}
       style={
         {
-          "backgroundColor": "#4a90e2",
+          "backgroundColor": "#e28e4a",
           "borderRadius": 10,
-          "justifyContent": "center",
           "marginTop": 20,
           "opacity": 1,
           "paddingHorizontal": 25,
           "paddingVertical": 15,
         }
       }
+      testID="menu"
     >
       <Text
         style={
           {
-            "color": "white",
-            "flex": 1,
+            "color": "#111111",
             "fontSize": 18,
+            "textAlign": "center",
           }
         }
       >
@@ -612,22 +652,22 @@ exports[`<ResultsScreen /> matches snapshot 1`] = `
       onStartShouldSetResponder={[Function]}
       style={
         {
-          "backgroundColor": "#4a90e2",
+          "backgroundColor": "#e28e4a",
           "borderRadius": 10,
-          "justifyContent": "center",
           "marginTop": 20,
           "opacity": 1,
           "paddingHorizontal": 25,
           "paddingVertical": 15,
         }
       }
+      testID="changeUser"
     >
       <Text
         style={
           {
-            "color": "white",
-            "flex": 1,
+            "color": "#111111",
             "fontSize": 18,
+            "textAlign": "center",
           }
         }
       >

@@ -13,15 +13,16 @@ import { router } from "expo-router";
 import React from "react";
 import { Text, TouchableOpacity, View } from "react-native";
 
-export default function MenuScreen() {
+export default function DirectoryScreen() {
   return (
     <View testID="menu" style={styles.container}>
       <Text style={styles.title}>All Tests</Text>
 
       <TouchableOpacity
+        testID="test1"
         style={styles.button}
         onPress={() => {
-          router.push("./test1");
+          router.push("/test1");
           Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
         }}
       >
@@ -31,7 +32,7 @@ export default function MenuScreen() {
       <TouchableOpacity
         style={styles.button}
         onPress={() => {
-          router.push("./test2");
+          router.push("/test2");
           Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
         }}
       >
@@ -43,7 +44,7 @@ export default function MenuScreen() {
       <TouchableOpacity
         style={styles.button}
         onPress={() => {
-          router.push("./test3");
+          router.push("/test3");
           Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
         }}
       >
@@ -53,7 +54,7 @@ export default function MenuScreen() {
       <TouchableOpacity
         style={styles.button}
         onPress={() => {
-          router.push("./test4");
+          router.push("/test4");
           Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
         }}
       >
