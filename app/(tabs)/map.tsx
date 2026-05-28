@@ -1,10 +1,15 @@
 import { globalStyles } from "@/app/Styles/globalStyles";
 import { darkTheme } from "@/app/Styles/Themes/dark";
 import { lightTheme } from "@/app/Styles/Themes/light";
-import { getAllLocations } from "@/firebase";
+
+import { getAllLocations, getUserBestScores, LocationData } from "@/firebase";
+
 import * as Haptics from "expo-haptics";
+
 import { router } from "expo-router";
+
 import React, { useEffect, useState } from "react";
+
 import {
     Platform,
     Text,
@@ -15,8 +20,17 @@ import {
 
 export default function MapScreen() {
   const scheme = useColorScheme();
+
   const theme = scheme === "dark" ? darkTheme : lightTheme;
+
   const styles = globalStyles(theme);
+
+  const [locations, setLocations] = useState<LocationData[]>([]);
+
+  const [userScores, setUserScores] = useState<Record<string, any>>({});
+  // LTU Bundoora
+  const initialLatitude = -37.7217;
+  const initialLongitude = 145.0479;
 
   if (Platform.OS === "web") {
     return (
@@ -30,18 +44,33 @@ export default function MapScreen() {
 
   const { Marker, Callout } = require("react-native-maps");
 
-  const [locations, setLocations] = useState<any[]>([]);
-  // ltu-bundoora campus coords
-  const initialLatitude = -37.7217;
-  const initialLongitude = 145.0479;
-
   useEffect(() => {
-    async function loadLocations() {
-      const locationData = await getAllLocations();
-      setLocations(locationData);
+    async function loadData() {
+      try {
+        const locationData = await getAllLocations();
+
+        setLocations(locationData);
+
+        // load scores for every location user
+        const scoreMap: any = {};
+
+        for (const loc of locationData) {
+          if (!loc.uid) continue;
+
+          const scores = await getUserBestScores(loc.uid);
+
+          scoreMap[loc.uid] = scores;
+        }
+
+        setUserScores(scoreMap);
+      } catch (e) {
+        console.log(e);
+      }
     }
-    loadLocations();
+
+    loadData();
   }, []);
+
   return (
     <View style={styles.mapContainer}>
       <MapView
@@ -53,25 +82,52 @@ export default function MapScreen() {
           longitudeDelta: 0.01,
         }}
       >
-        {locations.map((loc) => (
-          <Marker
-            key={loc.id}
-            coordinate={{
-              latitude: loc.latitude,
-              longitude: loc.longitude,
-            }}
-          >
-            <Callout>
-              <Text style={{ color: "black", fontSize: 18 }}>{loc.email}</Text>{" "}
-              {/* want to display users scores as well */}
-            </Callout>
-          </Marker>
-        ))}
+        {locations.map((loc) => {
+          const scores = userScores[loc.uid];
+
+          return (
+            <Marker
+              key={loc.id}
+              coordinate={{
+                latitude: loc.latitude,
+                longitude: loc.longitude,
+              }}
+            >
+              <Callout>
+                <View style={styles.calloutContainer}>
+                  <Text style={{ color: "black" }}>{loc.email}</Text>
+
+                  {scores && (
+                    <>
+                      <Text style={{ color: "black" }}>
+                        Test 1: {scores.test1 ?? "N/A"} ms
+                      </Text>
+
+                      <Text style={{ color: "black" }}>
+                        Test 2: {scores.test2 ?? "N/A"} ms
+                      </Text>
+
+                      <Text style={{ color: "black" }}>
+                        Test 3: {scores.test3 ?? "N/A"} clicks
+                      </Text>
+
+                      <Text style={{ color: "black" }}>
+                        Test 4: {scores.test4 ?? "N/A"} ms
+                      </Text>
+                    </>
+                  )}
+                </View>
+              </Callout>
+            </Marker>
+          );
+        })}
       </MapView>
+
       <TouchableOpacity
         style={styles.button}
         onPress={() => {
           router.push("/menu");
+
           Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
         }}
       >

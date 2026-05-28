@@ -102,17 +102,70 @@ export const uploadLocation = (user: any, location: any) => {
   });
 };
 
-export const getAllLocations = async () => {
+export type LocationData = {
+  id: string;
+  uid: string;
+  email: string;
+  latitude: number;
+  longitude: number;
+};
+
+export const getAllLocations = async (): Promise<LocationData[]> => {
   const querySnapshot = await getDocs(collection(db, "locations"));
 
   return querySnapshot.docs.map((doc) => ({
     id: doc.id,
     ...doc.data(),
-  }));
+  })) as LocationData[];
 };
 
-// export const getUserScores(user: any) => {
-//   return getDocs(collection(db, "scores"), {
-//     uid:
-//   })
-// }
+export const getUserBestScores = async (uid: string) => {
+  try {
+    const scoresRef = collection(db, "scores");
+
+    const q = query(scoresRef, where("userId", "==", uid));
+    const snapshot = await getDocs(q);
+
+    type TestType = "test1" | "test2" | "test3" | "test4";
+
+    const bestScores: Record<TestType, number | null> = {
+      test1: null,
+      test2: null,
+      test3: null,
+      test4: null,
+    };
+
+    snapshot.forEach((doc) => {
+      const data = doc.data();
+      const testType = data.testType as TestType;
+      const score = data.score;
+
+      // test 3 high to low
+      if (testType === "test3") {
+        if (bestScores.test3 === null || score > bestScores.test3) {
+          bestScores.test3 = score;
+        }
+      }
+
+      // rest of tests low to high
+      else if (
+        testType === "test1" ||
+        testType === "test2" ||
+        testType === "test4"
+      ) {
+        if (bestScores[testType] === null || score < bestScores[testType]) {
+          bestScores[testType] = score;
+        }
+      }
+    });
+    return bestScores;
+  } catch (e) {
+    console.log("Error getting best scores:", e);
+    return {
+      test1: null,
+      test2: null,
+      test3: null,
+      test4: null,
+    };
+  }
+};

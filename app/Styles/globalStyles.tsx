@@ -111,4 +111,9 @@ export const globalStyles = (theme: any) =>
     map: {
       flex: 1,
     },
+
+    calloutContainer: {
+      flexWrap: "wrap",
+      height: 90,
+    },
   });
