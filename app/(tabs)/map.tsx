@@ -27,7 +27,8 @@ export default function MapScreen() {
   }
 
   const MapView = require("react-native-maps").default;
-  const { Marker } = require("react-native-maps");
+
+  const { Marker, Callout } = require("react-native-maps");
 
   const [locations, setLocations] = useState<any[]>([]);
   // ltu-bundoora campus coords
@@ -59,7 +60,11 @@ export default function MapScreen() {
               latitude: loc.latitude,
               longitude: loc.longitude,
             }}
-          />
+          >
+            <Callout>
+              <Text style={styles.text}>{loc.email}</Text>
+            </Callout>
+          </Marker>
         ))}
       </MapView>
       <TouchableOpacity

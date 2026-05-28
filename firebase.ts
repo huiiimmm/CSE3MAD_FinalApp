@@ -95,6 +95,7 @@ export const uploadLocation = (user: any, location: any) => {
 
   return addDoc(collection(db, "locations"), {
     uid: user.uid,
+    email: user.email,
     latitude,
     longitude,
     updatedAt: new Date(),
