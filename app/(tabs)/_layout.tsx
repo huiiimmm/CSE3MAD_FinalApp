@@ -24,6 +24,8 @@ export default function Layout() {
       <Stack.Screen name="directory" options={{ title: "Directory" }} />
 
       <Stack.Screen name="map" options={{ title: "Map" }} />
+
+      <Stack.Screen name="myresults" options={{ title: "My Results" }} />
     </Stack>
   );
 }

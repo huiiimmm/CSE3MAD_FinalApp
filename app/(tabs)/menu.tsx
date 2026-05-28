@@ -80,6 +80,12 @@ export default function MenuScreen() {
         >
           <Text style={styles.buttonText}>Change User</Text>
         </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.button}
+          onPress={() => router.push("/(tabs)/myresults")}
+        >
+          <Text style={styles.buttonText}>My Results</Text>
+        </TouchableOpacity>
       </View>
     </ScrollView>
   );
