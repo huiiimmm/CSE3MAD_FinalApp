@@ -17,9 +17,11 @@ import {
 } from "react-native";
 
 export default function EarthquakeSimulator() {
-  const [vibrationTest, setVibrationTest] = useState(false);
   const [startTest, setStartTest] = useState(false);
   const [stopTest, setStopTest] = useState(false);
+
+  // Use a mutable ref to track active simulation state across threads instantly
+  const isSimulatingRef = useRef<boolean>(false);
 
   const [time, setTime] = useState(15);
   const intervalRef = useRef<any>(null);
@@ -28,28 +30,46 @@ export default function EarthquakeSimulator() {
   const scheme = useColorScheme();
   const theme = scheme === "dark" ? darkTheme : lightTheme;
   const styles = globalStyles(theme);
+  const user = auth.currentUser;
 
-  // Cleanup timers safely if the user changes pages mid-shake
+  // Unified absolute cleanup engine
+  const stopAllActivity = () => {
+    isSimulatingRef.current = false;
+    if (intervalRef.current) {
+      clearInterval(intervalRef.current);
+      intervalRef.current = null;
+    }
+    if (vibrationRef.current) {
+      clearTimeout(vibrationRef.current);
+      vibrationRef.current = null;
+    }
+    Vibration.cancel();
+  };
+
   useEffect(() => {
-    return () => {
-      if (intervalRef.current) clearInterval(intervalRef.current);
-      Vibration.cancel(); // Stop any active hardware vibrations
-    };
+    return () => stopAllActivity();
   }, []);
 
-  const startRandomEarthquake = () => {
-    if (vibrationTest) return; // Prevent multiple concurrent tests
-    setVibrationTest(true);
-    setVibrationTest(true);
-    // 1. Trigger an immediate heavy shock pattern: [Wait 0ms, Vibrate 400ms, Wait 100ms, Vibrate 200ms]
-    Vibration.vibrate([0, 400, 100, 200]);
+  const runEarthquakeTick = (isInitialShock = false) => {
+    // Instantly break the cycle if the test has been flagged to stop
+    if (!isSimulatingRef.current) return;
 
-    // 2. Generate a random delay before the next aftershock (between 800ms and 2500ms)
-    const nextInterval = Math.floor(Math.random() * (2500 - 800 + 1)) + 800;
+    if (isInitialShock) {
+      // 1. Strongest Initial Shock: Heavy, long rumble profile
+      Vibration.vibrate([0, 1000, 150, 400]);
+    } else {
+      // 2. Randomized Aftershock Intensities
+      // We simulate intensity variation by changing active motor rumble durations
+      const randomIntensityRumble =
+        Math.floor(Math.random() * (500 - 100 + 1)) + 100;
+      Vibration.vibrate([0, randomIntensityRumble]);
+    }
 
-    // 3. Queue up the next random tremor recursively
+    // 3. Generate randomized quiet spacing interval between aftershocks
+    const nextInterval = Math.floor(Math.random() * (2000 - 600 + 1)) + 600;
+
     vibrationRef.current = setTimeout(() => {
-      startRandomEarthquake();
+      runEarthquakeTick(false);
     }, nextInterval);
   };
 
@@ -63,31 +83,20 @@ export default function EarthquakeSimulator() {
     setTime(15);
     setStopTest(false);
     setStartTest(true);
-    startRandomEarthquake();
+    isSimulatingRef.current = true;
+    runEarthquakeTick(true);
 
     intervalRef.current = setInterval(() => {
       setTime((prev) => {
         if (prev <= 1) {
-          clearInterval(intervalRef.current!);
-          intervalRef.current = null;
-          // Use a tiny timeout to let the state cycle commit '0' before halting the test
-          setTimeout(() => setStopTest(true), 0);
+          stopAllActivity();
           setStopTest(true);
-          Vibration.cancel();
           return 0;
         }
         return prev - 1;
       });
     }, 1000);
   };
-
-  useEffect(() => {
-    return () => {
-      if (intervalRef.current) {
-        clearInterval(intervalRef.current);
-      }
-    };
-  }, []);
 
   // const saveTestScore = async () => {
   //   try {
@@ -110,13 +119,36 @@ export default function EarthquakeSimulator() {
   //     saveTestScore();
   //   }
   // }, [stopTest]);
+  if (!user) {
+    return (
+      <View style={styles.container}>
+        <Text style={styles.text}>Please log in to start the simulation.</Text>
+      </View>
+    );
+  } else {
+    return (
+      <View style={styles.container}>
+        <Text style={styles.title}>Earthquake Simulator</Text>
+        <Text style={{ fontSize: 20, marginVertical: 10 }}>
+          Time Remaining: {time}s
+        </Text>
 
-  return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Earthquake Simulator</Text>
-      <TouchableOpacity onPress={() => countDown()}>
-        <Text style={styles.buttonText}>Start Simulation</Text>
-      </TouchableOpacity>
-    </View>
-  );
+        <TouchableOpacity onPress={countDown} style={styles.button}>
+          <Text style={styles.buttonText}>
+            {isSimulatingRef.current
+              ? "Restart Simulation"
+              : "Start Simulation"}
+          </Text>
+        </TouchableOpacity>
+
+        {stopTest && (
+          <View style={styles.rowContainer}>
+            <Text style={styles.text}>
+              Simulation Completed! Showing Results...
+            </Text>
+          </View>
+        )}
+      </View>
+    );
+  }
 }

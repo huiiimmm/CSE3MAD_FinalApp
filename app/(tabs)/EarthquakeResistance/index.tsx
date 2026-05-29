@@ -9,7 +9,7 @@ import { router } from "expo-router";
 import React from "react";
 import { Text, TouchableOpacity, View } from "react-native";
 
-export default function DirectoryScreen() {
+export default function EarthquakeResistanceMain() {
   const scheme = useColorScheme();
   const theme = scheme === "dark" ? darkTheme : lightTheme;
   const styles = globalStyles(theme);
@@ -20,7 +20,7 @@ export default function DirectoryScreen() {
       <TouchableOpacity
         style={styles.button}
         onPress={() => {
-          router.push("//EarthquakeResistance/earthquake_simulator");
+          router.push("/EarthquakeResistance/earthquake_simulator");
           Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
         }}
       >

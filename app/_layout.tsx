@@ -9,12 +9,16 @@ export default function TabsLayout() {
       {/* Point directly to your subfolder stack layout root */}
       <Tabs.Screen
         name="ReactionTest"
-        options={{ title: "Reaction Tests", headerShown: false }}
+        options={{ title: "Reaction Tests", headerShown: false, href: null }}
       />
 
       <Tabs.Screen
         name="EarthquakeResistance"
-        options={{ title: "Earthquake Resistance", headerShown: false }}
+        options={{
+          title: "Earthquake Resistance",
+          headerShown: false,
+          href: null,
+        }}
       />
     </Tabs>
   );

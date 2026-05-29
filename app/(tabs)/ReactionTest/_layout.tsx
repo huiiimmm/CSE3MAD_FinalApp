@@ -19,8 +19,6 @@ export default function Layout() {
 
       <Stack.Screen name="results" options={{ title: "Results" }} />
 
-      <Stack.Screen name="leaderboard" options={{ title: "Leaderboard" }} />
-
       <Stack.Screen name="directory" options={{ title: "Directory" }} />
 
       <Stack.Screen name="map" options={{ title: "Map" }} />
