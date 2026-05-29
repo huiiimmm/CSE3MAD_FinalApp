@@ -204,3 +204,20 @@ export const getUserBestScores = async (uid: string) => {
     };
   }
 };
+
+export const uploadVibrationData = (
+  user: any,
+  averageMovementIntensity: any,
+  peakMovementIntensity: any,
+  movementDuration: any,
+  movementType: string,
+) => {
+  return addDoc(collection(db, "vibration data"), {
+    uid: user.uid,
+    email: user.email,
+    averageMovementIntensity,
+    peakMovementIntensity,
+    movementDuration,
+    movementType,
+  });
+};
