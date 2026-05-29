@@ -27,7 +27,6 @@ import { auth, uploadSoundLocation } from "@/firebase";
 import { Audio } from "expo-av";
 import { useEffect, useRef, useState } from "react";
 
-import { router } from "expo-router";
 import {
     Text,
     TextInput,
@@ -154,7 +153,6 @@ export default function SoundPollutionTest() {
     try {
       await uploadSoundLocation(user, location, noiseType, decibels);
       console.log("Sound location uploaded successfully");
-      router.push("/SoundPollution/record_sound");
     } catch (error) {
       console.error("Error uploading sound location:", error);
       setErrorText(true);
