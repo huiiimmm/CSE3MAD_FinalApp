@@ -2,7 +2,11 @@ import { globalStyles } from "@/app/Styles/globalStyles";
 import { darkTheme } from "@/app/Styles/Themes/dark";
 import { lightTheme } from "@/app/Styles/Themes/light";
 
-import { getAllLocations, getUserBestScores, LocationData } from "@/firebase";
+import {
+  getAllLocations,
+  getUserBestScores,
+  LocationData
+} from "@/firebase";
 
 import * as Haptics from "expo-haptics";
 
@@ -30,22 +34,33 @@ export default function MapScreen() {
   const initialLongitude = 145.0479;
 
   useEffect(() => {
+    let mounted = true;
     async function loadData() {
       try {
         const locationData = await getAllLocations();
 
+        if (!mounted) return;
+
         setLocations(locationData);
 
+        const scoreEntries = await Promise.all(
+          locationData.map(async (loc) => {
+            if (!loc.uid) return null;
+
+            const scores = await getUserBestScores(loc.uid);
+
+            return [loc.uid, scores] as [string, any];
+          }),
+        );
+
+        if (!mounted) return;
+
         // load scores for every location user
-        const scoreMap: any = {};
+        const validEntries = scoreEntries.filter(
+          (entry): entry is [string, any] => entry !== null,
+        );
 
-        for (const loc of locationData) {
-          if (!loc.uid) continue;
-
-          const scores = await getUserBestScores(loc.uid);
-
-          scoreMap[loc.uid] = scores;
-        }
+        const scoreMap = Object.fromEntries(validEntries);
 
         setUserScores(scoreMap);
       } catch (e) {
@@ -54,6 +69,10 @@ export default function MapScreen() {
     }
 
     loadData();
+
+    return () => {
+      mounted = false;
+    };
   }, []);
 
   return (

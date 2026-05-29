@@ -119,14 +119,11 @@ export const getAllLocations = async (): Promise<LocationData[]> => {
   })) as LocationData[];
 };
 
+export type TestType = "test1" | "test2" | "test3" | "test4";
+
 export const getUserBestScores = async (uid: string) => {
   try {
-    const scoresRef = collection(db, "scores");
-
-    const q = query(scoresRef, where("userId", "==", uid));
-    const snapshot = await getDocs(q);
-
-    type TestType = "test1" | "test2" | "test3" | "test4";
+    const snapshot = await getDocs(collection(db, "scores"));
 
     const bestScores: Record<TestType, number | null> = {
       test1: null,
@@ -135,7 +132,7 @@ export const getUserBestScores = async (uid: string) => {
       test4: null,
     };
 
-    snapshot.forEach((doc) => {
+    for (const doc of snapshot.docs) {
       const data = doc.data();
       const testType = data.testType as TestType;
       const score = data.score;
@@ -157,7 +154,7 @@ export const getUserBestScores = async (uid: string) => {
           bestScores[testType] = score;
         }
       }
-    });
+    }
     return bestScores;
   } catch (e) {
     console.log("Error getting best scores:", e);
