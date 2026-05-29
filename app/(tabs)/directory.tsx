@@ -4,16 +4,15 @@ import { darkTheme } from "@/app/Styles/Themes/dark";
 import { lightTheme } from "@/app/Styles/Themes/light";
 import { useColorScheme } from "react-native";
 
-const scheme = useColorScheme();
-const theme = scheme === "dark" ? darkTheme : lightTheme;
-const styles = globalStyles(theme);
-
 import * as Haptics from "expo-haptics";
 import { router } from "expo-router";
 import React from "react";
 import { Text, TouchableOpacity, View } from "react-native";
 
 export default function DirectoryScreen() {
+    const scheme = useColorScheme();
+    const theme = scheme === "dark" ? darkTheme : lightTheme;
+    const styles = globalStyles(theme);
   return (
     <View testID="menu" style={styles.container}>
       <Text style={styles.title}>All Tests</Text>

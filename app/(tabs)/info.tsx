@@ -5,10 +5,6 @@ import { Text, TouchableOpacity, View } from "react-native";
 
 import { globalStyles } from "@/app/Styles/globalStyles";
 
-import { darkTheme } from "@/app/Styles/Themes/dark";
-import { lightTheme } from "@/app/Styles/Themes/light";
-import { useColorScheme } from "react-native";
-
 export default function InfoScreen() {
   const scheme = useColorScheme();
   const theme = scheme === "dark" ? darkTheme : lightTheme;

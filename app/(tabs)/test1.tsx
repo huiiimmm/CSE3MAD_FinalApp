@@ -16,6 +16,9 @@ import {
 } from "react-native";
 
 export default function Test1() {
+    const scheme = useColorScheme();
+    const theme = scheme === "dark" ? darkTheme : lightTheme;
+    const styles = globalStyles(theme);
   const [readyText, setReadyText] = useState(true);
   const [bgColor, setBgColor] = useState("#1e1e1e");
   const [reactionScreen, setReactionScreen] = useState(false);
@@ -26,9 +29,6 @@ export default function Test1() {
   const [time, setTime] = useState(0);
   const [reactionTime, setReactionTime] = useState(0);
   const user = auth.currentUser;
-  const scheme = useColorScheme();
-  const theme = scheme === "dark" ? darkTheme : lightTheme;
-  const styles = globalStyles(theme);
 
   const intervalRef = useRef<number | null>(null);
   const startRef = useRef<number | null>(null);
