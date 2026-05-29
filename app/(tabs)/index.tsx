@@ -6,28 +6,26 @@ import { lightTheme } from "@/Styles/Themes/light";
 import { router } from "expo-router";
 import { useRef, useState } from "react";
 import {
-    SafeAreaView,
-    ScrollView,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    useColorScheme,
-    View,
+  SafeAreaView,
+  ScrollView,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  useColorScheme,
+  View,
 } from "react-native";
 
 import { SafeAreaProvider } from "react-native-safe-area-context";
 
 import {
-    addDebugDoc,
-    auth,
-    createAccount,
-    login,
-    logout,
-    removeUser,
-    uploadLocation,
+  addDebugDoc,
+  auth,
+  createAccount,
+  login,
+  logout,
+  removeUser,
 } from "@/firebase";
 
-import * as Location from "expo-location";
 
 export default function HomeScreen() {
   const [loginout, setloginout] = useState("Login");
@@ -66,9 +64,6 @@ export default function HomeScreen() {
       setloginout("login: " + user.email);
       router.push("/(tabs)/ReactionTest/menu");
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-
-      const coords = await getLocation();
-      uploadLocation(user, coords);
     } catch (error: any) {
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
       setloginout("login unsuccessful");
@@ -149,17 +144,6 @@ export default function HomeScreen() {
 
       await debug("DeleteEmailPassword", error.code + " " + error.message);
     }
-  }
-
-  async function getLocation() {
-    const { status } = await Location.requestForegroundPermissionsAsync();
-    if (status !== "granted") {
-      console.log("Permission denied");
-      return;
-    }
-    const location = await Location.getCurrentPositionAsync({});
-    const { latitude, longitude } = location.coords;
-    return { latitude, longitude };
   }
 
   return (

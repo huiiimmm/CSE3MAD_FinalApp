@@ -20,6 +20,22 @@ export default function TabsLayout() {
           href: null,
         }}
       />
+      <Tabs.Screen
+        name="SoundPollution"
+        options={{
+          title: "Sound Pollution",
+          headerShown: false,
+          href: null,
+        }}
+      />
+      <Tabs.Screen
+        name="StretchTest"
+        options={{
+          title: "Stretch Test",
+          headerShown: false,
+          href: null,
+        }}
+      />
     </Tabs>
   );
 }

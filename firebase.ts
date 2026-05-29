@@ -102,6 +102,36 @@ export const uploadLocation = (user: any, location: any) => {
   });
 };
 
+export const uploadSoundLocation = (
+  user: any,
+  location: any,
+  noiseType: string,
+) => {
+  console.log("UPLOAD INPUT:", user, location, noiseType);
+
+  const latitude = location?.latitude ?? location?.coords?.latitude;
+  const longitude = location?.longitude ?? location?.coords?.longitude;
+
+  if (
+    !user?.uid ||
+    typeof latitude !== "number" ||
+    typeof longitude !== "number" ||
+    typeof noiseType !== "string"
+  ) {
+    console.log("Invalid sound pollution payload:", location, noiseType);
+    return;
+  }
+
+  return addDoc(collection(db, "sound locations"), {
+    uid: user.uid,
+    email: user.email,
+    latitude,
+    longitude,
+    noiseType,
+    updatedAt: new Date(),
+  });
+};
+
 export type LocationData = {
   id: string;
   uid: string;

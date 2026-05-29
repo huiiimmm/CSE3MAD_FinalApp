@@ -6,8 +6,8 @@ export default function Layout() {
       <Stack.Screen name="index" options={{ title: "Menu" }} />
 
       <Stack.Screen
-        name="earthquake_simulator"
-        options={{ title: "Earthquake Simulator" }}
+        name="pollution_test"
+        options={{ title: "Sound Pollution Test" }}
       />
     </Stack>
   );
