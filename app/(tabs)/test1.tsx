@@ -16,11 +16,11 @@ import {
 } from "react-native";
 
 export default function Test1() {
-    const scheme = useColorScheme();
-    const theme = scheme === "dark" ? darkTheme : lightTheme;
-    const styles = globalStyles(theme);
+  const scheme = useColorScheme();
+  const theme = scheme === "dark" ? darkTheme : lightTheme;
+  const styles = globalStyles(theme);
   const [readyText, setReadyText] = useState(true);
-  const [bgColor, setBgColor] = useState("#1e1e1e");
+  const [bgColor, setBgColor] = useState(theme.background);
   const [reactionScreen, setReactionScreen] = useState(false);
   const [earlyCheck, setEarlyCheck] = useState(false);
   const [nextTestButton, setNextTestButton] = useState(false);

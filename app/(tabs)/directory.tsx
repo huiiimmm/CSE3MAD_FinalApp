@@ -10,9 +10,9 @@ import React from "react";
 import { Text, TouchableOpacity, View } from "react-native";
 
 export default function DirectoryScreen() {
-    const scheme = useColorScheme();
-    const theme = scheme === "dark" ? darkTheme : lightTheme;
-    const styles = globalStyles(theme);
+  const scheme = useColorScheme();
+  const theme = scheme === "dark" ? darkTheme : lightTheme;
+  const styles = globalStyles(theme);
   return (
     <View testID="menu" style={styles.container}>
       <Text style={styles.title}>All Tests</Text>

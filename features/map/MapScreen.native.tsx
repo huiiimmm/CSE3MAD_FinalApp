@@ -11,7 +11,8 @@ import { router } from "expo-router";
 import React, { useEffect, useState } from "react";
 
 import { Text, TouchableOpacity, useColorScheme, View } from "react-native";
-import MapView, { Callout, Marker, PROVIDER_GOOGLE } from "react-native-maps";
+import MapView from "react-native-map-clustering";
+import { Callout, Marker, PROVIDER_GOOGLE } from "react-native-maps";
 
 export default function MapScreen() {
   const scheme = useColorScheme();
@@ -66,6 +67,9 @@ export default function MapScreen() {
           latitudeDelta: 0.01,
           longitudeDelta: 0.01,
         }}
+        clusterColor="#4A90E2"
+        clusterTextColor="white"
+        animationEnabled
       >
         {locations.map((loc) => {
           const scores = userScores[loc.uid];
