@@ -1,0 +1,158 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<Test3 /> matches snapshot 1`] = `
+<View
+  onLayout={[Function]}
+  style={
+    {
+      "backgroundColor": "#ffffff",
+      "borderColor": "#cccccc",
+      "borderWidth": 4,
+      "flex": 1,
+      "overflow": "hidden",
+    }
+  }
+  testID="test3"
+>
+  <Text
+    style={
+      {
+        "color": "#111111",
+        "fontSize": 32,
+        "fontWeight": "bold",
+        "marginBottom": 20,
+        "textAlign": "center",
+      }
+    }
+  >
+    Test 3 - Tracking and Tracing
+  </Text>
+  <Text
+    style={
+      {
+        "color": "#111111",
+        "fontSize": 18,
+        "textAlign": "center",
+      }
+    }
+  >
+    Click the moving ball as many times as you can in 10 seconds without missing!
+  </Text>
+  <Text
+    style={
+      {
+        "color": "#111111",
+        "fontSize": 18,
+        "textAlign": "center",
+      }
+    }
+  >
+    Clicks: 
+    0
+  </Text>
+  <Text
+    style={
+      {
+        "color": "#111111",
+        "fontSize": 18,
+        "textAlign": "center",
+      }
+    }
+  >
+    Accuracy:
+     
+    0
+    %
+  </Text>
+  <View
+    accessibilityState={
+      {
+        "busy": undefined,
+        "checked": undefined,
+        "disabled": undefined,
+        "expanded": undefined,
+        "selected": undefined,
+      }
+    }
+    accessibilityValue={
+      {
+        "max": undefined,
+        "min": undefined,
+        "now": undefined,
+        "text": undefined,
+      }
+    }
+    accessible={true}
+    collapsable={false}
+    focusable={true}
+    onBlur={[Function]}
+    onClick={[Function]}
+    onFocus={[Function]}
+    onResponderGrant={[Function]}
+    onResponderMove={[Function]}
+    onResponderRelease={[Function]}
+    onResponderTerminate={[Function]}
+    onResponderTerminationRequest={[Function]}
+    onStartShouldSetResponder={[Function]}
+    style={
+      {
+        "flex": 1,
+      }
+    }
+    testID="background"
+  >
+    <View
+      accessibilityState={
+        {
+          "busy": undefined,
+          "checked": undefined,
+          "disabled": undefined,
+          "expanded": undefined,
+          "selected": undefined,
+        }
+      }
+      accessibilityValue={
+        {
+          "max": undefined,
+          "min": undefined,
+          "now": undefined,
+          "text": undefined,
+        }
+      }
+      accessible={true}
+      collapsable={false}
+      focusable={true}
+      onClick={[Function]}
+      onResponderGrant={[Function]}
+      onResponderMove={[Function]}
+      onResponderRelease={[Function]}
+      onResponderTerminate={[Function]}
+      onResponderTerminationRequest={[Function]}
+      onStartShouldSetResponder={[Function]}
+      style={
+        {
+          "backgroundColor": "#e28e4a",
+          "borderRadius": 10,
+          "marginTop": 20,
+          "opacity": 1,
+          "paddingHorizontal": 25,
+          "paddingVertical": 15,
+        }
+      }
+      testID="startButton"
+    >
+      <Text
+        style={
+          {
+            "color": "#111111",
+            "fontSize": 18,
+            "textAlign": "center",
+          }
+        }
+      >
+        Start Test
+      </Text>
+    </View>
+  </View>
+</View>
+`;

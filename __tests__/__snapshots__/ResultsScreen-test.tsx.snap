@@ -1,0 +1,718 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<ResultsScreen /> matches snapshot 1`] = `
+<RCTScrollView
+  contentContainerStyle={
+    {
+      "alignItems": "center",
+      "padding": 20,
+    }
+  }
+  style={
+    {
+      "backgroundColor": "#ffffff",
+      "flex": 1,
+    }
+  }
+  testID="results"
+>
+  <View>
+    <Text
+      style={
+        {
+          "color": "#111111",
+          "fontSize": 32,
+          "fontWeight": "bold",
+          "marginBottom": 20,
+          "textAlign": "center",
+        }
+      }
+    >
+      Leaderboards
+    </Text>
+    <View
+      style={
+        {
+          "alignItems": "center",
+          "marginTop": 20,
+          "width": "100%",
+        }
+      }
+    >
+      <Text
+        style={
+          {
+            "color": "#111111",
+            "fontSize": 24,
+            "fontWeight": "bold",
+            "marginBottom": 10,
+            "marginTop": 30,
+            "textAlign": "center",
+          }
+        }
+      >
+        Test 1 - Dominant Hand
+      </Text>
+      <View
+        style={
+          [
+            {
+              "alignItems": "center",
+              "borderColor": "#cccccc",
+              "borderWidth": 4,
+              "flexDirection": "row",
+              "justifyContent": "space-between",
+              "overflow": "hidden",
+              "paddingHorizontal": 20,
+              "paddingVertical": 10,
+              "width": "100%",
+            },
+            false,
+          ]
+        }
+      >
+        <Text
+          style={
+            {
+              "color": "#111111",
+              "fontSize": 18,
+              "textAlign": "center",
+            }
+          }
+        >
+          #
+          1
+        </Text>
+        <Text
+          style={
+            {
+              "color": "#111111",
+              "fontSize": 18,
+              "textAlign": "center",
+            }
+          }
+        >
+          current@test.com
+        </Text>
+        <Text
+          style={
+            {
+              "color": "#111111",
+              "fontSize": 18,
+              "textAlign": "center",
+            }
+          }
+        >
+          120
+           ms
+        </Text>
+      </View>
+      <View
+        style={
+          [
+            {
+              "alignItems": "center",
+              "borderColor": "#cccccc",
+              "borderWidth": 4,
+              "flexDirection": "row",
+              "justifyContent": "space-between",
+              "overflow": "hidden",
+              "paddingHorizontal": 20,
+              "paddingVertical": 10,
+              "width": "100%",
+            },
+            false,
+          ]
+        }
+      >
+        <Text
+          style={
+            {
+              "color": "#111111",
+              "fontSize": 18,
+              "textAlign": "center",
+            }
+          }
+        >
+          #
+          2
+        </Text>
+        <Text
+          style={
+            {
+              "color": "#111111",
+              "fontSize": 18,
+              "textAlign": "center",
+            }
+          }
+        >
+          other@test.com
+        </Text>
+        <Text
+          style={
+            {
+              "color": "#111111",
+              "fontSize": 18,
+              "textAlign": "center",
+            }
+          }
+        >
+          180
+           ms
+        </Text>
+      </View>
+    </View>
+    <View
+      style={
+        {
+          "alignItems": "center",
+          "marginTop": 20,
+          "width": "100%",
+        }
+      }
+    >
+      <Text
+        style={
+          {
+            "color": "#111111",
+            "fontSize": 24,
+            "fontWeight": "bold",
+            "marginBottom": 10,
+            "marginTop": 30,
+            "textAlign": "center",
+          }
+        }
+      >
+        Test 2 - Non Dominant Hand
+      </Text>
+      <View
+        style={
+          [
+            {
+              "alignItems": "center",
+              "borderColor": "#cccccc",
+              "borderWidth": 4,
+              "flexDirection": "row",
+              "justifyContent": "space-between",
+              "overflow": "hidden",
+              "paddingHorizontal": 20,
+              "paddingVertical": 10,
+              "width": "100%",
+            },
+            false,
+          ]
+        }
+      >
+        <Text
+          style={
+            {
+              "color": "#111111",
+              "fontSize": 18,
+              "textAlign": "center",
+            }
+          }
+        >
+          #
+          1
+        </Text>
+        <Text
+          style={
+            {
+              "color": "#111111",
+              "fontSize": 18,
+              "textAlign": "center",
+            }
+          }
+        >
+          current@test.com
+        </Text>
+        <Text
+          style={
+            {
+              "color": "#111111",
+              "fontSize": 18,
+              "textAlign": "center",
+            }
+          }
+        >
+          120
+           ms
+        </Text>
+      </View>
+      <View
+        style={
+          [
+            {
+              "alignItems": "center",
+              "borderColor": "#cccccc",
+              "borderWidth": 4,
+              "flexDirection": "row",
+              "justifyContent": "space-between",
+              "overflow": "hidden",
+              "paddingHorizontal": 20,
+              "paddingVertical": 10,
+              "width": "100%",
+            },
+            false,
+          ]
+        }
+      >
+        <Text
+          style={
+            {
+              "color": "#111111",
+              "fontSize": 18,
+              "textAlign": "center",
+            }
+          }
+        >
+          #
+          2
+        </Text>
+        <Text
+          style={
+            {
+              "color": "#111111",
+              "fontSize": 18,
+              "textAlign": "center",
+            }
+          }
+        >
+          other@test.com
+        </Text>
+        <Text
+          style={
+            {
+              "color": "#111111",
+              "fontSize": 18,
+              "textAlign": "center",
+            }
+          }
+        >
+          180
+           ms
+        </Text>
+      </View>
+    </View>
+    <View
+      style={
+        {
+          "alignItems": "center",
+          "marginTop": 20,
+          "width": "100%",
+        }
+      }
+    >
+      <Text
+        style={
+          {
+            "color": "#111111",
+            "fontSize": 24,
+            "fontWeight": "bold",
+            "marginBottom": 10,
+            "marginTop": 30,
+            "textAlign": "center",
+          }
+        }
+      >
+        Test 3 - Tracking
+      </Text>
+      <View
+        style={
+          [
+            {
+              "alignItems": "center",
+              "borderColor": "#cccccc",
+              "borderWidth": 4,
+              "flexDirection": "row",
+              "justifyContent": "space-between",
+              "overflow": "hidden",
+              "paddingHorizontal": 20,
+              "paddingVertical": 10,
+              "width": "100%",
+            },
+            false,
+          ]
+        }
+      >
+        <Text
+          style={
+            {
+              "color": "#111111",
+              "fontSize": 18,
+              "textAlign": "center",
+            }
+          }
+        >
+          #
+          1
+        </Text>
+        <Text
+          style={
+            {
+              "color": "#111111",
+              "fontSize": 18,
+              "textAlign": "center",
+            }
+          }
+        >
+          current@test.com
+        </Text>
+        <Text
+          style={
+            {
+              "color": "#111111",
+              "fontSize": 18,
+              "textAlign": "center",
+            }
+          }
+        >
+          25
+           clicks
+        </Text>
+      </View>
+      <View
+        style={
+          [
+            {
+              "alignItems": "center",
+              "borderColor": "#cccccc",
+              "borderWidth": 4,
+              "flexDirection": "row",
+              "justifyContent": "space-between",
+              "overflow": "hidden",
+              "paddingHorizontal": 20,
+              "paddingVertical": 10,
+              "width": "100%",
+            },
+            false,
+          ]
+        }
+      >
+        <Text
+          style={
+            {
+              "color": "#111111",
+              "fontSize": 18,
+              "textAlign": "center",
+            }
+          }
+        >
+          #
+          2
+        </Text>
+        <Text
+          style={
+            {
+              "color": "#111111",
+              "fontSize": 18,
+              "textAlign": "center",
+            }
+          }
+        >
+          other@test.com
+        </Text>
+        <Text
+          style={
+            {
+              "color": "#111111",
+              "fontSize": 18,
+              "textAlign": "center",
+            }
+          }
+        >
+          18
+           clicks
+        </Text>
+      </View>
+    </View>
+    <View
+      style={
+        {
+          "alignItems": "center",
+          "marginTop": 20,
+          "width": "100%",
+        }
+      }
+    >
+      <Text
+        style={
+          {
+            "color": "#111111",
+            "fontSize": 24,
+            "fontWeight": "bold",
+            "marginBottom": 10,
+            "marginTop": 30,
+            "textAlign": "center",
+          }
+        }
+      >
+        Test 4 - Audio Reaction
+      </Text>
+      <View
+        style={
+          [
+            {
+              "alignItems": "center",
+              "borderColor": "#cccccc",
+              "borderWidth": 4,
+              "flexDirection": "row",
+              "justifyContent": "space-between",
+              "overflow": "hidden",
+              "paddingHorizontal": 20,
+              "paddingVertical": 10,
+              "width": "100%",
+            },
+            false,
+          ]
+        }
+      >
+        <Text
+          style={
+            {
+              "color": "#111111",
+              "fontSize": 18,
+              "textAlign": "center",
+            }
+          }
+        >
+          #
+          1
+        </Text>
+        <Text
+          style={
+            {
+              "color": "#111111",
+              "fontSize": 18,
+              "textAlign": "center",
+            }
+          }
+        >
+          current@test.com
+        </Text>
+        <Text
+          style={
+            {
+              "color": "#111111",
+              "fontSize": 18,
+              "textAlign": "center",
+            }
+          }
+        >
+          120
+           ms
+        </Text>
+      </View>
+      <View
+        style={
+          [
+            {
+              "alignItems": "center",
+              "borderColor": "#cccccc",
+              "borderWidth": 4,
+              "flexDirection": "row",
+              "justifyContent": "space-between",
+              "overflow": "hidden",
+              "paddingHorizontal": 20,
+              "paddingVertical": 10,
+              "width": "100%",
+            },
+            false,
+          ]
+        }
+      >
+        <Text
+          style={
+            {
+              "color": "#111111",
+              "fontSize": 18,
+              "textAlign": "center",
+            }
+          }
+        >
+          #
+          2
+        </Text>
+        <Text
+          style={
+            {
+              "color": "#111111",
+              "fontSize": 18,
+              "textAlign": "center",
+            }
+          }
+        >
+          other@test.com
+        </Text>
+        <Text
+          style={
+            {
+              "color": "#111111",
+              "fontSize": 18,
+              "textAlign": "center",
+            }
+          }
+        >
+          180
+           ms
+        </Text>
+      </View>
+    </View>
+    <View
+      accessibilityState={
+        {
+          "busy": undefined,
+          "checked": undefined,
+          "disabled": undefined,
+          "expanded": undefined,
+          "selected": undefined,
+        }
+      }
+      accessibilityValue={
+        {
+          "max": undefined,
+          "min": undefined,
+          "now": undefined,
+          "text": undefined,
+        }
+      }
+      accessible={true}
+      collapsable={false}
+      focusable={true}
+      onClick={[Function]}
+      onResponderGrant={[Function]}
+      onResponderMove={[Function]}
+      onResponderRelease={[Function]}
+      onResponderTerminate={[Function]}
+      onResponderTerminationRequest={[Function]}
+      onStartShouldSetResponder={[Function]}
+      style={
+        {
+          "backgroundColor": "#e28e4a",
+          "borderRadius": 10,
+          "marginTop": 20,
+          "opacity": 1,
+          "paddingHorizontal": 25,
+          "paddingVertical": 15,
+        }
+      }
+      testID="menu"
+    >
+      <Text
+        style={
+          {
+            "color": "#111111",
+            "fontSize": 18,
+            "textAlign": "center",
+          }
+        }
+      >
+        Back To Menu
+      </Text>
+    </View>
+    <View
+      accessibilityState={
+        {
+          "busy": undefined,
+          "checked": undefined,
+          "disabled": undefined,
+          "expanded": undefined,
+          "selected": undefined,
+        }
+      }
+      accessibilityValue={
+        {
+          "max": undefined,
+          "min": undefined,
+          "now": undefined,
+          "text": undefined,
+        }
+      }
+      accessible={true}
+      collapsable={false}
+      focusable={true}
+      onClick={[Function]}
+      onResponderGrant={[Function]}
+      onResponderMove={[Function]}
+      onResponderRelease={[Function]}
+      onResponderTerminate={[Function]}
+      onResponderTerminationRequest={[Function]}
+      onStartShouldSetResponder={[Function]}
+      style={
+        {
+          "backgroundColor": "#e28e4a",
+          "borderRadius": 10,
+          "marginTop": 20,
+          "opacity": 1,
+          "paddingHorizontal": 25,
+          "paddingVertical": 15,
+        }
+      }
+      testID="changeUser"
+    >
+      <Text
+        style={
+          {
+            "color": "#111111",
+            "fontSize": 18,
+            "textAlign": "center",
+          }
+        }
+      >
+        Change User
+      </Text>
+    </View>
+    <View
+      accessibilityState={
+        {
+          "busy": undefined,
+          "checked": undefined,
+          "disabled": undefined,
+          "expanded": undefined,
+          "selected": undefined,
+        }
+      }
+      accessibilityValue={
+        {
+          "max": undefined,
+          "min": undefined,
+          "now": undefined,
+          "text": undefined,
+        }
+      }
+      accessible={true}
+      collapsable={false}
+      focusable={true}
+      onClick={[Function]}
+      onResponderGrant={[Function]}
+      onResponderMove={[Function]}
+      onResponderRelease={[Function]}
+      onResponderTerminate={[Function]}
+      onResponderTerminationRequest={[Function]}
+      onStartShouldSetResponder={[Function]}
+      style={
+        {
+          "backgroundColor": "#e28e4a",
+          "borderRadius": 10,
+          "marginTop": 20,
+          "opacity": 1,
+          "paddingHorizontal": 25,
+          "paddingVertical": 15,
+        }
+      }
+    >
+      <Text
+        style={
+          {
+            "color": "#111111",
+            "fontSize": 18,
+            "textAlign": "center",
+          }
+        }
+      >
+        My Results
+      </Text>
+    </View>
+  </View>
+</RCTScrollView>
+`;

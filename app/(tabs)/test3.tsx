@@ -1,18 +1,24 @@
+import { globalStyles } from "@/app/Styles/globalStyles";
+
+import { darkTheme } from "@/app/Styles/Themes/dark";
+import { lightTheme } from "@/app/Styles/Themes/light";
+import { auth, saveScore } from "@/firebase";
 import * as Haptics from "expo-haptics";
 import { router } from "expo-router";
-import { addDoc, collection } from "firebase/firestore";
 import React, { useEffect, useRef, useState } from "react";
 import {
   Animated,
   Pressable,
-  StyleSheet,
   Text,
   TouchableOpacity,
+  useColorScheme,
   View,
 } from "react-native";
-import { auth, db } from "./firebase";
 
 export default function Test3() {
+  const scheme = useColorScheme();
+  const theme = scheme === "dark" ? darkTheme : lightTheme;
+  const styles = globalStyles(theme);
   const size = 50;
   const MIN_SPEED = 2;
   const user = auth.currentUser;
@@ -76,9 +82,6 @@ export default function Test3() {
     if (screenWidth === 0 || screenHeight === 0) return;
 
     const interval = setInterval(() => {
-      posX.current += velX.current;
-      posY.current += velY.current;
-
       // Bounce X
       if (posX.current < 0) {
         posX.current = 0;
@@ -105,6 +108,9 @@ export default function Test3() {
         velX.current = randomVelocity();
       }
 
+      posX.current += velX.current;
+      posY.current += velY.current;
+
       xAnim.setValue(posX.current);
       yAnim.setValue(posY.current);
     }, 16);
@@ -112,16 +118,17 @@ export default function Test3() {
     return () => clearInterval(interval);
   }, [startTest, stopTest, screenWidth, screenHeight]);
 
-  const saveScore = async () => {
+  const saveTestScore = async () => {
     try {
       if (!user) return;
-      await addDoc(collection(db, "scores"), {
+      const scores = {
         testType: "test3",
         userId: user?.uid,
         email: user?.email,
         score: clickCount,
         timestamp: Date.now(),
-      });
+      };
+      saveScore(user, scores);
       console.log("score saved!");
     } catch (error) {
       console.log(error);
@@ -129,13 +136,14 @@ export default function Test3() {
   };
   useEffect(() => {
     if (stopTest) {
-      saveScore();
+      saveTestScore();
     }
   }, [stopTest]);
 
   return (
     <View
-      style={styles.container}
+      testID="test3"
+      style={styles.bounceContainer}
       onLayout={(e) => {
         const w = e.nativeEvent.layout.width;
         const h = e.nativeEvent.layout.height;
@@ -154,17 +162,21 @@ export default function Test3() {
       }}
     >
       {!startTest && (
-        <Text style={styles.buttonText}>
-          Click the moving ball as many times as you can in 10 seconds without
-          missing!
-        </Text>
+        <>
+          <Text style={styles.title}>Test 3 - Tracking and Tracing</Text>
+          <Text style={styles.text}>
+            Click the moving ball as many times as you can in 10 seconds without
+            missing!
+          </Text>
+        </>
       )}
-      <Text style={styles.buttonText}>Clicks: {clickCount}</Text>
-      <Text style={styles.buttonText}>
+      <Text style={styles.text}>Clicks: {clickCount}</Text>
+      <Text style={styles.text}>
         Accuracy:{" "}
         {totalClicks ? ((clickCount / totalClicks) * 100).toFixed(1) : 0}%
       </Text>
       <Pressable
+        testID="background"
         style={{ flex: 1 }}
         onPress={() => {
           if (stopTest) return;
@@ -177,6 +189,20 @@ export default function Test3() {
         {startTest && (
           <Text style={styles.buttonText}> {time > 0 ? time : "Stop!"}</Text>
         )}
+        {!startTest && (
+          <TouchableOpacity
+            style={styles.button}
+            testID="startButton"
+            onPress={() => {
+              setStartTest(true);
+              startPhysics();
+              countDown();
+              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+            }}
+          >
+            <Text style={styles.buttonText}>Start Test</Text>
+          </TouchableOpacity>
+        )}
         {startTest && (
           <Animated.View
             style={{
@@ -185,73 +211,52 @@ export default function Test3() {
             }}
           >
             <Pressable
+              style={styles.ball}
+              testID="ball"
               onPress={() => {
                 if (stopTest) return;
                 Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
                 setClickCount((prev) => prev + 1);
                 setTotalClicks((prev) => prev + 1);
               }}
-              style={styles.ball}
             />
           </Animated.View>
         )}
       </Pressable>
 
       {stopTest && (
-        <TouchableOpacity
-          style={styles.button}
-          onPress={() => {
-            router.push("/test4");
-            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-          }}
-        >
-          <Text style={styles.buttonText}>Test 4</Text>
-        </TouchableOpacity>
-      )}
-      {!startTest && (
-        <TouchableOpacity
-          style={styles.button}
-          onPress={() => {
-            setStartTest(true);
-            startPhysics();
-            countDown();
-            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-          }}
-        >
-          <Text style={styles.buttonText}>Start Test</Text>
-        </TouchableOpacity>
+        <>
+          <TouchableOpacity
+            testID="nextTest"
+            style={styles.button}
+            onPress={() => {
+              router.push("/test4");
+              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+            }}
+          >
+            <Text style={styles.buttonText}>Next Test</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={styles.button}
+            onPress={() => {
+              router.push("./directory");
+              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+            }}
+          >
+            <Text style={styles.buttonText}>All Tests</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.button}
+            onPress={() => {
+              router.push("./menu");
+              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+            }}
+          >
+            <Text style={styles.buttonText}>Back to Menu</Text>
+          </TouchableOpacity>
+        </>
       )}
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#111",
-    borderWidth: 2,
-    borderColor: "white",
-  },
-
-  ball: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
-    backgroundColor: "cyan",
-  },
-
-  button: {
-    backgroundColor: "#4a90e2",
-    paddingVertical: 15,
-    paddingHorizontal: 25,
-    borderRadius: 10,
-    marginTop: 20,
-  },
-
-  buttonText: {
-    color: "white",
-    fontSize: 18,
-    marginBottom: 20,
-    textAlign: "center",
-  },
-});

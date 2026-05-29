@@ -1,3 +1,7 @@
+import { globalStyles } from "@/app/Styles/globalStyles";
+
+import { darkTheme } from "@/app/Styles/Themes/dark";
+import { lightTheme } from "@/app/Styles/Themes/light";
 import * as Haptics from "expo-haptics";
 import { router } from "expo-router";
 import { addDoc, collection } from "firebase/firestore";
@@ -7,13 +11,17 @@ import {
   StyleSheet,
   Text,
   TouchableOpacity,
+  useColorScheme,
   View,
 } from "react-native";
 import { auth, db } from "./firebase";
 
 export default function Test2() {
+  const scheme = useColorScheme();
+  const theme = scheme === "dark" ? darkTheme : lightTheme;
+  const styles = globalStyles(theme);
   const [readyText, setReadyText] = useState(true);
-  const [bgColor, setBgColor] = useState("#1e1e1e");
+  const [bgColor, setBgColor] = useState(theme.background);
   const [reactionScreen, setReactionScreen] = useState(false);
   const [nextTestButton, setNextTestButton] = useState(false);
   const [showResults, setShowResults] = useState(false);
@@ -154,51 +162,37 @@ export default function Test2() {
       )}
 
       {nextTestButton && (
-        <TouchableOpacity
-          style={styles.button}
-          onPress={() => {
-            router.push("/test3");
-            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-          }}
-        >
-          <Text style={styles.buttonText}>Next Test</Text>
-        </TouchableOpacity>
+        <>
+          <TouchableOpacity
+            style={styles.button}
+            onPress={() => {
+              router.push("/test3");
+              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+            }}
+          >
+            <Text style={styles.buttonText}>Next Test</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={styles.button}
+            onPress={() => {
+              router.push("./directory");
+              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+            }}
+          >
+            <Text style={styles.buttonText}>All Tests</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.button}
+            onPress={() => {
+              router.push("./menu");
+              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+            }}
+          >
+            <Text style={styles.buttonText}>Back to Menu</Text>
+          </TouchableOpacity>
+        </>
       )}
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-
-  title: {
-    color: "white",
-    fontSize: 32,
-    marginBottom: 20,
-    justifyContent: "center",
-  },
-
-  text: {
-    color: "white",
-    fontSize: 18,
-    marginBottom: 20,
-    textAlign: "center",
-  },
-
-  button: {
-    backgroundColor: "#4a90e2",
-    paddingVertical: 15,
-    paddingHorizontal: 25,
-    borderRadius: 10,
-    marginTop: 20,
-  },
-
-  buttonText: {
-    color: "white",
-    fontSize: 18,
-  },
-});

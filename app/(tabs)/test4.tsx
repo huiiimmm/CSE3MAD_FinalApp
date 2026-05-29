@@ -1,16 +1,22 @@
+import { globalStyles } from "@/app/Styles/globalStyles";
+
+import { darkTheme } from "@/app/Styles/Themes/dark";
+import { lightTheme } from "@/app/Styles/Themes/light";
+import { auth, saveScore } from "@/firebase";
 import { Audio } from "expo-av";
 import * as Haptics from "expo-haptics";
 import { router } from "expo-router";
-import { addDoc, collection } from "firebase/firestore";
 import React, { useEffect, useRef, useState } from "react";
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import { auth, db } from "./firebase";
+import { Text, TouchableOpacity, useColorScheme, View } from "react-native";
 
 export default function Test4() {
   const [time, setTime] = useState(0);
   const [reactionTime, setReactionTime] = useState(0);
   const [readyText, setReadyText] = useState(true);
   const [nextTestButton, setNextTestButton] = useState(false);
+  const scheme = useColorScheme();
+  const theme = scheme === "dark" ? darkTheme : lightTheme;
+  const styles = globalStyles(theme);
 
   const user = auth.currentUser;
 
@@ -21,13 +27,13 @@ export default function Test4() {
   const soundRef = useRef<Audio.Sound | null>(null);
   const recordingRef = useRef<Audio.Recording | null>(null);
 
-  // 🔥 FIX 1: global locks (prevents duplicate recordings/timers)
+  // global locks
   const recordingLock = useRef(false);
   const timerLock = useRef(false);
 
   const loadSound = async () => {
     const { sound } = await Audio.Sound.createAsync(
-      require("./audio/beep-07a.mp3"),
+      require("@/features/audio/beep-07a.mp3"),
       { shouldPlay: false, volume: 1.0 },
     );
     soundRef.current = sound;
@@ -57,13 +63,13 @@ export default function Test4() {
     await detectSound();
   };
 
-  // 🔥 FIX 2: fully safe recording lifecycle
+  // sound detection
   const detectSound = async () => {
     if (recordingLock.current) return;
     recordingLock.current = true;
 
     try {
-      // 🧹 hard cleanup before new recording
+      // cleanup
       if (recordingRef.current) {
         await recordingRef.current.stopAndUnloadAsync();
         recordingRef.current = null;
@@ -145,17 +151,18 @@ export default function Test4() {
     }
   };
 
-  const saveScore = async () => {
+  const saveTestScore = async () => {
     try {
       if (!user) return;
 
-      await addDoc(collection(db, "scores"), {
+      const scores = {
         testType: "test4",
         userId: user.uid,
         email: user.email,
         score: reactionTime,
         timestamp: Date.now(),
-      });
+      };
+      saveScore(user, scores);
 
       console.log("score saved!");
     } catch (error) {
@@ -165,7 +172,7 @@ export default function Test4() {
 
   useEffect(() => {
     if (nextTestButton) {
-      saveScore();
+      saveTestScore();
     }
   }, [nextTestButton]);
 
@@ -178,7 +185,7 @@ export default function Test4() {
   }, []);
 
   return (
-    <View style={styles.container}>
+    <View testID="test4" style={styles.container}>
       {readyText && (
         <>
           <Text style={styles.title}>Test 4 - Sound Reaction</Text>
@@ -205,50 +212,37 @@ export default function Test4() {
       )}
 
       {nextTestButton && (
-        <TouchableOpacity
-          style={styles.button}
-          onPress={() => {
-            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-            router.push("/results");
-          }}
-        >
-          <Text style={styles.buttonText}>Results</Text>
-        </TouchableOpacity>
+        <>
+          <TouchableOpacity
+            style={styles.button}
+            onPress={() => {
+              router.push("/results");
+              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+            }}
+          >
+            <Text style={styles.buttonText}>Results</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={styles.button}
+            onPress={() => {
+              router.push("./directory");
+              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+            }}
+          >
+            <Text style={styles.buttonText}>All Tests</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.button}
+            onPress={() => {
+              router.push("./menu");
+              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+            }}
+          >
+            <Text style={styles.buttonText}>Back to Menu</Text>
+          </TouchableOpacity>
+        </>
       )}
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-
-  title: {
-    color: "white",
-    fontSize: 32,
-    marginBottom: 20,
-  },
-
-  text: {
-    color: "white",
-    fontSize: 18,
-    marginBottom: 20,
-    textAlign: "center",
-  },
-
-  button: {
-    backgroundColor: "#4a90e2",
-    paddingVertical: 15,
-    paddingHorizontal: 25,
-    borderRadius: 10,
-    marginTop: 20,
-  },
-
-  buttonText: {
-    color: "white",
-    fontSize: 18,
-  },
-});

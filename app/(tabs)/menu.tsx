@@ -1,73 +1,91 @@
+import { globalStyles } from "@/app/Styles/globalStyles";
+
+import { darkTheme } from "@/app/Styles/Themes/dark";
+import { lightTheme } from "@/app/Styles/Themes/light";
 import * as Haptics from "expo-haptics";
 import { router } from "expo-router";
 import React from "react";
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import {
+  ScrollView,
+  Text,
+  TouchableOpacity,
+  useColorScheme,
+  View,
+} from "react-native";
 
 export default function MenuScreen() {
+  const scheme = useColorScheme();
+  const theme = scheme === "dark" ? darkTheme : lightTheme;
+  const styles = globalStyles(theme);
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Reaction Tester</Text>
+    <ScrollView>
+      <View testID="menu" style={styles.container}>
+        <Text style={styles.title}>Reaction Tester</Text>
 
-      <TouchableOpacity
-        style={styles.button}
-        onPress={() => {
-          router.push("./info");
-          Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-        }}
-      >
-        <Text style={styles.buttonText}>Info</Text>
-      </TouchableOpacity>
+        <TouchableOpacity
+          testID="info"
+          style={styles.button}
+          onPress={() => {
+            router.push("./info");
+            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+          }}
+        >
+          <Text style={styles.buttonText}>Info</Text>
+        </TouchableOpacity>
 
-      <TouchableOpacity
-        style={styles.button}
-        onPress={() => {
-          router.push("./test1");
-          Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-        }}
-      >
-        <Text style={styles.buttonText}>Start Test</Text>
-      </TouchableOpacity>
+        <TouchableOpacity
+          testID="startTest"
+          style={styles.button}
+          onPress={() => {
+            router.push("./test1");
+            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+          }}
+        >
+          <Text style={styles.buttonText}>Start Test 1</Text>
+        </TouchableOpacity>
 
-      <TouchableOpacity
-        style={styles.button}
-        onPress={() => {
-          router.push("./results");
-          Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-        }}
-      >
-        <Text style={styles.buttonText}>Leaderboard</Text>
-      </TouchableOpacity>
-    </View>
+        <TouchableOpacity
+          style={styles.button}
+          onPress={() => {
+            router.push("./directory");
+            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+          }}
+        >
+          <Text style={styles.buttonText}>All Tests</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          testID="leaderboard"
+          style={styles.button}
+          onPress={() => {
+            router.push("./results");
+            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+          }}
+        >
+          <Text style={styles.buttonText}>Leaderboard</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.button}
+          onPress={() => {
+            router.push("/(tabs)/map");
+            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+          }}
+        >
+          <Text style={styles.buttonText}>Map</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.button}
+          onPress={() => router.push("/(tabs)")}
+        >
+          <Text style={styles.buttonText}>Change User</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.button}
+          onPress={() => router.push("/(tabs)/myresults")}
+        >
+          <Text style={styles.buttonText}>My Results</Text>
+        </TouchableOpacity>
+      </View>
+    </ScrollView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#1e1e1e",
-    justifyContent: "center",
-    alignItems: "center",
-    paddingHorizontal: 20,
-    paddingVertical: 10,
-  },
-
-  title: {
-    color: "white",
-    fontSize: 36,
-    marginBottom: 40,
-  },
-
-  button: {
-    marginTop: 20,
-    backgroundColor: "#4a90e2",
-    paddingVertical: 15,
-    paddingHorizontal: 30,
-    borderRadius: 10,
-    color: "white",
-  },
-
-  buttonText: {
-    color: "white",
-    fontSize: 18,
-  },
-});

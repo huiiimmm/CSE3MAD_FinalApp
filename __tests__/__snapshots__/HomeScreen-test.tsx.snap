@@ -1,0 +1,316 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<HomeScreen /> matches snapshot 1`] = `
+<RCTScrollView>
+  <View>
+    <RCTSafeAreaView>
+      <View
+        style={
+          {
+            "backgroundColor": "#ffffff",
+            "flex": 1,
+          }
+        }
+      >
+        <View
+          style={
+            {
+              "alignItems": "center",
+              "marginTop": 20,
+              "width": "100%",
+            }
+          }
+        >
+          <Text
+            style={
+              {
+                "color": "#111111",
+                "fontSize": 18,
+                "textAlign": "center",
+              }
+            }
+            testID="loginHeader"
+          >
+            Login
+          </Text>
+          <Text
+            style={
+              {
+                "color": "#111111",
+                "fontSize": 18,
+                "textAlign": "center",
+              }
+            }
+            testID="createHeader"
+          >
+            Create
+          </Text>
+        </View>
+        <View
+          style={
+            {
+              "alignItems": "center",
+              "marginTop": 20,
+              "width": "100%",
+            }
+          }
+        >
+          <TextInput
+            autoCapitalize="none"
+            keyboardType="email-address"
+            onChangeText={[Function]}
+            placeholder="Email"
+            style={
+              {
+                "alignItems": "center",
+                "backgroundColor": "#fff",
+                "borderColor": "#999",
+                "borderRadius": 8,
+                "borderWidth": 1,
+                "padding": 12,
+                "width": 220,
+              }
+            }
+            testID="email"
+            value=""
+          />
+          <TextInput
+            onChangeText={[Function]}
+            placeholder="Password"
+            secureTextEntry={true}
+            style={
+              {
+                "alignItems": "center",
+                "backgroundColor": "#fff",
+                "borderColor": "#999",
+                "borderRadius": 8,
+                "borderWidth": 1,
+                "padding": 12,
+                "width": 220,
+              }
+            }
+            testID="password"
+            value=""
+          />
+        </View>
+        <View
+          style={
+            {
+              "alignItems": "center",
+              "marginTop": 20,
+              "width": "100%",
+            }
+          }
+        >
+          <View
+            accessibilityState={
+              {
+                "busy": undefined,
+                "checked": undefined,
+                "disabled": undefined,
+                "expanded": undefined,
+                "selected": undefined,
+              }
+            }
+            accessibilityValue={
+              {
+                "max": undefined,
+                "min": undefined,
+                "now": undefined,
+                "text": undefined,
+              }
+            }
+            accessible={true}
+            collapsable={false}
+            focusable={true}
+            onClick={[Function]}
+            onResponderGrant={[Function]}
+            onResponderMove={[Function]}
+            onResponderRelease={[Function]}
+            onResponderTerminate={[Function]}
+            onResponderTerminationRequest={[Function]}
+            onStartShouldSetResponder={[Function]}
+            style={
+              {
+                "backgroundColor": "#e28e4a",
+                "borderRadius": 10,
+                "marginTop": 20,
+                "opacity": 1,
+                "paddingHorizontal": 25,
+                "paddingVertical": 15,
+              }
+            }
+            testID="loginButton"
+          >
+            <Text
+              style={
+                {
+                  "color": "#111111",
+                  "fontSize": 18,
+                  "textAlign": "center",
+                }
+              }
+            >
+              Login
+            </Text>
+          </View>
+          <View
+            accessibilityState={
+              {
+                "busy": undefined,
+                "checked": undefined,
+                "disabled": undefined,
+                "expanded": undefined,
+                "selected": undefined,
+              }
+            }
+            accessibilityValue={
+              {
+                "max": undefined,
+                "min": undefined,
+                "now": undefined,
+                "text": undefined,
+              }
+            }
+            accessible={true}
+            collapsable={false}
+            focusable={true}
+            onClick={[Function]}
+            onResponderGrant={[Function]}
+            onResponderMove={[Function]}
+            onResponderRelease={[Function]}
+            onResponderTerminate={[Function]}
+            onResponderTerminationRequest={[Function]}
+            onStartShouldSetResponder={[Function]}
+            style={
+              {
+                "backgroundColor": "#e28e4a",
+                "borderRadius": 10,
+                "marginTop": 20,
+                "opacity": 1,
+                "paddingHorizontal": 25,
+                "paddingVertical": 15,
+              }
+            }
+            testID="createButton"
+          >
+            <Text
+              style={
+                {
+                  "color": "#111111",
+                  "fontSize": 18,
+                  "textAlign": "center",
+                }
+              }
+            >
+              Create
+            </Text>
+          </View>
+          <View
+            accessibilityState={
+              {
+                "busy": undefined,
+                "checked": undefined,
+                "disabled": undefined,
+                "expanded": undefined,
+                "selected": undefined,
+              }
+            }
+            accessibilityValue={
+              {
+                "max": undefined,
+                "min": undefined,
+                "now": undefined,
+                "text": undefined,
+              }
+            }
+            accessible={true}
+            collapsable={false}
+            focusable={true}
+            onClick={[Function]}
+            onResponderGrant={[Function]}
+            onResponderMove={[Function]}
+            onResponderRelease={[Function]}
+            onResponderTerminate={[Function]}
+            onResponderTerminationRequest={[Function]}
+            onStartShouldSetResponder={[Function]}
+            style={
+              {
+                "backgroundColor": "#e28e4a",
+                "borderRadius": 10,
+                "marginTop": 20,
+                "opacity": 1,
+                "paddingHorizontal": 25,
+                "paddingVertical": 15,
+              }
+            }
+          >
+            <Text
+              style={
+                {
+                  "color": "#111111",
+                  "fontSize": 18,
+                  "textAlign": "center",
+                }
+              }
+            >
+              Logout
+            </Text>
+          </View>
+          <View
+            accessibilityState={
+              {
+                "busy": undefined,
+                "checked": undefined,
+                "disabled": undefined,
+                "expanded": undefined,
+                "selected": undefined,
+              }
+            }
+            accessibilityValue={
+              {
+                "max": undefined,
+                "min": undefined,
+                "now": undefined,
+                "text": undefined,
+              }
+            }
+            accessible={true}
+            collapsable={false}
+            focusable={true}
+            onClick={[Function]}
+            onResponderGrant={[Function]}
+            onResponderMove={[Function]}
+            onResponderRelease={[Function]}
+            onResponderTerminate={[Function]}
+            onResponderTerminationRequest={[Function]}
+            onStartShouldSetResponder={[Function]}
+            style={
+              {
+                "backgroundColor": "#e28e4a",
+                "borderRadius": 10,
+                "marginTop": 20,
+                "opacity": 1,
+                "paddingHorizontal": 25,
+                "paddingVertical": 15,
+              }
+            }
+          >
+            <Text
+              style={
+                {
+                  "color": "#111111",
+                  "fontSize": 18,
+                  "textAlign": "center",
+                }
+              }
+            >
+              Delete
+            </Text>
+          </View>
+        </View>
+      </View>
+    </RCTSafeAreaView>
+  </View>
+</RCTScrollView>
+`;

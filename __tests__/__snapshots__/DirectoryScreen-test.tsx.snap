@@ -1,0 +1,232 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<DirectoryScreen /> matches snapshot 1`] = `
+<View
+  style={
+    {
+      "backgroundColor": "#ffffff",
+      "flex": 1,
+    }
+  }
+  testID="menu"
+>
+  <Text
+    style={
+      {
+        "color": "#111111",
+        "fontSize": 32,
+        "fontWeight": "bold",
+        "marginBottom": 20,
+        "textAlign": "center",
+      }
+    }
+  >
+    All Tests
+  </Text>
+  <View
+    accessibilityState={
+      {
+        "busy": undefined,
+        "checked": undefined,
+        "disabled": undefined,
+        "expanded": undefined,
+        "selected": undefined,
+      }
+    }
+    accessibilityValue={
+      {
+        "max": undefined,
+        "min": undefined,
+        "now": undefined,
+        "text": undefined,
+      }
+    }
+    accessible={true}
+    collapsable={false}
+    focusable={true}
+    onClick={[Function]}
+    onResponderGrant={[Function]}
+    onResponderMove={[Function]}
+    onResponderRelease={[Function]}
+    onResponderTerminate={[Function]}
+    onResponderTerminationRequest={[Function]}
+    onStartShouldSetResponder={[Function]}
+    style={
+      {
+        "backgroundColor": "#e28e4a",
+        "borderRadius": 10,
+        "marginTop": 20,
+        "opacity": 1,
+        "paddingHorizontal": 25,
+        "paddingVertical": 15,
+      }
+    }
+    testID="test1"
+  >
+    <Text
+      style={
+        {
+          "color": "#111111",
+          "fontSize": 18,
+          "textAlign": "center",
+        }
+      }
+    >
+      Test 1 - Dominant Hand Reaction
+    </Text>
+  </View>
+  <View
+    accessibilityState={
+      {
+        "busy": undefined,
+        "checked": undefined,
+        "disabled": undefined,
+        "expanded": undefined,
+        "selected": undefined,
+      }
+    }
+    accessibilityValue={
+      {
+        "max": undefined,
+        "min": undefined,
+        "now": undefined,
+        "text": undefined,
+      }
+    }
+    accessible={true}
+    collapsable={false}
+    focusable={true}
+    onClick={[Function]}
+    onResponderGrant={[Function]}
+    onResponderMove={[Function]}
+    onResponderRelease={[Function]}
+    onResponderTerminate={[Function]}
+    onResponderTerminationRequest={[Function]}
+    onStartShouldSetResponder={[Function]}
+    style={
+      {
+        "backgroundColor": "#e28e4a",
+        "borderRadius": 10,
+        "marginTop": 20,
+        "opacity": 1,
+        "paddingHorizontal": 25,
+        "paddingVertical": 15,
+      }
+    }
+  >
+    <Text
+      style={
+        {
+          "color": "#111111",
+          "fontSize": 18,
+          "textAlign": "center",
+        }
+      }
+    >
+      Test 2 - Non Dominant Hand Reaction
+    </Text>
+  </View>
+  <View
+    accessibilityState={
+      {
+        "busy": undefined,
+        "checked": undefined,
+        "disabled": undefined,
+        "expanded": undefined,
+        "selected": undefined,
+      }
+    }
+    accessibilityValue={
+      {
+        "max": undefined,
+        "min": undefined,
+        "now": undefined,
+        "text": undefined,
+      }
+    }
+    accessible={true}
+    collapsable={false}
+    focusable={true}
+    onClick={[Function]}
+    onResponderGrant={[Function]}
+    onResponderMove={[Function]}
+    onResponderRelease={[Function]}
+    onResponderTerminate={[Function]}
+    onResponderTerminationRequest={[Function]}
+    onStartShouldSetResponder={[Function]}
+    style={
+      {
+        "backgroundColor": "#e28e4a",
+        "borderRadius": 10,
+        "marginTop": 20,
+        "opacity": 1,
+        "paddingHorizontal": 25,
+        "paddingVertical": 15,
+      }
+    }
+  >
+    <Text
+      style={
+        {
+          "color": "#111111",
+          "fontSize": 18,
+          "textAlign": "center",
+        }
+      }
+    >
+      Test 3 - Tracking and Accuracy
+    </Text>
+  </View>
+  <View
+    accessibilityState={
+      {
+        "busy": undefined,
+        "checked": undefined,
+        "disabled": undefined,
+        "expanded": undefined,
+        "selected": undefined,
+      }
+    }
+    accessibilityValue={
+      {
+        "max": undefined,
+        "min": undefined,
+        "now": undefined,
+        "text": undefined,
+      }
+    }
+    accessible={true}
+    collapsable={false}
+    focusable={true}
+    onClick={[Function]}
+    onResponderGrant={[Function]}
+    onResponderMove={[Function]}
+    onResponderRelease={[Function]}
+    onResponderTerminate={[Function]}
+    onResponderTerminationRequest={[Function]}
+    onStartShouldSetResponder={[Function]}
+    style={
+      {
+        "backgroundColor": "#e28e4a",
+        "borderRadius": 10,
+        "marginTop": 20,
+        "opacity": 1,
+        "paddingHorizontal": 25,
+        "paddingVertical": 15,
+      }
+    }
+  >
+    <Text
+      style={
+        {
+          "color": "#111111",
+          "fontSize": 18,
+          "textAlign": "center",
+        }
+      }
+    >
+      Test 4 - Auditory Reaction Response
+    </Text>
+  </View>
+</View>
+`;

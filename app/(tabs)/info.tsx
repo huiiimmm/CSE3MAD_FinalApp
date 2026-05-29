@@ -1,11 +1,18 @@
+import { darkTheme } from "@/app/Styles/Themes/dark";
+import { lightTheme } from "@/app/Styles/Themes/light";
 import * as Haptics from "expo-haptics";
 import { router } from "expo-router";
 import React from "react";
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Text, TouchableOpacity, View, useColorScheme } from "react-native";
+
+import { globalStyles } from "@/app/Styles/globalStyles";
 
 export default function InfoScreen() {
+  const scheme = useColorScheme();
+  const theme = scheme === "dark" ? darkTheme : lightTheme;
+  const styles = globalStyles(theme);
   return (
-    <View style={styles.container}>
+    <View testID="info" style={styles.container}>
       <Text style={styles.title}>Info Guide</Text>
 
       <Text style={styles.text}>This is a reaction testing app.</Text>
@@ -31,6 +38,7 @@ export default function InfoScreen() {
       </Text>
 
       <TouchableOpacity
+        testID="startTest"
         style={styles.button}
         onPress={() => {
           router.push("/test1");
@@ -42,39 +50,3 @@ export default function InfoScreen() {
     </View>
   );
 }
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#1e1e1e",
-    justifyContent: "center",
-    alignItems: "center",
-    paddingHorizontal: 20,
-  },
-
-  title: {
-    color: "white",
-    fontSize: 32,
-    marginBottom: 30,
-    fontWeight: "bold",
-  },
-
-  text: {
-    color: "white",
-    fontSize: 16,
-    marginBottom: 15,
-    textAlign: "center",
-  },
-
-  button: {
-    marginTop: 20,
-    backgroundColor: "#4a90e2",
-    paddingVertical: 15,
-    paddingHorizontal: 30,
-    borderRadius: 10,
-  },
-
-  buttonText: {
-    color: "white",
-    fontSize: 18,
-  },
-});
