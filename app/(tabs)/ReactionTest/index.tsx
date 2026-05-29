@@ -2,9 +2,9 @@ import { useRouter } from "expo-router";
 import React from "react";
 import { Text, TouchableOpacity, View } from "react-native";
 
-import { darkTheme } from "@/app/(tabs)/Styles/Themes/dark";
-import { lightTheme } from "@/app/(tabs)/Styles/Themes/light";
-import { globalStyles } from "@/app//(tabs)/Styles/globalStyles";
+import { darkTheme } from "@/Styles/Themes/dark";
+import { lightTheme } from "@/Styles/Themes/light";
+import { globalStyles } from "@/Styles/globalStyles";
 import { useColorScheme } from "react-native";
 
 export default function ReactionTestIndex() {

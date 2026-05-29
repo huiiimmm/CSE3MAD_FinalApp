@@ -11,6 +11,11 @@ export default function TabsLayout() {
         name="ReactionTest"
         options={{ title: "Reaction Tests", headerShown: false }}
       />
+
+      <Tabs.Screen
+        name="EarthquakeResistance"
+        options={{ title: "Earthquake Resistance", headerShown: false }}
+      />
     </Tabs>
   );
 }

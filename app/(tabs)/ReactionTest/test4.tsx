@@ -1,7 +1,7 @@
-import { globalStyles } from "@/app/(tabs)/Styles/globalStyles";
+import { globalStyles } from "@/Styles/globalStyles";
 
-import { darkTheme } from "@/app/(tabs)/Styles/Themes/dark";
-import { lightTheme } from "@/app/(tabs)/Styles/Themes/light";
+import { darkTheme } from "@/Styles/Themes/dark";
+import { lightTheme } from "@/Styles/Themes/light";
 import { auth, saveScore } from "@/firebase";
 import { Audio } from "expo-av";
 import * as Haptics from "expo-haptics";

@@ -1,8 +1,8 @@
-import { globalStyles } from "@/app/(tabs)/Styles/globalStyles";
+import { globalStyles } from "@/Styles/globalStyles";
 import * as Haptics from "expo-haptics";
 
-import { darkTheme } from "@/app/(tabs)/Styles/Themes/dark";
-import { lightTheme } from "@/app/(tabs)/Styles/Themes/light";
+import { darkTheme } from "@/Styles/Themes/dark";
+import { lightTheme } from "@/Styles/Themes/light";
 import { router } from "expo-router";
 import { useRef, useState } from "react";
 import {

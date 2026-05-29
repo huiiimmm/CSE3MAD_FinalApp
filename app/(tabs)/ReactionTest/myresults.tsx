@@ -1,16 +1,16 @@
-import { globalStyles } from "@/app/(tabs)/Styles/globalStyles";
+import { globalStyles } from "@/Styles/globalStyles";
 
-import { darkTheme } from "@/app/(tabs)/Styles/Themes/dark";
-import { lightTheme } from "@/app/(tabs)/Styles/Themes/light";
+import { darkTheme } from "@/Styles/Themes/dark";
+import { lightTheme } from "@/Styles/Themes/light";
 import { auth, getUserBestScores } from "@/firebase";
 import { router } from "expo-router";
 import { useEffect, useState } from "react";
 import {
-    ScrollView,
-    Text,
-    TouchableOpacity,
-    useColorScheme,
-    View,
+  ScrollView,
+  Text,
+  TouchableOpacity,
+  useColorScheme,
+  View,
 } from "react-native";
 
 export default function MyResultsScreen() {

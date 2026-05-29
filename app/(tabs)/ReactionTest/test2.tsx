@@ -1,20 +1,20 @@
-import { globalStyles } from "@/app/(tabs)/Styles/globalStyles";
+import { globalStyles } from "@/Styles/globalStyles";
 
-import { darkTheme } from "@/app/(tabs)/Styles/Themes/dark";
-import { lightTheme } from "@/app/(tabs)/Styles/Themes/light";
+import { darkTheme } from "@/Styles/Themes/dark";
+import { lightTheme } from "@/Styles/Themes/light";
+import { auth, db } from "@/firebase";
 import * as Haptics from "expo-haptics";
 import { router } from "expo-router";
 import { addDoc, collection } from "firebase/firestore";
 import React, { useEffect, useRef, useState } from "react";
 import {
-    Pressable,
-    StyleSheet,
-    Text,
-    TouchableOpacity,
-    useColorScheme,
-    View,
+  Pressable,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  useColorScheme,
+  View,
 } from "react-native";
-import { auth, db } from "./firebase";
 
 export default function Test2() {
   const scheme = useColorScheme();
