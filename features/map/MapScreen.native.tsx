@@ -2,11 +2,7 @@ import { globalStyles } from "@/app/Styles/globalStyles";
 import { darkTheme } from "@/app/Styles/Themes/dark";
 import { lightTheme } from "@/app/Styles/Themes/light";
 
-import {
-  getAllLocations,
-  getUserBestScores,
-  LocationData
-} from "@/firebase";
+import { getAllLocations, getUserBestScores, LocationData } from "@/firebase";
 
 import * as Haptics from "expo-haptics";
 
@@ -90,9 +86,10 @@ export default function MapScreen() {
         clusterTextColor="white"
         animationEnabled
       >
-        {locations.map((loc) => {
+        {Array.from(
+          new Map(locations.map((loc) => [loc.uid, loc])).values(),
+        ).map((loc) => {
           const scores = userScores[loc.uid];
-
           return (
             <Marker
               key={loc.id}

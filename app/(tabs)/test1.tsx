@@ -19,13 +19,16 @@ export default function Test1() {
   const scheme = useColorScheme();
   const theme = scheme === "dark" ? darkTheme : lightTheme;
   const styles = globalStyles(theme);
+
   const [readyText, setReadyText] = useState(true);
   const [bgColor, setBgColor] = useState(theme.background);
+
   const [reactionScreen, setReactionScreen] = useState(false);
   const [earlyCheck, setEarlyCheck] = useState(false);
   const [nextTestButton, setNextTestButton] = useState(false);
   const [recordResults, setRecordResults] = useState(false);
   const [restartTest, setRestartTest] = useState(false);
+
   const [time, setTime] = useState(0);
   const [reactionTime, setReactionTime] = useState(0);
   const user = auth.currentUser;
