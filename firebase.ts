@@ -106,8 +106,9 @@ export const uploadSoundLocation = (
   user: any,
   location: any,
   noiseType: string,
+  noiseLevel: number,
 ) => {
-  console.log("UPLOAD INPUT:", user, location, noiseType);
+  console.log("UPLOAD INPUT:", user, location, noiseType, noiseLevel);
 
   const latitude = location?.latitude ?? location?.coords?.latitude;
   const longitude = location?.longitude ?? location?.coords?.longitude;
@@ -116,9 +117,15 @@ export const uploadSoundLocation = (
     !user?.uid ||
     typeof latitude !== "number" ||
     typeof longitude !== "number" ||
-    typeof noiseType !== "string"
+    typeof noiseType !== "string" ||
+    typeof noiseLevel !== "number"
   ) {
-    console.log("Invalid sound pollution payload:", location, noiseType);
+    console.log(
+      "Invalid sound pollution payload:",
+      location,
+      noiseType,
+      noiseLevel,
+    );
     return;
   }
 
@@ -128,6 +135,7 @@ export const uploadSoundLocation = (
     latitude,
     longitude,
     noiseType,
+    noiseLevel,
     updatedAt: new Date(),
   });
 };
