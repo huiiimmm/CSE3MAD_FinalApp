@@ -1,18 +1,18 @@
-import { globalStyles } from "@/app/Styles/globalStyles";
+import { globalStyles } from "@/app/(tabs)/Styles/globalStyles";
 
-import { darkTheme } from "@/app/Styles/Themes/dark";
-import { lightTheme } from "@/app/Styles/Themes/light";
+import { darkTheme } from "@/app/(tabs)/Styles/Themes/dark";
+import { lightTheme } from "@/app/(tabs)/Styles/Themes/light";
 import { auth, saveScore } from "@/firebase";
 import * as Haptics from "expo-haptics";
 import { router } from "expo-router";
 import React, { useEffect, useRef, useState } from "react";
 import {
-  Animated,
-  Pressable,
-  Text,
-  TouchableOpacity,
-  useColorScheme,
-  View,
+    Animated,
+    Pressable,
+    Text,
+    TouchableOpacity,
+    useColorScheme,
+    View,
 } from "react-native";
 
 export default function Test3() {
@@ -24,7 +24,7 @@ export default function Test3() {
   const user = auth.currentUser;
 
   const [time, setTime] = useState(10);
-  const intervalRef = useRef<number | null>(null);
+  const intervalRef = useRef<any>(null);
 
   const countDown = () => {
     setTime(10);
@@ -230,7 +230,7 @@ export default function Test3() {
             testID="nextTest"
             style={styles.button}
             onPress={() => {
-              router.push("/test4");
+              router.push("/(tabs)/ReactionTest/test4");
               Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
             }}
           >
@@ -240,7 +240,7 @@ export default function Test3() {
           <TouchableOpacity
             style={styles.button}
             onPress={() => {
-              router.push("./directory");
+              router.push("/(tabs)/ReactionTest/directory");
               Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
             }}
           >
@@ -249,7 +249,7 @@ export default function Test3() {
           <TouchableOpacity
             style={styles.button}
             onPress={() => {
-              router.push("./menu");
+              router.push("/(tabs)/ReactionTest/menu");
               Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
             }}
           >

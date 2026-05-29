@@ -1,7 +1,7 @@
-import { globalStyles } from "@/app/Styles/globalStyles";
+import { globalStyles } from "@/app/(tabs)/Styles/globalStyles";
 
-import { darkTheme } from "@/app/Styles/Themes/dark";
-import { lightTheme } from "@/app/Styles/Themes/light";
+import { darkTheme } from "@/app/(tabs)/Styles/Themes/dark";
+import { lightTheme } from "@/app/(tabs)/Styles/Themes/light";
 import * as Haptics from "expo-haptics";
 import { router } from "expo-router";
 import React from "react";
@@ -37,7 +37,7 @@ export default function MenuScreen() {
           testID="startTest"
           style={styles.button}
           onPress={() => {
-            router.push("./test1");
+            router.push("/(tabs)/ReactionTest/test1");
             Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
           }}
         >
@@ -47,7 +47,7 @@ export default function MenuScreen() {
         <TouchableOpacity
           style={styles.button}
           onPress={() => {
-            router.push("./directory");
+            router.push("/(tabs)/ReactionTest/directory");
             Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
           }}
         >
@@ -58,7 +58,7 @@ export default function MenuScreen() {
           testID="leaderboard"
           style={styles.button}
           onPress={() => {
-            router.push("./results");
+            router.push("/(tabs)/ReactionTest/results");
             Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
           }}
         >
@@ -67,7 +67,7 @@ export default function MenuScreen() {
         <TouchableOpacity
           style={styles.button}
           onPress={() => {
-            router.push("/(tabs)/map");
+            router.push("/(tabs)/ReactionTest/map");
             Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
           }}
         >
@@ -75,13 +75,13 @@ export default function MenuScreen() {
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.button}
-          onPress={() => router.push("/(tabs)")}
+          onPress={() => router.push("/(tabs)/ReactionTest")}
         >
           <Text style={styles.buttonText}>Change User</Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.button}
-          onPress={() => router.push("/(tabs)/myresults")}
+          onPress={() => router.push("/(tabs)/ReactionTest/myresults")}
         >
           <Text style={styles.buttonText}>My Results</Text>
         </TouchableOpacity>

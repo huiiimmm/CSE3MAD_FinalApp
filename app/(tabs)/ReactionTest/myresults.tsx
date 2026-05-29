@@ -1,7 +1,7 @@
-import { globalStyles } from "@/app/Styles/globalStyles";
+import { globalStyles } from "@/app/(tabs)/Styles/globalStyles";
 
-import { darkTheme } from "@/app/Styles/Themes/dark";
-import { lightTheme } from "@/app/Styles/Themes/light";
+import { darkTheme } from "@/app/(tabs)/Styles/Themes/dark";
+import { lightTheme } from "@/app/(tabs)/Styles/Themes/light";
 import { auth, getUserBestScores } from "@/firebase";
 import { router } from "expo-router";
 import { useEffect, useState } from "react";
@@ -102,7 +102,7 @@ export default function MyResultsScreen() {
       <TouchableOpacity
         testID="menu"
         style={styles.button}
-        onPress={() => router.push("/menu")}
+        onPress={() => router.push("/(tabs)/ReactionTest/menu")}
       >
         <Text style={styles.buttonText}>Back To Menu</Text>
       </TouchableOpacity>

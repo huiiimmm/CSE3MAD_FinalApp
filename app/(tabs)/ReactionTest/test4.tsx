@@ -1,7 +1,7 @@
-import { globalStyles } from "@/app/Styles/globalStyles";
+import { globalStyles } from "@/app/(tabs)/Styles/globalStyles";
 
-import { darkTheme } from "@/app/Styles/Themes/dark";
-import { lightTheme } from "@/app/Styles/Themes/light";
+import { darkTheme } from "@/app/(tabs)/Styles/Themes/dark";
+import { lightTheme } from "@/app/(tabs)/Styles/Themes/light";
 import { auth, saveScore } from "@/firebase";
 import { Audio } from "expo-av";
 import * as Haptics from "expo-haptics";
@@ -20,9 +20,9 @@ export default function Test4() {
 
   const user = auth.currentUser;
 
-  const intervalRef = useRef<number | null>(null);
-  const detectionInterval = useRef<number | null>(null);
-  const startRef = useRef<number | null>(null);
+  const intervalRef = useRef<any>(null);
+  const detectionInterval = useRef<any>(null);
+  const startRef = useRef<any>(null);
 
   const soundRef = useRef<Audio.Sound | null>(null);
   const recordingRef = useRef<Audio.Recording | null>(null);
@@ -216,7 +216,7 @@ export default function Test4() {
           <TouchableOpacity
             style={styles.button}
             onPress={() => {
-              router.push("/results");
+              router.push("/(tabs)/ReactionTest/results");
               Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
             }}
           >
@@ -226,7 +226,7 @@ export default function Test4() {
           <TouchableOpacity
             style={styles.button}
             onPress={() => {
-              router.push("./directory");
+              router.push("/(tabs)/ReactionTest/directory");
               Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
             }}
           >
@@ -235,7 +235,7 @@ export default function Test4() {
           <TouchableOpacity
             style={styles.button}
             onPress={() => {
-              router.push("./menu");
+              router.push("/(tabs)/ReactionTest/menu");
               Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
             }}
           >

@@ -1,30 +1,30 @@
-import { globalStyles } from "@/app/Styles/globalStyles";
+import { globalStyles } from "@/app/(tabs)/Styles/globalStyles";
 import * as Haptics from "expo-haptics";
 
-import { darkTheme } from "@/app/Styles/Themes/dark";
-import { lightTheme } from "@/app/Styles/Themes/light";
+import { darkTheme } from "@/app/(tabs)/Styles/Themes/dark";
+import { lightTheme } from "@/app/(tabs)/Styles/Themes/light";
 import { router } from "expo-router";
 import { useRef, useState } from "react";
 import {
-  SafeAreaView,
-  ScrollView,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  useColorScheme,
-  View,
+    SafeAreaView,
+    ScrollView,
+    Text,
+    TextInput,
+    TouchableOpacity,
+    useColorScheme,
+    View,
 } from "react-native";
 
 import { SafeAreaProvider } from "react-native-safe-area-context";
 
 import {
-  addDebugDoc,
-  auth,
-  createAccount,
-  login,
-  logout,
-  removeUser,
-  uploadLocation,
+    addDebugDoc,
+    auth,
+    createAccount,
+    login,
+    logout,
+    removeUser,
+    uploadLocation,
 } from "@/firebase";
 
 import * as Location from "expo-location";
@@ -64,7 +64,7 @@ export default function HomeScreen() {
       await debug("signinEmailPassword", "success: " + user.email);
 
       setloginout("login: " + user.email);
-      router.push("/menu");
+      router.push("/(tabs)/ReactionTest/menu");
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
 
       const coords = await getLocation();

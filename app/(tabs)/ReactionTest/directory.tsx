@@ -1,7 +1,7 @@
-import { globalStyles } from "@/app/Styles/globalStyles";
+import { globalStyles } from "@/app//(tabs)/Styles/globalStyles";
 
-import { darkTheme } from "@/app/Styles/Themes/dark";
-import { lightTheme } from "@/app/Styles/Themes/light";
+import { darkTheme } from "@/app/(tabs)/Styles/Themes/dark";
+import { lightTheme } from "@/app/(tabs)/Styles/Themes/light";
 import { useColorScheme } from "react-native";
 
 import * as Haptics from "expo-haptics";
@@ -21,7 +21,7 @@ export default function DirectoryScreen() {
         testID="test1"
         style={styles.button}
         onPress={() => {
-          router.push("/test1");
+          router.push("/(tabs)/ReactionTest/test1");
           Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
         }}
       >
@@ -31,7 +31,7 @@ export default function DirectoryScreen() {
       <TouchableOpacity
         style={styles.button}
         onPress={() => {
-          router.push("/test2");
+          router.push("/(tabs)/ReactionTest/test2");
           Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
         }}
       >
@@ -43,7 +43,7 @@ export default function DirectoryScreen() {
       <TouchableOpacity
         style={styles.button}
         onPress={() => {
-          router.push("/test3");
+          router.push("/(tabs)/ReactionTest/test3");
           Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
         }}
       >
@@ -53,7 +53,7 @@ export default function DirectoryScreen() {
       <TouchableOpacity
         style={styles.button}
         onPress={() => {
-          router.push("/test4");
+          router.push("/(tabs)/ReactionTest/test4");
           Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
         }}
       >

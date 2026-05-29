@@ -1,11 +1,11 @@
-import { darkTheme } from "@/app/Styles/Themes/dark";
-import { lightTheme } from "@/app/Styles/Themes/light";
+import { darkTheme } from "@/app/(tabs)/Styles/Themes/dark";
+import { lightTheme } from "@/app/(tabs)/Styles/Themes/light";
 import * as Haptics from "expo-haptics";
 import { router } from "expo-router";
 import React from "react";
 import { Text, TouchableOpacity, View, useColorScheme } from "react-native";
 
-import { globalStyles } from "@/app/Styles/globalStyles";
+import { globalStyles } from "@/app/(tabs)/Styles/globalStyles";
 
 export default function InfoScreen() {
   const scheme = useColorScheme();
@@ -41,7 +41,7 @@ export default function InfoScreen() {
         testID="startTest"
         style={styles.button}
         onPress={() => {
-          router.push("/test1");
+          router.push("/(tabs)/ReactionTest/test1");
           Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
         }}
       >
