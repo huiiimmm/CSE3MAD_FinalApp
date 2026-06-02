@@ -4,7 +4,7 @@ import { darkTheme } from "@/Styles/Themes/dark";
 import { lightTheme } from "@/Styles/Themes/light";
 import * as Haptics from "expo-haptics";
 import { router } from "expo-router";
-import { Accelerometer } from "expo-sensors";
+import { Accelerometer, Gyroscope } from "expo-sensors";
 import React, { useEffect, useRef, useState } from "react";
 import {
   Text,
@@ -15,12 +15,14 @@ import {
   View,
 } from "react-native";
 
-interface VibrationSample {
-  intensity: number;
+interface TelemetrySample {
+  acceleration: number;
+  rotation: number;
 }
 
 export default function EarthquakeSimulator() {
   const [vibration, setVibration] = useState<number>(0);
+  const [rotation, setRotation] = useState<number>(0); // New live tracking state
 
   const [startTest, setStartTest] = useState(false);
   const [stopTest, setStopTest] = useState(false);
@@ -28,174 +30,189 @@ export default function EarthquakeSimulator() {
   const [successText, setSuccessText] = useState(false);
   const [errorText, setErrorText] = useState(false);
   const [isRecording, setIsRecording] = useState<boolean>(false);
+
+  // Hardware Subscription References
   const accelSubRef = useRef<any>(null);
-  const vibrationIntervalRef = useRef<any>(null);
-  const recordedDataRef = useRef<VibrationSample[]>([]);
-  const startTimeRef = useRef<number>(0);
-  const [structureName, setStructureName] = useState<string>("");
-
-  // Use a mutable ref to track active simulation state across threads instantly
-  const isSimulatingRef = useRef<boolean>(false);
-
-  const [time, setTime] = useState(15);
-  const intervalRef = useRef<any>(null);
+  const gyroSubRef = useRef<any>(null);
   const vibrationRef = useRef<any>(null);
+  const intervalRef = useRef<any>(null);
+
+  const recordedDataRef = useRef<TelemetrySample[]>([]);
+  const [structureName, setStructureName] = useState<string>("");
+  const isSimulatingRef = useRef<boolean>(false);
+  const [time, setTime] = useState(15);
 
   const scheme = useColorScheme();
   const theme = scheme === "dark" ? darkTheme : lightTheme;
   const styles = globalStyles(theme);
   const user = auth.currentUser;
 
-  // Unified absolute cleanup engine
-  const stopAllActivity = () => {
+  const stopAllActivity = async () => {
     isSimulatingRef.current = false;
-    if (intervalRef.current) {
-      clearInterval(intervalRef.current);
-      intervalRef.current = null;
-    }
-    if (vibrationRef.current) {
-      clearTimeout(vibrationRef.current);
-      vibrationRef.current = null;
-    }
+
+    if (intervalRef.current) clearInterval(intervalRef.current);
+    if (vibrationRef.current) clearTimeout(vibrationRef.current);
+
     Vibration.cancel();
+
+    // Disengage Accelerometer
+    if (accelSubRef.current) {
+      accelSubRef.current.remove();
+      accelSubRef.current = null;
+    }
+    // Disengage Gyroscope
+    if (gyroSubRef.current) {
+      gyroSubRef.current.remove();
+      gyroSubRef.current = null;
+    }
+
+    setIsRecording(false);
+    setVibration(0);
+    setRotation(0);
   };
 
   useEffect(() => {
-    return () => stopAllActivity();
+    return () => {
+      stopAllActivity();
+    };
   }, []);
 
   const startRecording = () => {
-    if (!structureName.trim()) {
-      setSaveStatus("Please define a structure name before beginning.");
-      return;
-    }
-    // Reset status and outcome messages from any previous runs
-    setSaveStatus("");
-    setSuccessText(false);
-    setErrorText(false);
+    if (accelSubRef.current || gyroSubRef.current) return;
 
     recordedDataRef.current = [];
-    startTimeRef.current = Date.now();
     setIsRecording(true);
 
+    // Explicitly sync timing updates across hardware frames
+    Accelerometer.setUpdateInterval(100);
+    Gyroscope.setUpdateInterval(100);
+
+    // Local snapshot logs to pair coordinates across sensor callbacks
+    let currentAcc = 0;
+    let currentGyro = 0;
+
+    // 1. Monitor Linear Shaking Forces
     accelSubRef.current = Accelerometer.addListener((data) => {
       const totalForce = Math.sqrt(
         Math.pow(data.x, 2) + Math.pow(data.y, 2) + Math.pow(data.z, 2),
       );
       let dynamicVibration = Math.abs(totalForce - 1.0);
-      if (dynamicVibration < 0.03) dynamicVibration = 0; // Filter micro-noise
+      if (dynamicVibration < 0.03) dynamicVibration = 0; // Noise gate
 
+      currentAcc = dynamicVibration;
       setVibration(dynamicVibration);
+    });
 
+    // 2. Monitor Structural Twisting/Tilting (Gyro)
+    gyroSubRef.current = Gyroscope.addListener((data) => {
+      // Total Rotational Vector Magnitude (rad/s)
+      const totalRotation = Math.sqrt(
+        Math.pow(data.x, 2) + Math.pow(data.y, 2) + Math.pow(data.z, 2),
+      );
+      let dynamicRotation = totalRotation;
+      if (dynamicRotation < 0.02) dynamicRotation = 0; // Noise gate
+
+      currentGyro = dynamicRotation;
+      setRotation(dynamicRotation);
+
+      // Record paired telemetry samples to the collection array
       recordedDataRef.current.push({
-        intensity: parseFloat(dynamicVibration.toFixed(4)),
+        acceleration: parseFloat(currentAcc.toFixed(4)),
+        rotation: parseFloat(dynamicRotation.toFixed(4)),
       });
     });
   };
 
-  const stopRecording = async () => {
-    setIsRecording(false);
-
-    // Clear our background motor refresh interval loop
-    if (vibrationIntervalRef.current) {
-      clearInterval(vibrationIntervalRef.current);
-      vibrationIntervalRef.current = null;
-    }
-
-    // Silence phone hardware coil immediately
-    Vibration.cancel();
-
-    if (accelSubRef.current) {
-      accelSubRef.current.remove();
-      accelSubRef.current = null;
-    }
-    setVibration(0);
-
+  const processAndUploadLogs = async () => {
     if (recordedDataRef.current.length > 0) {
-      if (!structureName) {
-        setSaveStatus("Please define a structure name before saving.");
-        return;
-      }
-
       const totalSamples = recordedDataRef.current.length;
-      const sumIntensity = recordedDataRef.current.reduce(
-        (acc, cur) => acc + cur.intensity,
+
+      // Calculate Combined Structural Movement Metrics
+      const sumAcc = recordedDataRef.current.reduce(
+        (acc, cur) => acc + cur.acceleration,
         0,
       );
-      const avgStructureMovementIntensity = parseFloat(
-        (sumIntensity / totalSamples).toFixed(4),
+      const sumGyro = recordedDataRef.current.reduce(
+        (acc, cur) => acc + cur.rotation,
+        0,
       );
 
-      const peakStructureMovementIntensity = Math.max(
-        ...recordedDataRef.current.map((s) => s.intensity),
+      const avgAcc = parseFloat((sumAcc / totalSamples).toFixed(4));
+      const avgGyro = parseFloat((sumGyro / totalSamples).toFixed(4));
+
+      const peakAcc = Math.max(
+        ...recordedDataRef.current.map((s) => s.acceleration),
       );
+      const peakGyro = Math.max(
+        ...recordedDataRef.current.map((s) => s.rotation),
+      );
+
+      // Sensor Fusion Index: We scale rotation and acceleration together
+      // to yield a single total destructive movement rating
+      const combinedAverage = parseFloat((avgAcc + avgGyro).toFixed(4));
+      const combinedPeak = parseFloat((peakAcc + peakGyro).toFixed(4));
 
       try {
         await uploadEarthquakeData(
           user,
           structureName,
-          avgStructureMovementIntensity,
-          peakStructureMovementIntensity,
+          combinedAverage, // Pushed down as average movement intensity
+          combinedPeak, // Pushed down as peak structural movement intensity
         );
         setSuccessText(true);
-        setSaveStatus("Data saved successfully!");
+        setSaveStatus("Sensor Fusion telemetry logged successfully!");
       } catch (e) {
-        console.error("Error uploading earthquake data: ", e);
+        console.error(e);
         setErrorText(true);
-        setSaveStatus("Failed to save data. Please try again.");
+        setSaveStatus("Failed to save metrics.");
       }
     }
   };
 
   const runEarthquakeTick = (isInitialShock = false) => {
-    // Instantly break the cycle if the test has been flagged to stop
     if (!isSimulatingRef.current) return;
 
     if (isInitialShock) {
-      // 1. Strongest Initial Shock: Heavy, long rumble profile
       Vibration.vibrate([0, 1000, 150, 400]);
     } else {
-      // 2. Randomized Aftershock Intensities
-      // We simulate intensity variation by changing active motor rumble durations
       const randomIntensityRumble =
         Math.floor(Math.random() * (500 - 100 + 1)) + 100;
       Vibration.vibrate([0, randomIntensityRumble]);
     }
 
-    // 3. Generate randomized quiet spacing interval between aftershocks
     const nextInterval = Math.floor(Math.random() * (2000 - 600 + 1)) + 600;
-
     vibrationRef.current = setTimeout(() => {
       runEarthquakeTick(false);
     }, nextInterval);
-    startRecording();
-
-    // Schedule a stop recording after 4 seconds to capture each shock's full profile
-    setTimeout(() => {
-      stopRecording();
-    }, 4000);
   };
 
-  const countDown = () => {
+  const countDown = async () => {
     if (!user) return;
+    if (!structureName.trim()) {
+      setSaveStatus("Please define a structure name before beginning.");
+      return;
+    }
 
-    if (intervalRef.current) clearInterval(intervalRef.current);
-    if (vibrationRef.current) clearTimeout(vibrationRef.current);
-
-    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
-
+    await stopAllActivity();
+    setSaveStatus("");
+    setSuccessText(false);
+    setErrorText(false);
     setTime(15);
     setStopTest(false);
     setStartTest(true);
     isSimulatingRef.current = true;
+
+    startRecording();
     runEarthquakeTick(true);
 
-    intervalRef.current = setInterval(() => {
+    intervalRef.current = setInterval(async () => {
       setTime((prev) => {
         if (prev <= 1) {
-          stopAllActivity();
-          setStopTest(true);
-          Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+          stopAllActivity().then(() => {
+            processAndUploadLogs();
+            setStopTest(true);
+            Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+          });
           return 0;
         }
         return prev - 1;
@@ -203,28 +220,11 @@ export default function EarthquakeSimulator() {
     }, 1000);
   };
 
-  if (!user) {
-    return (
-      <View style={[styles.container, { justifyContent: "center" }]}>
-        <Text style={styles.text}>Please log in to start the simulation.</Text>
-      </View>
-    );
-  }
-
   return (
     <View style={[styles.container, { paddingHorizontal: 16, paddingTop: 40 }]}>
-      <Text style={styles.title}>Earthquake Simulator</Text>
+      <Text style={styles.title}>Seismic Fusion Simulator</Text>
 
-      {/* Visual countdown tracking read-out */}
       <View style={[styles.colContainer, { marginVertical: 10 }]}>
-        <Text
-          style={[
-            styles.text,
-            { fontSize: 22, fontWeight: "600", paddingBottom: 20 },
-          ]}
-        >
-          Enter a name for your structure
-        </Text>
         <TextInput
           style={styles.sUser}
           placeholder="Enter structure name"
@@ -232,14 +232,30 @@ export default function EarthquakeSimulator() {
           value={structureName}
           editable={!isRecording}
         />
+
+        {/* Dual Telemetry Readout Bars */}
+        <View style={{ marginTop: 15 }}>
+          <Text style={[styles.text, { fontSize: 14, color: "#4CAF50" }]}>
+            Linear Acceleration: {vibration.toFixed(4)} G
+          </Text>
+          <Text
+            style={[
+              styles.text,
+              { fontSize: 14, color: "#2196F3", marginTop: 5 },
+            ]}
+          >
+            Angular Rotation: {rotation.toFixed(4)} rad/s
+          </Text>
+        </View>
+
         <Text
           style={[
             styles.text,
             {
               fontSize: 22,
               fontWeight: "600",
-              color: isSimulatingRef.current ? "#F44336" : theme.text,
               paddingTop: 20,
+              color: isSimulatingRef.current ? "#F44336" : theme.text,
             },
           ]}
         >
@@ -248,6 +264,20 @@ export default function EarthquakeSimulator() {
       </View>
 
       <View style={styles.colContainer}>
+        {saveStatus ? (
+          <Text
+            style={[
+              styles.text,
+              {
+                color: successText ? "#4CAF50" : "#F44336",
+                marginBottom: 10,
+                textAlign: "center",
+              },
+            ]}
+          >
+            {saveStatus}
+          </Text>
+        ) : null}
         <TouchableOpacity
           onPress={countDown}
           style={[
@@ -258,31 +288,14 @@ export default function EarthquakeSimulator() {
         >
           <Text style={styles.buttonText}>
             {isSimulatingRef.current
-              ? "Restart Simulation"
-              : "Start Simulation"}
+              ? "Restart Test"
+              : "Start Sensor Fusion Test"}
           </Text>
         </TouchableOpacity>
       </View>
 
-      {/* Conditional completed outcome panel */}
       {stopTest && (
         <View style={styles.colContainer}>
-          <View
-            style={[
-              styles.rowContainer,
-              {
-                borderColor: "#4CAF50",
-                borderWidth: 2,
-                borderRadius: 10,
-                marginTop: 15,
-              },
-            ]}
-          >
-            <Text style={[styles.text, { fontSize: 16, fontWeight: "600" }]}>
-              Simulation Completed!
-            </Text>
-          </View>
-
           <TouchableOpacity
             style={[
               styles.button,
@@ -292,7 +305,7 @@ export default function EarthquakeSimulator() {
               router.push("/EarthquakeResistance/earthquake_results")
             }
           >
-            <Text style={styles.buttonText}>Review Analytical Logs</Text>
+            <Text style={styles.buttonText}>Review Combined Analytics</Text>
           </TouchableOpacity>
         </View>
       )}

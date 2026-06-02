@@ -1,4 +1,3 @@
-import { auth } from "@/firebase";
 import { globalStyles } from "@/Styles/globalStyles";
 import { darkTheme } from "@/Styles/Themes/dark";
 import { lightTheme } from "@/Styles/Themes/light";
@@ -12,22 +11,24 @@ export default function SoundPollutionMain() {
   const theme = scheme === "dark" ? darkTheme : lightTheme;
   const styles = globalStyles(theme);
 
-  // Secure auth guard fallback
-  if (!auth.currentUser) {
-    return (
-      <View
-        style={[
-          styles.container,
-          { justifyContent: "center", paddingHorizontal: 20 },
-        ]}
-      >
-        <Text style={styles.title}>Access Denied</Text>
-        <Text style={styles.text}>
-          Please log in to record environmental noise samples.
-        </Text>
-      </View>
-    );
-  }
+  // temporary bypass
+
+  // // Secure auth guard fallback
+  // if (!auth.currentUser) {
+  //   return (
+  //     <View
+  //       style={[
+  //         styles.container,
+  //         { justifyContent: "center", paddingHorizontal: 20 },
+  //       ]}
+  //     >
+  //       <Text style={styles.title}>Access Denied</Text>
+  //       <Text style={styles.text}>
+  //         Please log in to record environmental noise samples.
+  //       </Text>
+  //     </View>
+  //   );
+  // }
 
   return (
     <View

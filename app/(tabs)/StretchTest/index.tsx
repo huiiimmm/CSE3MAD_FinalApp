@@ -1,4 +1,3 @@
-import { auth } from "@/firebase";
 import { globalStyles } from "@/Styles/globalStyles";
 import { darkTheme } from "@/Styles/Themes/dark";
 import { lightTheme } from "@/Styles/Themes/light";
@@ -12,22 +11,24 @@ export default function StretchTestMain() {
   const theme = scheme === "dark" ? darkTheme : lightTheme;
   const styles = globalStyles(theme);
 
-  // Fallback state if no user context is detected
-  if (!auth.currentUser) {
-    return (
-      <View
-        style={[
-          styles.container,
-          { justifyContent: "center", paddingHorizontal: 20 },
-        ]}
-      >
-        <Text style={styles.title}>Access Denied</Text>
-        <Text style={styles.text}>
-          Please log in to capture or analyze stretch telemetries.
-        </Text>
-      </View>
-    );
-  }
+  // temporary bypass
+
+  // // Fallback state if no user context is detected
+  // if (!auth.currentUser) {
+  //   return (
+  //     <View
+  //       style={[
+  //         styles.container,
+  //         { justifyContent: "center", paddingHorizontal: 20 },
+  //       ]}
+  //     >
+  //       <Text style={styles.title}>Access Denied</Text>
+  //       <Text style={styles.text}>
+  //         Please log in to capture or analyze stretch telemetries.
+  //       </Text>
+  //     </View>
+  //   );
+  // }
 
   return (
     <View
