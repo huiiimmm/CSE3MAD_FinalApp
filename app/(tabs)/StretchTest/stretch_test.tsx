@@ -7,13 +7,19 @@ import { globalStyles } from "@/Styles/globalStyles";
 import { darkTheme } from "@/Styles/Themes/dark";
 import { lightTheme } from "@/Styles/Themes/light";
 import { Accelerometer } from "expo-sensors";
-import { TextInput, TouchableOpacity, useColorScheme } from "react-native";
 
 import { auth, uploadVibrationData } from "@/firebase";
 import React, { useEffect, useRef, useState } from "react";
-import { Text, View } from "react-native";
+import {
+  Text,
+  TextInput,
+  TouchableOpacity,
+  useColorScheme,
+  Vibration,
+  View,
+} from "react-native";
 
-// upload tracking messages
+import { router } from "expo-router";
 
 // Define TypeScript structure for recording payloads
 interface VibrationSample {
@@ -26,6 +32,10 @@ export default function StretchTest() {
   const [isRecording, setIsRecording] = useState<boolean>(false);
   const [saveStatus, setSaveStatus] = useState<string>("");
   const [stretchType, setStretchType] = useState<string>("");
+
+  const [successText, setSuccessText] = useState(false);
+  const [errorText, setErrorText] = useState(false);
+
   const scheme = useColorScheme();
   const theme = scheme === "dark" ? darkTheme : lightTheme;
   const styles = globalStyles(theme);
@@ -44,10 +54,16 @@ export default function StretchTest() {
   }, []);
 
   const startRecording = () => {
+    if (!stretchType.trim()) {
+      setSaveStatus("Please define a stretch type before beginning.");
+      return;
+    }
     setSaveStatus("");
     recordedDataRef.current = [];
     startTimeRef.current = Date.now();
     setIsRecording(true);
+
+    Vibration.vibrate([0, 500], true); // Start with a 500ms vibration to signal recording start
 
     accelSubRef.current = Accelerometer.addListener((data) => {
       const totalForce = Math.sqrt(
@@ -67,6 +83,8 @@ export default function StretchTest() {
   };
   const stopRecording = async () => {
     setIsRecording(false);
+    Vibration.cancel();
+
     if (accelSubRef.current) {
       accelSubRef.current.remove();
       accelSubRef.current = null;
@@ -93,14 +111,22 @@ export default function StretchTest() {
       const durationSeconds = parseFloat(
         ((Date.now() - startTimeRef.current) / 1000).toFixed(2),
       );
-
-      await uploadVibrationData(
-        user,
-        avgIntensity,
-        peakIntensity,
-        durationSeconds,
-        stretchType,
-      );
+      try {
+        await uploadVibrationData(
+          user,
+          avgIntensity,
+          peakIntensity,
+          durationSeconds,
+          stretchType,
+        );
+        setSuccessText(true);
+        setSaveStatus("Data saved successfully!");
+      } catch (e) {
+        console.error("Error uploading vibration data: ", e);
+        setErrorText(true);
+        setSaveStatus("Failed to save data. Please try again.");
+        return;
+      }
     }
   };
   return (
@@ -122,11 +148,25 @@ export default function StretchTest() {
           <Text style={styles.buttonText}>
             {isRecording ? "Stop Recording" : "Start Recording"}
           </Text>
-
-          <Text style={styles.buttonText}>
-            {isRecording ? "Stop Recording" : "Start Recording"}
-          </Text>
         </TouchableOpacity>
+        {successText && (
+          <>
+            <Text style={[styles.text, { color: "green" }]}>
+              Data saved successfully!
+            </Text>
+            <TouchableOpacity
+              style={styles.button}
+              onPress={() => router.push("/StretchTest/stretch_results")}
+            >
+              <Text style={styles.buttonText}>View Results</Text>
+            </TouchableOpacity>{" "}
+          </>
+        )}
+        {errorText && (
+          <Text style={[styles.text, { color: "red" }]}>
+            Failed to save data. Please try again.
+          </Text>
+        )}
       </View>
     </View>
   );

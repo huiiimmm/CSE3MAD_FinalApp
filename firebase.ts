@@ -233,4 +233,12 @@ export const uploadVibrationData = (
   });
 };
 
+export const getVibrationData = async (): Promise<any[]> => {
+  const querySnapshot = await getDocs(collection(db, "vibration data"));
+  return querySnapshot.docs.map((doc) => ({
+    id: doc.id,
+    ...doc.data(),
+  }));
+};
+
 //earthquake test score?
