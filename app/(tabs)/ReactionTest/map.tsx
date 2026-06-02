@@ -1,6 +1,6 @@
-import { globalStyles } from "@/app/Styles/globalStyles";
-import { darkTheme } from "@/app/Styles/Themes/dark";
-import { lightTheme } from "@/app/Styles/Themes/light";
+import { globalStyles } from "@/Styles/globalStyles";
+import { darkTheme } from "@/Styles/Themes/dark";
+import { lightTheme } from "@/Styles/Themes/light";
 
 import { getAllLocations, getUserBestScores, LocationData } from "@/firebase";
 
@@ -131,7 +131,7 @@ export default function MapScreen() {
       <TouchableOpacity
         style={styles.button}
         onPress={() => {
-          router.push("/menu");
+          router.push("/(tabs)/ReactionTest/menu");
 
           Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
         }}

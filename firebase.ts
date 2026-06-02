@@ -50,19 +50,19 @@ export const logout = () => signOut(auth);
 
 export const removeUser = (user: any) => deleteUser(user);
 
-export const saveScore = (user: any, data: any) => {
-  return addDoc(collection(db, "scores"), data);
+export const saveReactionScore = (user: any, data: any) => {
+  return addDoc(collection(db, "reactionScores"), data);
 };
 
-export const getLeaderboardDocs = async (
+export const getReactionLeaderboardDocs = async (
   testType: string,
   setFunction: React.Dispatch<React.SetStateAction<any[]>>,
   ascending: boolean = false,
 ) => {
   const q = query(
-    collection(db, "scores"),
+    collection(db, "reactionScores"),
     where("testType", "==", testType),
-    orderBy("score", ascending ? "asc" : "desc"),
+    orderBy("reactionScore", ascending ? "asc" : "desc"),
     limit(10),
   );
   const querySnapshot = await getDocs(q);
@@ -102,12 +102,60 @@ export const uploadLocation = (user: any, location: any) => {
   });
 };
 
+export const uploadSoundLocation = (
+  user: any,
+  location: any,
+  noiseType: string,
+  noiseLevel: number,
+) => {
+  console.log("UPLOAD INPUT:", user, location, noiseType, noiseLevel);
+
+  const latitude = location?.latitude ?? location?.coords?.latitude;
+  const longitude = location?.longitude ?? location?.coords?.longitude;
+
+  if (
+    !user?.uid ||
+    typeof latitude !== "number" ||
+    typeof longitude !== "number" ||
+    typeof noiseType !== "string" ||
+    typeof noiseLevel !== "number"
+  ) {
+    console.log(
+      "Invalid sound pollution payload:",
+      location,
+      noiseType,
+      noiseLevel,
+    );
+    return;
+  }
+
+  return addDoc(collection(db, "sound locations"), {
+    uid: user.uid,
+    email: user.email,
+    latitude,
+    longitude,
+    noiseType,
+    noiseLevel,
+    updatedAt: new Date(),
+  });
+};
+
+export const getSoundLocation = async (): Promise<LocationData[]> => {
+  const querySnapshot = await getDocs(collection(db, "sound locations"));
+  return querySnapshot.docs.map((doc) => ({
+    id: doc.id,
+    ...doc.data(),
+  })) as LocationData[];
+};
+
 export type LocationData = {
   id: string;
   uid: string;
   email: string;
   latitude: number;
   longitude: number;
+  noiseType?: string; // Optional property for type of noise
+  noiseLevel?: number; // Optional property for sound level
 };
 
 export const getAllLocations = async (): Promise<LocationData[]> => {
@@ -120,10 +168,15 @@ export const getAllLocations = async (): Promise<LocationData[]> => {
 };
 
 export type TestType = "test1" | "test2" | "test3" | "test4";
-
 export const getUserBestScores = async (uid: string) => {
   try {
-    const snapshot = await getDocs(collection(db, "scores"));
+    // 1. Target ONLY the logged-in user's documents using a where filter query
+    const q = query(
+      collection(db, "reactionScores"),
+      where("userId", "==", uid),
+    );
+
+    const snapshot = await getDocs(q);
 
     const bestScores: Record<TestType, number | null> = {
       test1: null,
@@ -135,29 +188,36 @@ export const getUserBestScores = async (uid: string) => {
     for (const doc of snapshot.docs) {
       const data = doc.data();
       const testType = data.testType as TestType;
-      const score = data.score;
 
-      // test 3 high to low
+      // Force conversion to a number to protect against string evaluation bugs
+      const reactionScore = Number(data.reactionScore);
+
+      // Skip document processing if testType is undefined or invalid
+      if (!bestScores.hasOwnProperty(testType)) continue;
+
+      // test 3: high to low (Most clicks wins)
       if (testType === "test3") {
-        if (bestScores.test3 === null || score > bestScores.test3) {
-          bestScores.test3 = score;
+        const currentBest = bestScores.test3;
+        if (currentBest === null || reactionScore > currentBest) {
+          bestScores.test3 = reactionScore;
         }
       }
-
-      // rest of tests low to high
+      // rest of tests: low to high (Fastest reaction speed wins)
       else if (
         testType === "test1" ||
         testType === "test2" ||
         testType === "test4"
       ) {
-        if (bestScores[testType] === null || score < bestScores[testType]) {
-          bestScores[testType] = score;
+        const currentBest = bestScores[testType];
+        if (currentBest === null || reactionScore < currentBest) {
+          bestScores[testType] = reactionScore;
         }
       }
     }
+
     return bestScores;
   } catch (e) {
-    console.log("Error getting best scores:", e);
+    console.error("Error getting best scores:", e);
     return {
       test1: null,
       test2: null,
@@ -165,4 +225,43 @@ export const getUserBestScores = async (uid: string) => {
       test4: null,
     };
   }
+};
+
+export const uploadVibrationData = (user: any, data: any) => {
+  return addDoc(collection(db, "vibration data"), {
+    uid: user.uid,
+    ...data,
+  });
+};
+
+export const getVibrationData = async (): Promise<any[]> => {
+  const querySnapshot = await getDocs(collection(db, "vibration data"));
+  return querySnapshot.docs.map((doc) => ({
+    id: doc.id,
+    ...doc.data(),
+  }));
+};
+
+//earthquake test score?
+export const uploadEarthquakeData = (
+  user: any,
+  structureName: string,
+  averageStructureMovementIntensity: any,
+  peakStructureMovementIntensity: any,
+) => {
+  return addDoc(collection(db, "earthquake data"), {
+    uid: user.uid,
+    email: user.email,
+    structureName,
+    averageStructureMovementIntensity,
+    peakStructureMovementIntensity,
+  });
+};
+
+export const getEarthquakeData = async (): Promise<any[]> => {
+  const querySnapshot = await getDocs(collection(db, "earthquake data"));
+  return querySnapshot.docs.map((doc) => ({
+    id: doc.id,
+    ...doc.data(),
+  }));
 };
