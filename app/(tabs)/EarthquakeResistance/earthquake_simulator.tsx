@@ -1,21 +1,38 @@
-import { auth } from "@/firebase";
+import { auth, uploadEarthquakeData } from "@/firebase";
 import { globalStyles } from "@/Styles/globalStyles";
 import { darkTheme } from "@/Styles/Themes/dark";
 import { lightTheme } from "@/Styles/Themes/light";
 import * as Haptics from "expo-haptics";
 import { router } from "expo-router";
+import { Accelerometer } from "expo-sensors";
 import React, { useEffect, useRef, useState } from "react";
 import {
   Text,
+  TextInput,
   TouchableOpacity,
   useColorScheme,
   Vibration,
   View,
 } from "react-native";
 
+interface VibrationSample {
+  intensity: number;
+}
+
 export default function EarthquakeSimulator() {
+  const [vibration, setVibration] = useState<number>(0);
+
   const [startTest, setStartTest] = useState(false);
   const [stopTest, setStopTest] = useState(false);
+  const [saveStatus, setSaveStatus] = useState("");
+  const [successText, setSuccessText] = useState(false);
+  const [errorText, setErrorText] = useState(false);
+  const [isRecording, setIsRecording] = useState<boolean>(false);
+  const accelSubRef = useRef<any>(null);
+  const vibrationIntervalRef = useRef<any>(null);
+  const recordedDataRef = useRef<VibrationSample[]>([]);
+  const startTimeRef = useRef<number>(0);
+  const [structureName, setStructureName] = useState<string>("");
 
   // Use a mutable ref to track active simulation state across threads instantly
   const isSimulatingRef = useRef<boolean>(false);
@@ -47,6 +64,89 @@ export default function EarthquakeSimulator() {
     return () => stopAllActivity();
   }, []);
 
+  const startRecording = () => {
+    if (!structureName.trim()) {
+      setSaveStatus("Please define a structure name before beginning.");
+      return;
+    }
+    // Reset status and outcome messages from any previous runs
+    setSaveStatus("");
+    setSuccessText(false);
+    setErrorText(false);
+
+    recordedDataRef.current = [];
+    startTimeRef.current = Date.now();
+    setIsRecording(true);
+
+    accelSubRef.current = Accelerometer.addListener((data) => {
+      const totalForce = Math.sqrt(
+        Math.pow(data.x, 2) + Math.pow(data.y, 2) + Math.pow(data.z, 2),
+      );
+      let dynamicVibration = Math.abs(totalForce - 1.0);
+      if (dynamicVibration < 0.03) dynamicVibration = 0; // Filter micro-noise
+
+      setVibration(dynamicVibration);
+
+      recordedDataRef.current.push({
+        intensity: parseFloat(dynamicVibration.toFixed(4)),
+      });
+    });
+  };
+
+  const stopRecording = async () => {
+    setIsRecording(false);
+
+    // Clear our background motor refresh interval loop
+    if (vibrationIntervalRef.current) {
+      clearInterval(vibrationIntervalRef.current);
+      vibrationIntervalRef.current = null;
+    }
+
+    // Silence phone hardware coil immediately
+    Vibration.cancel();
+
+    if (accelSubRef.current) {
+      accelSubRef.current.remove();
+      accelSubRef.current = null;
+    }
+    setVibration(0);
+
+    if (recordedDataRef.current.length > 0) {
+      if (!structureName) {
+        setSaveStatus("Please define a structure name before saving.");
+        return;
+      }
+
+      const totalSamples = recordedDataRef.current.length;
+      const sumIntensity = recordedDataRef.current.reduce(
+        (acc, cur) => acc + cur.intensity,
+        0,
+      );
+      const avgStructureMovementIntensity = parseFloat(
+        (sumIntensity / totalSamples).toFixed(4),
+      );
+
+      const peakStructureMovementIntensity = Math.max(
+        ...recordedDataRef.current.map((s) => s.intensity),
+      );
+
+      try {
+        await uploadEarthquakeData(
+          user,
+          structureName,
+          avgStructureMovementIntensity,
+          peakStructureMovementIntensity,
+        );
+        setSuccessText(true);
+        setSaveStatus("Data saved successfully!");
+      } catch (e) {
+        console.error("Error uploading earthquake data: ", e);
+        setErrorText(true);
+        setSaveStatus("Failed to save data. Please try again.");
+      }
+    }
+  };
+
   const runEarthquakeTick = (isInitialShock = false) => {
     // Instantly break the cycle if the test has been flagged to stop
     if (!isSimulatingRef.current) return;
@@ -68,6 +168,12 @@ export default function EarthquakeSimulator() {
     vibrationRef.current = setTimeout(() => {
       runEarthquakeTick(false);
     }, nextInterval);
+    startRecording();
+
+    // Schedule a stop recording after 4 seconds to capture each shock's full profile
+    setTimeout(() => {
+      stopRecording();
+    }, 4000);
   };
 
   const countDown = () => {
@@ -114,10 +220,26 @@ export default function EarthquakeSimulator() {
         <Text
           style={[
             styles.text,
+            { fontSize: 22, fontWeight: "600", paddingBottom: 20 },
+          ]}
+        >
+          Enter a name for your structure
+        </Text>
+        <TextInput
+          style={styles.sUser}
+          placeholder="Enter structure name"
+          onChangeText={setStructureName}
+          value={structureName}
+          editable={!isRecording}
+        />
+        <Text
+          style={[
+            styles.text,
             {
               fontSize: 22,
               fontWeight: "600",
               color: isSimulatingRef.current ? "#F44336" : theme.text,
+              paddingTop: 20,
             },
           ]}
         >

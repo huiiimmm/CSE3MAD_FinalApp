@@ -9,6 +9,11 @@ export default function Layout() {
         name="pollution_test"
         options={{ title: "Sound Pollution Test" }}
       />
+
+      <Stack.Screen
+        name="sound_map"
+        options={{ title: "Sound Pollution Map" }}
+      />
     </Stack>
   );
 }

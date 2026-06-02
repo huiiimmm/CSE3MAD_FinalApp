@@ -9,6 +9,11 @@ export default function Layout() {
         name="earthquake_simulator"
         options={{ title: "Earthquake Simulator" }}
       />
+
+      <Stack.Screen
+        name="earthquake_results"
+        options={{ title: "Earthquake Results" }}
+      />
     </Stack>
   );
 }

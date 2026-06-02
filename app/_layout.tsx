@@ -4,36 +4,30 @@ export default function TabsLayout() {
   return (
     <Tabs>
       {/* Your default home or dashboard tab */}
-      <Tabs.Screen name="index" options={{ title: "Home" }} />
+      <Tabs.Screen name="(tabs)/index" options={{ title: "Login" }} />
 
       {/* Point directly to your subfolder stack layout root */}
       <Tabs.Screen
-        name="ReactionTest"
-        options={{ title: "Reaction Tests", headerShown: false, href: null }}
+        name="(tabs)/ReactionTest"
+        options={{ title: "Reaction Tests" }}
       />
 
       <Tabs.Screen
-        name="EarthquakeResistance"
+        name="(tabs)/EarthquakeResistance"
         options={{
           title: "Earthquake Resistance",
-          headerShown: false,
-          href: null,
         }}
       />
       <Tabs.Screen
-        name="SoundPollution"
+        name="(tabs)/SoundPollution"
         options={{
           title: "Sound Pollution",
-          headerShown: false,
-          href: null,
         }}
       />
       <Tabs.Screen
-        name="StretchTest"
+        name="(tabs)/StretchTest"
         options={{
           title: "Stretch Test",
-          headerShown: false,
-          href: null,
         }}
       />
     </Tabs>

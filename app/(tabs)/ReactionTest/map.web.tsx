@@ -1,3 +1,15 @@
-import MapScreen from "@/features/map/MapScreen.web";
+import { Text, View } from "react-native";
 
-export default MapScreen;
+export default function MapScreen() {
+  return (
+    <View
+      style={{
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center",
+      }}
+    >
+      <Text>Maps are not supported on web</Text>
+    </View>
+  );
+}
