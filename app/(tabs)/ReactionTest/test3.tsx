@@ -183,6 +183,7 @@ export default function Test3() {
           </Text>
           {startTest && (
             <Text
+              testID="timer"
               style={[styles.text, { color: "#4A90E2", fontWeight: "700" }]}
             >
               Timer: {time}s

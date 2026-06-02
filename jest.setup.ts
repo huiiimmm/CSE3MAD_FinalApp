@@ -99,7 +99,18 @@ jest.mock("expo-router", () => ({
 
 jest.mock("expo-haptics", () => ({
   impactAsync: jest.fn(),
-  ImpactFeedbackStyle: { Light: "Light" },
+  notificationAsync: jest.fn(), // Added to prevent unmocked method errors
+  ImpactFeedbackStyle: {
+    Light: "Light",
+    Medium: "Medium",
+    Heavy: "Heavy",
+  },
+  // Fixes: TypeError: Cannot read properties of undefined (reading 'Success')
+  NotificationFeedbackType: {
+    Success: "Success",
+    Warning: "Warning",
+    Error: "Error",
+  },
 }));
 
 jest.mock("expo-location", () => ({
@@ -117,9 +128,6 @@ jest.mock("expo-sensors", () => {
   // Store active subscription listener blocks to trigger synthetic events manually
   let accelerometerListeners: Array<(data: any) => void> = [];
   let gyroscopeListeners: Array<(data: any) => void> = [];
-  let magnetometerListeners: Array<(data: any) => void> = [];
-  let pedometerListeners: Array<(data: any) => void> = [];
-
   return {
     __esModule: true,
 
@@ -169,75 +177,138 @@ jest.mock("expo-sensors", () => {
   };
 });
 
-// Mock Expo AV Audio Framework
+// Fixed Expo AV Framework Mock
 jest.mock("expo-av", () => {
-  // Retain global hooks to simulate dynamic audio playback or recording updates
-  let mockOnPlaybackStatusUpdate: ((status: any) => void) | null = null;
-
-  // The mocked Recording instance engine
   const mockRecordingInstance = {
     getStatusAsync: jest.fn().mockResolvedValue({
       canRecord: true,
       isRecording: true,
       durationMillis: 1200,
-      metering: -35, // Default hardware level decibel offset (-35 + 100 = 65 dB)
+      metering: -35,
     }),
+    prepareToRecordAsync: jest.fn().mockResolvedValue({}), // Required by Test4
     startAsync: jest.fn().mockResolvedValue({}),
     pauseAsync: jest.fn().mockResolvedValue({}),
     stopAndUnloadAsync: jest.fn().mockResolvedValue({}),
-    setOnPlaybackStatusUpdate: jest.fn((callback) => {
-      mockOnPlaybackStatusUpdate = callback;
-    }),
+    setOnPlaybackStatusUpdate: jest.fn(),
   };
 
-  // The mocked Sound instance engine (for audio playback alerts)
   const mockSoundInstance = {
     playAsync: jest.fn().mockResolvedValue({}),
+    replayAsync: jest.fn().mockResolvedValue({}), // Required by Test4
     pauseAsync: jest.fn().mockResolvedValue({}),
     stopAsync: jest.fn().mockResolvedValue({}),
     unloadAsync: jest.fn().mockResolvedValue({}),
     setStatusAsync: jest.fn().mockResolvedValue({}),
   };
 
+  // Explicitly instantiate spy tracks before exporting them inside structural trees
+  const mockCreateRecordingAsync = jest.fn().mockResolvedValue({
+    recording: mockRecordingInstance,
+    status: { canRecord: true, isRecording: true },
+  });
+
+  const mockCreateSoundAsync = jest.fn().mockResolvedValue({
+    sound: mockSoundInstance,
+    status: { isLoaded: true },
+  });
+
+  // --- CONSTRUCTOR FACTORIES TO BRIDGE THE 'NEW' KEYWORD GAP ---
+  const MockRecordingConstructor = jest
+    .fn()
+    .mockImplementation(() => mockRecordingInstance);
+  const MockSoundConstructor = jest
+    .fn()
+    .mockImplementation(() => mockSoundInstance);
+
+  // Attach static utility method anchors directly onto the constructible functions
+  (MockRecordingConstructor as any).createAsync = mockCreateRecordingAsync;
+  (MockSoundConstructor as any).createAsync = mockCreateSoundAsync;
+
   return {
     __esModule: true,
     Audio: {
-      // Hardware Permissions Hooks
       requestPermissionsAsync: jest
         .fn()
         .mockResolvedValue({ status: "granted" }),
       getPermissionsAsync: jest.fn().mockResolvedValue({ status: "granted" }),
-
-      // Thread Layout Configuration
       setAudioModeAsync: jest.fn().mockResolvedValue({}),
 
-      // Recording Engine Blueprint Constructors
-      Recording: {
-        createAsync: jest.fn(() =>
-          Promise.resolve({
-            recording: mockRecordingInstance,
-            status: { canRecord: true, isRecording: true },
-          }),
-        ),
-      },
+      // Nested references now point directly to constructible functions supporting static methods
+      Recording: MockRecordingConstructor,
+      Sound: MockSoundConstructor,
 
-      // Sound Playback Engine Blueprint Constructors
-      Sound: {
-        createAsync: jest.fn(() =>
-          Promise.resolve({
-            sound: mockSoundInstance,
-            status: { isLoaded: true },
-          }),
-        ),
+      RecordingOptionsPresets: {
+        LOW_QUALITY: { isMeteringEnabled: true, android: {}, ios: {} },
+        HIGH_QUALITY: { isMeteringEnabled: true, android: {}, ios: {} }, // Match Test4 spreading requirements
       },
+      AndroidOutputFormat: { MPEG_4: 2 },
+      AndroidAudioEncoder: { AAC: 3 },
+      IOSOutputFormat: { MPEG4AAC: "aac" },
+      IOSAudioQuality: { MIN: 0, MAX: 127 },
+    },
+  };
+});
+// Correctly mock Vibration inside the react-native package wrapper
+jest.mock("react-native", () => {
+  const ReactNative = jest.requireActual("react-native");
+
+  return {
+    ...ReactNative,
+    Vibration: {
+      vibrate: jest.fn(),
+      cancel: jest.fn(),
     },
   };
 });
 
-jest.mock("Vibration", () => ({
-  __esModule: true,
-  default: {
-    vibrate: jest.fn(),
-    cancel: jest.fn(),
-  },
-}));
+// Fix for Invariant Violation: 'DevMenu' could not be found
+jest.mock("react-native/Libraries/TurboModule/TurboModuleRegistry", () => {
+  const actualRegistry = jest.requireActual(
+    "react-native/Libraries/TurboModule/TurboModuleRegistry",
+  );
+  return {
+    ...actualRegistry,
+    getEnforcing: (name: string) => {
+      if (name === "DevMenu") {
+        return {
+          showAlert: jest.fn(),
+          hideMenu: jest.fn(),
+          showMenu: jest.fn(),
+        };
+      }
+      return actualRegistry.getEnforcing(name);
+    },
+  };
+});
+
+// Unified TurboModule registry fallback mock
+jest.mock("react-native/Libraries/TurboModule/TurboModuleRegistry", () => {
+  const actualRegistry = jest.requireActual(
+    "react-native/Libraries/TurboModule/TurboModuleRegistry",
+  );
+  return {
+    ...actualRegistry,
+    getEnforcing: (name: string) => {
+      if (name === "DevMenu") {
+        return {
+          showAlert: jest.fn(),
+          hideMenu: jest.fn(),
+          showMenu: jest.fn(),
+        };
+      }
+      if (name === "SettingsManager") {
+        return {
+          settings: {
+            AppleLanguages: ["en"],
+            AppleLocale: "en_US",
+          },
+          getConstants: () => ({
+            settings: { AppleLanguages: ["en"], AppleLocale: "en_US" },
+          }),
+        };
+      }
+      return actualRegistry.getEnforcing(name);
+    },
+  };
+});

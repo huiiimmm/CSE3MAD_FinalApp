@@ -295,7 +295,7 @@ export default function EarthquakeSimulator() {
       </View>
 
       {stopTest && (
-        <View style={styles.colContainer}>
+        <View style={styles.colContainer} testID="Simulation Completed!">
           <TouchableOpacity
             style={[
               styles.button,
