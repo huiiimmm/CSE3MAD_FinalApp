@@ -13,6 +13,8 @@ import { auth, uploadVibrationData } from "@/firebase";
 import React, { useEffect, useRef, useState } from "react";
 import { Text, View } from "react-native";
 
+// upload tracking messages
+
 // Define TypeScript structure for recording payloads
 interface VibrationSample {
   intensity: number;

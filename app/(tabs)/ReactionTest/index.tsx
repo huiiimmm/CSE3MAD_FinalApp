@@ -7,6 +7,8 @@ import { lightTheme } from "@/Styles/Themes/light";
 import { globalStyles } from "@/Styles/globalStyles";
 import { useColorScheme } from "react-native";
 
+import { auth } from "@/firebase";
+
 export default function ReactionTestIndex() {
   const scheme = useColorScheme();
   const theme = scheme === "dark" ? darkTheme : lightTheme;
@@ -18,6 +20,13 @@ export default function ReactionTestIndex() {
     router.replace("/" as any);
   };
 
+  if (!auth.currentUser) {
+    return (
+      <View style={styles.container}>
+        <Text style={styles.title}>Please log in to access Reaction Tests</Text>
+      </View>
+    );
+  }
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Reaction Test Home</Text>

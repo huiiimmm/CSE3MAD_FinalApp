@@ -140,12 +140,22 @@ export const uploadSoundLocation = (
   });
 };
 
+export const getSoundLocation = async (): Promise<LocationData[]> => {
+  const querySnapshot = await getDocs(collection(db, "sound locations"));
+  return querySnapshot.docs.map((doc) => ({
+    id: doc.id,
+    ...doc.data(),
+  })) as LocationData[];
+};
+
 export type LocationData = {
   id: string;
   uid: string;
   email: string;
   latitude: number;
   longitude: number;
+  noiseType?: string; // Optional property for type of noise
+  noiseLevel?: number; // Optional property for sound level
 };
 
 export const getAllLocations = async (): Promise<LocationData[]> => {
@@ -205,6 +215,7 @@ export const getUserBestScores = async (uid: string) => {
   }
 };
 
+// stretch test vibration data upload
 export const uploadVibrationData = (
   user: any,
   averageMovementIntensity: any,
@@ -221,3 +232,5 @@ export const uploadVibrationData = (
     movementType,
   });
 };
+
+//earthquake test score?

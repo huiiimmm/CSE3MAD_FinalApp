@@ -9,10 +9,21 @@ import { router } from "expo-router";
 import React from "react";
 import { Text, TouchableOpacity, View } from "react-native";
 
+import { auth } from "@/firebase";
+
 export default function EarthquakeResistanceMain() {
   const scheme = useColorScheme();
   const theme = scheme === "dark" ? darkTheme : lightTheme;
   const styles = globalStyles(theme);
+  if (!auth.currentUser) {
+    return (
+      <View style={styles.container}>
+        <Text style={styles.title}>
+          Please log in to access Earthquake Resistance Tests
+        </Text>
+      </View>
+    );
+  }
   return (
     <View testID="menu" style={styles.container}>
       <Text style={styles.title}>Earthquake Resistance Tests</Text>
