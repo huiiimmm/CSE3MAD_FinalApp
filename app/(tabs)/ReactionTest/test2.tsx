@@ -1,10 +1,9 @@
-import { auth, db } from "@/firebase";
+import { auth, saveReactionScore } from "@/firebase";
 import { globalStyles } from "@/Styles/globalStyles";
 import { darkTheme } from "@/Styles/Themes/dark";
 import { lightTheme } from "@/Styles/Themes/light";
 import * as Haptics from "expo-haptics";
 import { router } from "expo-router";
-import { addDoc, collection } from "firebase/firestore";
 import React, { useEffect, useRef, useState } from "react";
 import {
   Pressable,
@@ -26,7 +25,7 @@ export default function Test2() {
   const [reactionScreen, setReactionScreen] = useState(false);
   const [earlyCheck, setEarlyCheck] = useState(false);
   const [nextTestButton, setNextTestButton] = useState(false);
-  const [showResults, setShowResults] = useState(false);
+  const [recordResults, setRecordResults] = useState(false);
   const [restartTest, setRestartTest] = useState(false);
 
   const [time, setTime] = useState(0);
@@ -62,8 +61,8 @@ export default function Test2() {
     if (restartTest) return;
 
     randomRef.current = setTimeout(() => {
-      setEarlyCheck(false); // Remove early tap interception layer
-      setBgColor("#4CAF50"); // Using standard vibrant green asset profile
+      setEarlyCheck(false); // Disable early check window once target triggers
+      setBgColor("#4CAF50"); // Using standard green asset color
       setReactionScreen(true);
       startTimer();
     }, delay);
@@ -81,29 +80,30 @@ export default function Test2() {
     }
   };
 
-  const saveScore = async () => {
+  async function saveTestScore() {
     try {
       if (!user) return;
-      await addDoc(collection(db, "scores"), {
+      const scores = {
         testType: "test2",
         userId: user?.uid,
         email: user?.email,
-        score: reactionTime,
+        reactionScore: reactionTime,
         timestamp: Date.now(),
-      });
+      };
+      await saveReactionScore(user, scores);
       console.log("Reaction score saved successfully!");
     } catch (error) {
       console.error("Error committing score down to cloud ledger:", error);
     }
-  };
+  }
 
   useEffect(() => {
-    if (showResults && reactionTime > 0) {
-      saveScore();
+    if (recordResults && reactionTime > 0) {
+      saveTestScore();
     }
-  }, [showResults, reactionTime]);
+  }, [recordResults, reactionTime]);
 
-  // Handle component teardown lifecycle cleanly
+  // Handle unmount tree teardown routines safely
   useEffect(() => {
     return () => {
       if (randomRef.current) clearTimeout(randomRef.current);
@@ -113,6 +113,7 @@ export default function Test2() {
 
   return (
     <View
+      testID="test2"
       style={[
         styles.container,
         {
@@ -125,6 +126,7 @@ export default function Test2() {
       {/* Absolute Layer Interceptors for Input Capture */}
       {earlyCheck && (
         <Pressable
+          testID="earlyCheck"
           style={StyleSheet.absoluteFill}
           onPress={() => {
             Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
@@ -135,18 +137,19 @@ export default function Test2() {
 
       {reactionScreen && (
         <Pressable
+          testID="reactionScreen"
           style={StyleSheet.absoluteFill}
           onPress={() => {
             Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
             stopTimer();
             setReactionScreen(false);
             setNextTestButton(true);
-            setShowResults(true);
+            setRecordResults(true);
           }}
         />
       )}
 
-      {/* Main Structural Display Layer */}
+      {/* Main Form/Interface Context UI Elements */}
       <View
         style={[
           styles.colContainer,
@@ -162,11 +165,12 @@ export default function Test2() {
             </Text>
 
             <TouchableOpacity
+              testID="startButton"
               style={[styles.button, { width: "100%" }]}
               onPress={() => {
                 Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
                 setReadyText(false);
-                setBgColor("#F44336"); // Hot warning red standby block
+                setBgColor("#F44336"); // Failsafe hot red warning block
                 startRandomTimer();
               }}
             >
@@ -175,7 +179,7 @@ export default function Test2() {
           </>
         )}
 
-        {/* Real-time Dynamic Running Timer Display */}
+        {/* Real-time Dynamic Telemetry Value Text */}
         {!readyText && !restartTest && !nextTestButton && (
           <Text
             style={[
@@ -187,7 +191,7 @@ export default function Test2() {
           </Text>
         )}
 
-        {/* Premature Action Reset Canvas UI */}
+        {/* Failed Premature Touch Alert Dashboard */}
         {restartTest && (
           <View style={{ width: "100%", alignItems: "center" }}>
             <Text style={[styles.title, { color: "#fff" }]}>Too Early!</Text>
@@ -196,6 +200,7 @@ export default function Test2() {
             </Text>
 
             <TouchableOpacity
+              testID="restartButton"
               style={[
                 styles.button,
                 { width: "100%", backgroundColor: "#fff" },
@@ -206,7 +211,7 @@ export default function Test2() {
                 setBgColor(theme.background);
                 setTime(0);
                 setReactionTime(0);
-                setShowResults(false);
+                setRecordResults(false);
               }}
             >
               <Text style={[styles.buttonText, { color: "#000" }]}>
@@ -216,7 +221,7 @@ export default function Test2() {
           </View>
         )}
 
-        {/* Post-Assessment Success View & Navigation Routes */}
+        {/* Outcomes & Secondary Navigation Controls */}
         {nextTestButton && (
           <View style={{ width: "100%", alignItems: "center" }}>
             <View
@@ -253,6 +258,7 @@ export default function Test2() {
             </View>
 
             <TouchableOpacity
+              testID="nextTest"
               style={[styles.button, { width: "100%" }]}
               onPress={() => {
                 router.push("/(tabs)/ReactionTest/test3");

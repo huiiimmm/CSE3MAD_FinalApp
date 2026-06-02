@@ -1,4 +1,4 @@
-import { auth, saveScore } from "@/firebase";
+import { auth, saveReactionScore } from "@/firebase";
 import { globalStyles } from "@/Styles/globalStyles";
 import { darkTheme } from "@/Styles/Themes/dark";
 import { lightTheme } from "@/Styles/Themes/light";
@@ -29,6 +29,8 @@ export default function Test3() {
   const [stopTest, setStopTest] = useState(false);
   const [screenWidth, setScreenWidth] = useState(0);
   const [screenHeight, setScreenHeight] = useState(0);
+
+  const [isScoreSaved, setIsScoreSaved] = useState(false);
 
   const [clickCount, setClickCount] = useState(0);
   const [totalClicks, setTotalClicks] = useState(0);
@@ -108,27 +110,36 @@ export default function Test3() {
   }, [startTest, stopTest, screenWidth, screenHeight]);
 
   const saveTestScore = async () => {
+    // Prevent duplicate uploads from firing during state updates
+    if (isScoreSaved || !user) return;
+
     try {
-      if (!user) return;
+      setIsScoreSaved(true); // Lock the gate immediately before hitting network tasks
+
       const scores = {
         testType: "test3",
-        userId: user?.uid,
-        email: user?.email,
-        score: clickCount,
+        userId: user.uid,
+        email: user.email,
+        reactionScore: Number(clickCount), // Force explicit numeric assignment
         timestamp: Date.now(),
       };
-      await saveScore(user, scores);
-      console.log("Tracking accuracy score saved successfully!");
+
+      await saveReactionScore(user, scores);
+      console.log(
+        `Tracking accuracy score (${clickCount} clicks) saved successfully!`,
+      );
     } catch (error) {
+      setIsScoreSaved(false); // Unlock the gate if the network write fails completely
       console.error("Error committing score down to cloud ledger:", error);
     }
   };
 
+  // 2. Keep your listener clean
   useEffect(() => {
-    if (stopTest) {
+    if (stopTest && !isScoreSaved) {
       saveTestScore();
     }
-  }, [stopTest]);
+  }, [stopTest, isScoreSaved]);
 
   useEffect(() => {
     return () => {

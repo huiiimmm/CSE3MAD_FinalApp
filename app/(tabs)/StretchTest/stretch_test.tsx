@@ -124,13 +124,12 @@ export default function StretchTest() {
       );
 
       try {
-        await uploadVibrationData(
-          user,
-          avgIntensity,
-          peakIntensity,
-          durationSeconds,
-          stretchType,
-        );
+        await uploadVibrationData(user, {
+          averageMovementIntensity: avgIntensity,
+          peakMovementIntensity: peakIntensity,
+          movementDuration: durationSeconds,
+          movementType: stretchType,
+        });
         setSuccessText(true);
         setSaveStatus("Data saved successfully!");
       } catch (e) {

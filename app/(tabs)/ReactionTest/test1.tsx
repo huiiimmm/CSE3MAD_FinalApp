@@ -1,4 +1,4 @@
-import { auth, saveScore } from "@/firebase";
+import { auth, saveReactionScore } from "@/firebase";
 import { globalStyles } from "@/Styles/globalStyles";
 import { darkTheme } from "@/Styles/Themes/dark";
 import { lightTheme } from "@/Styles/Themes/light";
@@ -87,10 +87,10 @@ export default function Test1() {
         testType: "test1",
         userId: user?.uid,
         email: user?.email,
-        score: reactionTime,
+        reactionScore: reactionTime,
         timestamp: Date.now(),
       };
-      await saveScore(user, scores);
+      await saveReactionScore(user, scores);
       console.log("Reaction score saved successfully!");
     } catch (error) {
       console.error("Error committing score down to cloud ledger:", error);

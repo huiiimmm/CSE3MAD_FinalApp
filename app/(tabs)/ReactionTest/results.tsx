@@ -1,4 +1,4 @@
-import { auth, getLeaderboardDocs } from "@/firebase";
+import { auth, getReactionLeaderboardDocs } from "@/firebase";
 import { globalStyles } from "@/Styles/globalStyles";
 import { darkTheme } from "@/Styles/Themes/dark";
 import { lightTheme } from "@/Styles/Themes/light";
@@ -27,20 +27,20 @@ export default function ResultsScreen() {
   useEffect(() => {
     try {
       // Fastest response speed records (Lower numbers win)
-      getLeaderboardDocs("test1", setTest1Scores, true);
-      getLeaderboardDocs("test2", setTest2Scores, true);
-      getLeaderboardDocs("test4", setTest4Scores, true);
+      getReactionLeaderboardDocs("test1", setTest1Scores, true);
+      getReactionLeaderboardDocs("test2", setTest2Scores, true);
+      getReactionLeaderboardDocs("test4", setTest4Scores, true);
 
       // Highest tracking point accumulations (Higher numbers win)
-      getLeaderboardDocs("test3", setTest3Scores, false);
+      getReactionLeaderboardDocs("test3", setTest3Scores, false);
     } catch (error) {
       console.error("Error connecting to leaderboard tables:", error);
     }
   }, []);
 
   // Shared reusable row rendering matrix to enforce clean alignment metrics
-  const renderLeaderboardRows = (scores: any[], unit: string) => {
-    if (scores.length === 0) {
+  const renderLeaderboardRows = (reactionScores: any[], unit: string) => {
+    if (reactionScores.length === 0) {
       return (
         <View
           style={[
@@ -55,7 +55,7 @@ export default function ResultsScreen() {
       );
     }
 
-    return scores.map((user: any, index: number) => {
+    return reactionScores.map((user: any, index: number) => {
       const isCurrentUser = user.userId === currentUser?.uid;
       const parsedUsername = user.email
         ? user.email.split("@")[0]
@@ -116,7 +116,7 @@ export default function ResultsScreen() {
               },
             ]}
           >
-            {user.score} {unit}
+            {user.reactionScore} {unit}
           </Text>
         </View>
       );
@@ -161,7 +161,7 @@ export default function ResultsScreen() {
       <View style={[styles.colContainer, { marginBottom: 20 }]}>
         <Text style={styles.header}>Test 3 - Tracking Fluidity</Text>
         <View style={{ width: "100%", marginTop: 4 }}>
-          {renderLeaderboardRows(test3Scores, "pts")}
+          {renderLeaderboardRows(test3Scores, "clicks")}
         </View>
       </View>
 

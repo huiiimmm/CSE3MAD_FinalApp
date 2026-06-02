@@ -12,6 +12,7 @@ import {
   useColorScheme,
   View,
 } from "react-native";
+import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 
 export default function MyResultsScreen() {
   const [test1Scores, setTest1Scores] = useState<number | null>(null);
@@ -44,108 +45,279 @@ export default function MyResultsScreen() {
   }, [user]);
 
   return (
-    <ScrollView
-      style={styles.container}
-      contentContainerStyle={[
-        styles.scrollContent,
-        { paddingHorizontal: 16, paddingBottom: 30 },
-      ]}
-      showsVerticalScrollIndicator={false}
-    >
-      <Text style={styles.title}>
-        {user?.email?.split("@")[0] ?? "User"}'s Personal Bests
-      </Text>
-      <Text
-        style={[styles.text, { color: "gray", marginBottom: 10, fontSize: 14 }]}
+    <SafeAreaProvider>
+      <SafeAreaView
+        style={{ flex: 1, backgroundColor: theme.background }}
+        edges={["top", "left", "right"]}
       >
-        Your top recorded metrics across all diagnostic evaluation modules.
-      </Text>
-
-      {/* Grid Layout Row 1: Hand Reflex Speeds */}
-      <View style={styles.statsRow}>
-        <View
-          style={[
-            styles.statCard,
-            { borderLeftColor: "#4A90E2", marginRight: 8 },
+        <ScrollView
+          style={{ flex: 1 }}
+          contentContainerStyle={[
+            styles.scrollContent,
+            { paddingHorizontal: 16, paddingBottom: 30, paddingTop: 10 },
           ]}
+          showsVerticalScrollIndicator={false}
         >
-          <Text style={styles.cardLabel}>TEST 1: DOMINANT</Text>
-          <Text testID="test1" style={styles.cardValue}>
-            {test1Scores !== null ? `${test1Scores} ms` : "--"}
-          </Text>
-        </View>
+          {/* Header Identity Display Block */}
+          <View style={{ marginBottom: 20 }}>
+            <Text style={styles.title}>
+              {user?.email?.split("@")[0] ?? "User"}'s Personal Bests
+            </Text>
+            <Text
+              style={[
+                styles.text,
+                { color: "gray", marginTop: 4, fontSize: 14 },
+              ]}
+            >
+              Your top recorded metrics across all diagnostic evaluation
+              modules.
+            </Text>
+          </View>
 
-        <View
-          style={[
-            styles.statCard,
-            { borderLeftColor: "#9C27B0", marginLeft: 8 },
-          ]}
-        >
-          <Text style={styles.cardLabel}>TEST 2: NON-DOMINANT</Text>
-          <Text testID="test2" style={styles.cardValue}>
-            {test2Scores !== null ? `${test2Scores} ms` : "--"}
-          </Text>
-        </View>
-      </View>
+          {/* Grid Layout Row 1: Hand Reflex Speeds */}
+          <View
+            style={[
+              styles.statsRow,
+              { flexDirection: "row", width: "100%", marginBottom: 12 },
+            ]}
+          >
+            <View
+              style={[
+                styles.statCard,
+                {
+                  borderLeftColor: "#4A90E2",
+                  borderLeftWidth: 4,
+                  flex: 1,
+                  marginRight: 6,
+                  padding: 12,
+                },
+              ]}
+            >
+              <Text
+                style={[
+                  styles.cardLabel,
+                  { fontSize: 11, color: "gray", fontWeight: "600" },
+                ]}
+              >
+                TEST 1: DOMINANT
+              </Text>
+              <Text
+                testID="test1"
+                style={[
+                  styles.cardValue,
+                  {
+                    fontSize: 22,
+                    fontWeight: "bold",
+                    marginTop: 6,
+                    color: theme.text,
+                  },
+                ]}
+              >
+                {test1Scores !== null ? `${test1Scores} ms` : "--"}
+              </Text>
+            </View>
 
-      {/* Grid Layout Row 2: Tracking Precision & Audio Cues */}
-      <View style={styles.statsRow}>
-        <View
-          style={[
-            styles.statCard,
-            { borderLeftColor: "#4CAF50", marginRight: 8 },
-          ]}
-        >
-          <Text style={styles.cardLabel}>TEST 3: TRACKING</Text>
-          <Text testID="test3" style={styles.cardValue}>
-            {test3Scores !== null ? `${test3Scores} Clicks` : "--"}
-          </Text>
-        </View>
+            <View
+              style={[
+                styles.statCard,
+                {
+                  borderLeftColor: "#9C27B0",
+                  borderLeftWidth: 4,
+                  flex: 1,
+                  marginLeft: 6,
+                  padding: 12,
+                },
+              ]}
+            >
+              <Text
+                style={[
+                  styles.cardLabel,
+                  { fontSize: 11, color: "gray", fontWeight: "600" },
+                ]}
+              >
+                TEST 2: NON-DOMINANT
+              </Text>
+              <Text
+                testID="test2"
+                style={[
+                  styles.cardValue,
+                  {
+                    fontSize: 22,
+                    fontWeight: "bold",
+                    marginTop: 6,
+                    color: theme.text,
+                  },
+                ]}
+              >
+                {test2Scores !== null ? `${test2Scores} ms` : "--"}
+              </Text>
+            </View>
+          </View>
 
-        <View
-          style={[
-            styles.statCard,
-            { borderLeftColor: "#FF9800", marginLeft: 8 },
-          ]}
-        >
-          <Text style={styles.cardLabel}>TEST 4: AUDIO CUE</Text>
-          <Text testID="test4" style={styles.cardValue}>
-            {test4Scores !== null ? `${test4Scores} ms` : "--"}
-          </Text>
-        </View>
-      </View>
+          {/* Grid Layout Row 2: Tracking Precision & Audio Cues */}
+          <View
+            style={[
+              styles.statsRow,
+              { flexDirection: "row", width: "100%", marginBottom: 12 },
+            ]}
+          >
+            <View
+              style={[
+                styles.statCard,
+                {
+                  borderLeftColor: "#4CAF50",
+                  borderLeftWidth: 4,
+                  flex: 1,
+                  marginRight: 6,
+                  padding: 12,
+                },
+              ]}
+            >
+              <Text
+                style={[
+                  styles.cardLabel,
+                  { fontSize: 11, color: "gray", fontWeight: "600" },
+                ]}
+              >
+                TEST 3: TRACKING
+              </Text>
+              <Text
+                testID="test3"
+                style={[
+                  styles.cardValue,
+                  {
+                    fontSize: 22,
+                    fontWeight: "bold",
+                    marginTop: 6,
+                    color: theme.text,
+                  },
+                ]}
+              >
+                {test3Scores !== null ? `${test3Scores} Clicks` : "--"}
+              </Text>
+            </View>
 
-      {/* Highlight Information Box */}
-      <View style={[styles.dataCard, { width: "100%", marginTop: 15 }]}>
-        <View style={styles.cardHeader}>
-          <Text style={styles.stretchTitle}>Telemetry Context</Text>
-          <Text style={styles.metaLabel}>Live Database</Text>
-        </View>
-        <Text
-          style={[
-            styles.text,
-            { textAlign: "left", fontSize: 13, color: "gray", marginTop: 4 },
-          ]}
-        >
-          For millisecond (ms) reaction speeds, lower scores represent faster
-          sensory processing. For tracking tests, higher score counts indicate
-          greater accuracy and consistency.
-        </Text>
-      </View>
+            <View
+              style={[
+                styles.statCard,
+                {
+                  borderLeftColor: "#FF9800",
+                  borderLeftWidth: 4,
+                  flex: 1,
+                  marginLeft: 6,
+                  padding: 12,
+                },
+              ]}
+            >
+              <Text
+                style={[
+                  styles.cardLabel,
+                  { fontSize: 11, color: "gray", fontWeight: "600" },
+                ]}
+              >
+                TEST 4: AUDIO CUE
+              </Text>
+              <Text
+                testID="test4"
+                style={[
+                  styles.cardValue,
+                  {
+                    fontSize: 22,
+                    fontWeight: "bold",
+                    marginTop: 6,
+                    color: theme.text,
+                  },
+                ]}
+              >
+                {test4Scores !== null ? `${test4Scores} ms` : "--"}
+              </Text>
+            </View>
+          </View>
 
-      {/* Return to Main Dashboard Actions */}
-      <View style={[styles.colContainer, { width: "100%", marginTop: 20 }]}>
-        <TouchableOpacity
-          testID="menu"
-          style={[styles.button, { width: "100%" }]}
-          onPress={() => {
-            router.push("/(tabs)/ReactionTest/menu");
-            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-          }}
-        >
-          <Text style={styles.buttonText}>Return to Menu</Text>
-        </TouchableOpacity>
-      </View>
-    </ScrollView>
+          {/* Highlight Information Box */}
+          <View
+            style={[
+              styles.dataCard,
+              { width: "100%", marginTop: 12, padding: 16 },
+            ]}
+          >
+            <View
+              style={[
+                styles.cardHeader,
+                {
+                  flexDirection: "row",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                },
+              ]}
+            >
+              <Text
+                style={[
+                  styles.stretchTitle,
+                  { fontWeight: "700", color: theme.text },
+                ]}
+              >
+                Telemetry Context
+              </Text>
+              <View
+                style={{
+                  backgroundColor: "rgba(74,144,226,0.1)",
+                  paddingHorizontal: 6,
+                  paddingVertical: 2,
+                  borderRadius: 4,
+                }}
+              >
+                <Text
+                  style={[
+                    styles.metaLabel,
+                    { fontSize: 11, color: "#4A90E2", fontWeight: "600" },
+                  ]}
+                >
+                  Live Database
+                </Text>
+              </View>
+            </View>
+            <Text
+              style={[
+                styles.text,
+                {
+                  textAlign: "left",
+                  fontSize: 13,
+                  color: "gray",
+                  marginTop: 8,
+                  lineHeight: 18,
+                },
+              ]}
+            >
+              For millisecond (ms) reaction speeds, lower scores represent
+              faster sensory processing. For tracking tests, higher score counts
+              indicate greater accuracy and consistency.
+            </Text>
+          </View>
+
+          {/* Return to Main Dashboard Actions */}
+          <View style={[styles.colContainer, { width: "100%", marginTop: 24 }]}>
+            <TouchableOpacity
+              testID="menu"
+              style={[
+                styles.button,
+                {
+                  width: "100%",
+                  height: 48,
+                  justifyContent: "center",
+                  alignItems: "center",
+                },
+              ]}
+              onPress={() => {
+                router.push("/(tabs)/ReactionTest/menu");
+                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+              }}
+            >
+              <Text style={styles.buttonText}>Return to Menu</Text>
+            </TouchableOpacity>
+          </View>
+        </ScrollView>
+      </SafeAreaView>
+    </SafeAreaProvider>
   );
 }
