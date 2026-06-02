@@ -32,7 +32,6 @@ export default function SoundPollutionTest() {
   const [isMonitoring, setIsMonitoring] = useState(false);
   const [recording, setRecording] = useState<Audio.Recording | null>(null);
 
-  // Clean up recording telemetry on unmount
   useEffect(() => {
     return () => {
       stopMonitoring();
@@ -78,7 +77,7 @@ export default function SoundPollutionTest() {
           const status = await newRecording.getStatusAsync();
           if (status.metering !== undefined) {
             let calculatedDb = Math.round(status.metering + 100);
-            if (calculatedDb < 30) calculatedDb = 30; // Floor baseline noise
+            if (calculatedDb < 30) calculatedDb = 30;
             setDecibels(calculatedDb);
           }
         }
@@ -98,7 +97,7 @@ export default function SoundPollutionTest() {
       try {
         await recording.stopAndUnloadAsync();
       } catch (error) {
-        // Safe bypass if recording structures terminated early
+        // Safe bypass if components unmount abruptly
       }
       setRecording(null);
     }
@@ -113,15 +112,10 @@ export default function SoundPollutionTest() {
 
   const noiseLabel = getNoiseLabel(decibels);
 
-  /**
-   * Improved Core Upload Logic
-   * Dynamically tracks GPS location to pair with structural noise payloads
-   */
   async function handleLocationUpload() {
     setErrorText(false);
     setSuccessText(false);
 
-    // 1. Text input Validation Check
     if (!noiseType.trim()) {
       setErrorText(true);
       return;
@@ -130,7 +124,6 @@ export default function SoundPollutionTest() {
     setIsSubmitting(true);
 
     try {
-      // 2. Request core location permission coordinates
       const { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== "granted") {
         alert(
@@ -140,7 +133,6 @@ export default function SoundPollutionTest() {
         return;
       }
 
-      // 3. Grab current high precision global coordinates
       const locationData = await Location.getCurrentPositionAsync({
         accuracy: Location.Accuracy.Balanced,
       });
@@ -150,11 +142,10 @@ export default function SoundPollutionTest() {
         longitude: locationData.coords.longitude,
       };
 
-      // 4. Submit fully constructed structured payload down to your DB handler
       await uploadSoundLocation(user, coords, noiseType, decibels);
 
       setSuccessText(true);
-      setNoiseType(""); // Clear input form field on success
+      setNoiseType("");
     } catch (error) {
       console.error("Error processing hardware or cloud upload:", error);
       setErrorText(true);
@@ -176,16 +167,18 @@ export default function SoundPollutionTest() {
       <View testID="menu" style={styles.container}>
         <Text style={styles.title}>Sound Pollution Test</Text>
 
-        {/* Data Fields Collection Context */}
-        <View style={[styles.colContainer, { width: "100%", marginTop: 20 }]}>
+        {/* Form Inputs Container */}
+        <View style={styles.colContainer}>
           <Text style={styles.header}>Describe Noise Source</Text>
           <TextInput
             style={styles.sUser}
             placeholder="e.g., Traffic, Construction, Train, Cafe"
+            placeholderTextColor="gray"
             value={noiseType}
             onChangeText={setNoiseType}
           />
         </View>
+
         <TouchableOpacity
           style={styles.button}
           onPress={isMonitoring ? stopMonitoring : startMonitoring}
@@ -195,17 +188,15 @@ export default function SoundPollutionTest() {
           </Text>
         </TouchableOpacity>
 
-        {/* Informational Decibel Gauge Panel */}
+        {/* Real-time Decibel Gauge Panel mapped to rowContainer */}
         <View
           style={[
             styles.rowContainer,
             {
-              borderColor: isMonitoring ? noiseLabel.color : "#ccc",
+              borderColor: isMonitoring
+                ? noiseLabel.color
+                : theme.border || "#ccc",
               borderWidth: 2,
-              padding: 20,
-              borderRadius: 10,
-              marginVertical: 15,
-              alignItems: "center",
             },
           ]}
         >
@@ -224,7 +215,8 @@ export default function SoundPollutionTest() {
           )}
         </View>
 
-        <View style={[styles.colContainer, { width: "100%", marginTop: 10 }]}>
+        {/* Submission Dashboard Status Section */}
+        <View style={styles.colContainer}>
           <TouchableOpacity
             style={[styles.button, isSubmitting && { opacity: 0.6 }]}
             onPress={handleLocationUpload}
@@ -238,24 +230,32 @@ export default function SoundPollutionTest() {
           </TouchableOpacity>
 
           {errorText && (
-            <Text style={{ color: "red", marginTop: 10, textAlign: "center" }}>
+            <Text
+              style={[
+                styles.text,
+                { color: "#F44336", marginTop: 10, fontSize: 14 },
+              ]}
+            >
               Upload failed. Please ensure description isn't blank.
             </Text>
           )}
           {successText && (
             <Text
-              style={{ color: "green", marginTop: 10, textAlign: "center" }}
+              style={[
+                styles.text,
+                { color: "#4CAF50", marginTop: 10, fontSize: 14 },
+              ]}
             >
               Sound metrics and GPS coordinates mapped successfully!
             </Text>
           )}
         </View>
 
-        {/* Map Route Nav link redirection */}
+        {/* Live Cluster Map Navigation Shortcut */}
         <TouchableOpacity
-          style={[styles.button, { marginTop: 30, backgroundColor: "#4A90E2" }]}
+          style={[styles.button, { backgroundColor: "#4A90E2", width: "100%" }]}
           onPress={async () => {
-            await stopMonitoring(); // Kill tracking lines safely before switching screens
+            await stopMonitoring();
             router.push("/SoundPollution/sound_map");
           }}
         >

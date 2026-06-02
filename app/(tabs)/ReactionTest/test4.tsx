@@ -1,8 +1,7 @@
+import { auth, saveScore } from "@/firebase";
 import { globalStyles } from "@/Styles/globalStyles";
-
 import { darkTheme } from "@/Styles/Themes/dark";
 import { lightTheme } from "@/Styles/Themes/light";
-import { auth, saveScore } from "@/firebase";
 import { Audio } from "expo-av";
 import * as Haptics from "expo-haptics";
 import { router } from "expo-router";
@@ -14,6 +13,7 @@ export default function Test4() {
   const [reactionTime, setReactionTime] = useState(0);
   const [readyText, setReadyText] = useState(true);
   const [nextTestButton, setNextTestButton] = useState(false);
+
   const scheme = useColorScheme();
   const theme = scheme === "dark" ? darkTheme : lightTheme;
   const styles = globalStyles(theme);
@@ -27,25 +27,30 @@ export default function Test4() {
   const soundRef = useRef<Audio.Sound | null>(null);
   const recordingRef = useRef<Audio.Recording | null>(null);
 
-  // global locks
+  // Global thread lockers
   const recordingLock = useRef(false);
   const timerLock = useRef(false);
 
   const loadSound = async () => {
-    const { sound } = await Audio.Sound.createAsync(
-      require("@/features/audio/beep-07a.mp3"),
-      { shouldPlay: false, volume: 1.0 },
-    );
-    soundRef.current = sound;
+    try {
+      const { sound } = await Audio.Sound.createAsync(
+        require("@/features/audio/beep-07a.mp3"),
+        { shouldPlay: false, volume: 1.0 },
+      );
+      soundRef.current = sound;
+    } catch (error) {
+      console.error("Failed to mount asset sound buffer source:", error);
+    }
   };
 
   const startRandomTimer = async () => {
     const delay = Math.random() * 8000 + 2000;
-
     await loadSound();
 
     setTimeout(async () => {
-      await soundRef.current?.replayAsync();
+      if (soundRef.current) {
+        await soundRef.current.replayAsync();
+      }
       startTimer();
     }, delay);
   };
@@ -55,7 +60,6 @@ export default function Test4() {
     timerLock.current = true;
 
     startRef.current = Date.now();
-
     intervalRef.current = setInterval(() => {
       setTime(Date.now() - startRef.current!);
     }, 10);
@@ -63,23 +67,18 @@ export default function Test4() {
     await detectSound();
   };
 
-  // sound detection
   const detectSound = async () => {
     if (recordingLock.current) return;
     recordingLock.current = true;
 
     try {
-      // cleanup
       if (recordingRef.current) {
         await recordingRef.current.stopAndUnloadAsync();
         recordingRef.current = null;
-
-        // important native buffer delay
-        await new Promise((res) => setTimeout(res, 200));
+        await new Promise((res) => setTimeout(res, 200)); // Native audio hardware engine cooling buffer delay
       }
 
       await Audio.requestPermissionsAsync();
-
       await Audio.setAudioModeAsync({
         allowsRecordingIOS: true,
         playsInSilentModeIOS: true,
@@ -102,38 +101,37 @@ export default function Test4() {
 
       detectionInterval.current = setInterval(async () => {
         const status = await recording.getStatusAsync();
-
         if (!status.metering || !startRef.current) return;
 
+        // Decibel threshold evaluation window match point
         if (status.metering > -20) {
           Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
-
           stopTimer();
 
-          clearInterval(detectionInterval.current!);
-          detectionInterval.current = null;
+          if (detectionInterval.current) {
+            clearInterval(detectionInterval.current);
+            detectionInterval.current = null;
+          }
 
           await stopRecording();
-
           setNextTestButton(true);
-
           recordingLock.current = false;
         }
       }, 80);
     } catch (e) {
-      console.log("detectSound error:", e);
+      console.error("Audio core decibel parsing failure:", e);
       recordingLock.current = false;
     }
   };
 
   const stopTimer = () => {
     timerLock.current = false;
-
     if (startRef.current) {
-      setReactionTime(Date.now() - startRef.current);
+      const duration = Date.now() - startRef.current;
+      setReactionTime(duration);
+      setTime(duration);
       startRef.current = null;
     }
-
     if (intervalRef.current) {
       clearInterval(intervalRef.current);
       intervalRef.current = null;
@@ -147,14 +145,13 @@ export default function Test4() {
         recordingRef.current = null;
       }
     } catch (e) {
-      console.log(e);
+      console.error("Failed to unload recording hardware gracefully:", e);
     }
   };
 
   const saveTestScore = async () => {
     try {
       if (!user) return;
-
       const scores = {
         testType: "test4",
         userId: user.uid,
@@ -162,87 +159,182 @@ export default function Test4() {
         score: reactionTime,
         timestamp: Date.now(),
       };
-      saveScore(user, scores);
-
-      console.log("score saved!");
+      await saveScore(user, scores);
+      console.log("Audio latency score saved successfully!");
     } catch (error) {
-      console.log(error);
+      console.error("Error committing score down to cloud ledger:", error);
     }
   };
 
   useEffect(() => {
-    if (nextTestButton) {
+    if (nextTestButton && reactionTime > 0) {
       saveTestScore();
     }
-  }, [nextTestButton]);
+  }, [nextTestButton, reactionTime]);
 
   useEffect(() => {
     return () => {
       if (intervalRef.current) clearInterval(intervalRef.current);
       if (detectionInterval.current) clearInterval(detectionInterval.current);
       stopRecording();
+      if (soundRef.current) {
+        soundRef.current.unloadAsync();
+      }
     };
   }, []);
 
   return (
-    <View testID="test4" style={styles.container}>
-      {readyText && (
-        <>
-          <Text style={styles.title}>Test 4 - Sound Reaction</Text>
+    <View
+      testID="test4"
+      style={[
+        styles.container,
+        { paddingHorizontal: 16, justifyContent: "center" },
+      ]}
+    >
+      <View
+        style={[styles.colContainer, { width: "100%", alignItems: "center" }]}
+      >
+        {readyText && (
+          <>
+            <Text style={styles.title}>Test 4 - Audio Cue Reaction</Text>
+            <Text
+              style={[
+                styles.text,
+                { marginBottom: 25, opacity: 0.8, textAlign: "center" },
+              ]}
+            >
+              Press start, then immediately snap or produce a distinct sound
+              vocalization when the system cue tone triggers.
+            </Text>
 
-          <Text style={styles.text}>
-            Tap start, then react when you hear the sound or make a loud noise
-          </Text>
+            <TouchableOpacity
+              style={[styles.button, { width: "100%" }]}
+              onPress={() => {
+                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+                setReadyText(false);
+                startRandomTimer();
+              }}
+            >
+              <Text style={styles.buttonText}>Initialize Test</Text>
+            </TouchableOpacity>
+          </>
+        )}
 
-          <TouchableOpacity
-            style={styles.button}
-            onPress={() => {
-              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-              setReadyText(false);
-              startRandomTimer();
-            }}
-          >
-            <Text style={styles.buttonText}>Start</Text>
-          </TouchableOpacity>
-        </>
-      )}
+        {/* Real-time Processing Feed Display */}
+        {!readyText && !nextTestButton && (
+          <View style={{ alignItems: "center" }}>
+            <Text
+              style={[
+                styles.text,
+                { fontSize: 16, color: "gray", marginBottom: 8 },
+              ]}
+            >
+              LISTENING FOR INPUT ACCELERATION...
+            </Text>
+            <Text
+              style={[
+                styles.text,
+                { fontSize: 28, fontWeight: "bold", color: theme.text },
+              ]}
+            >
+              {time} ms
+            </Text>
+          </View>
+        )}
 
-      {!readyText && (
-        <Text style={{ color: "white", fontSize: 30 }}>{time} ms</Text>
-      )}
+        {/* Final Outbound Diagnostics & Complete Navigation Tree */}
+        {nextTestButton && (
+          <View style={{ width: "100%", alignItems: "center" }}>
+            <View
+              style={[
+                styles.dataCard,
+                {
+                  width: "100%",
+                  padding: 20,
+                  marginBottom: 20,
+                  borderColor: "#4CAF50",
+                  borderWidth: 2,
+                },
+              ]}
+            >
+              <Text style={[styles.text, { fontSize: 14, color: "gray" }]}>
+                FINAL ACOUSTIC LATENCY
+              </Text>
+              <Text
+                style={[
+                  styles.title,
+                  { fontSize: 32, marginVertical: 4, color: theme.text },
+                ]}
+              >
+                {reactionTime} ms
+              </Text>
+              <Text
+                style={[
+                  styles.text,
+                  { fontSize: 13, color: "#4CAF50", fontWeight: "600" },
+                ]}
+              >
+                Acoustic telemetry data synced with global leaderboards!
+              </Text>
+            </View>
 
-      {nextTestButton && (
-        <>
-          <TouchableOpacity
-            style={styles.button}
-            onPress={() => {
-              router.push("/(tabs)/ReactionTest/results");
-              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-            }}
-          >
-            <Text style={styles.buttonText}>Results</Text>
-          </TouchableOpacity>
+            <TouchableOpacity
+              style={[styles.button, { width: "100%" }]}
+              onPress={() => {
+                router.push("/(tabs)/ReactionTest/results");
+                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+              }}
+            >
+              <Text style={styles.buttonText}>View Leaderboards</Text>
+            </TouchableOpacity>
 
-          <TouchableOpacity
-            style={styles.button}
-            onPress={() => {
-              router.push("/(tabs)/ReactionTest/directory");
-              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-            }}
-          >
-            <Text style={styles.buttonText}>All Tests</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.button}
-            onPress={() => {
-              router.push("/(tabs)/ReactionTest/menu");
-              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-            }}
-          >
-            <Text style={styles.buttonText}>Back to Menu</Text>
-          </TouchableOpacity>
-        </>
-      )}
+            <TouchableOpacity
+              style={[
+                styles.button,
+                {
+                  width: "100%",
+                  marginTop: 10,
+                  backgroundColor: theme.card || "#4A90E2",
+                },
+              ]}
+              onPress={() => {
+                router.push("/(tabs)/ReactionTest/directory");
+                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+              }}
+            >
+              <Text
+                style={[
+                  styles.buttonText,
+                  theme.card ? { color: theme.text } : { color: "#fff" },
+                ]}
+              >
+                View All Tests
+              </Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={[
+                styles.button,
+                {
+                  width: "100%",
+                  marginTop: 10,
+                  backgroundColor: "transparent",
+                  borderWidth: 1,
+                  borderColor: theme.border || "#ccc",
+                },
+              ]}
+              onPress={() => {
+                router.push("/(tabs)/ReactionTest/menu");
+                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+              }}
+            >
+              <Text style={[styles.buttonText, { color: theme.text }]}>
+                Back to Menu
+              </Text>
+            </TouchableOpacity>
+          </View>
+        )}
+      </View>
     </View>
   );
 }

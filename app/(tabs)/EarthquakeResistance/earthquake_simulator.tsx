@@ -1,19 +1,16 @@
-// strongest vibration on start
-// then after time, stops
-// simulate earthquake by vibrating at random intervals and intensities for a few seconds
-// then stops and shows results
-import { globalStyles } from "@/Styles/globalStyles";
-
 import { auth } from "@/firebase";
+import { globalStyles } from "@/Styles/globalStyles";
 import { darkTheme } from "@/Styles/Themes/dark";
 import { lightTheme } from "@/Styles/Themes/light";
+import * as Haptics from "expo-haptics";
+import { router } from "expo-router";
 import React, { useEffect, useRef, useState } from "react";
 import {
-    Text,
-    TouchableOpacity,
-    useColorScheme,
-    Vibration,
-    View,
+  Text,
+  TouchableOpacity,
+  useColorScheme,
+  Vibration,
+  View,
 } from "react-native";
 
 export default function EarthquakeSimulator() {
@@ -74,11 +71,12 @@ export default function EarthquakeSimulator() {
   };
 
   const countDown = () => {
-    const user = auth.currentUser;
     if (!user) return;
 
     if (intervalRef.current) clearInterval(intervalRef.current);
     if (vibrationRef.current) clearTimeout(vibrationRef.current);
+
+    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
 
     setTime(15);
     setStopTest(false);
@@ -91,6 +89,7 @@ export default function EarthquakeSimulator() {
         if (prev <= 1) {
           stopAllActivity();
           setStopTest(true);
+          Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
           return 0;
         }
         return prev - 1;
@@ -98,57 +97,83 @@ export default function EarthquakeSimulator() {
     }, 1000);
   };
 
-  // const saveTestScore = async () => {
-  //   try {
-  //     if (!user) return;
-  //     const scores = {
-  //       testType: "test3",
-  //       userId: user?.uid,
-  //       email: user?.email,
-  //       score: clickCount,
-  //       timestamp: Date.now(),
-  //     };
-  //     saveScore(user, scores);
-  //     console.log("score saved!");
-  //   } catch (error) {
-  //     console.log(error);
-  //   }
-  // };
-  // useEffect(() => {
-  //   if (stopTest) {
-  //     saveTestScore();
-  //   }
-  // }, [stopTest]);
   if (!user) {
     return (
-      <View style={styles.container}>
+      <View style={[styles.container, { justifyContent: "center" }]}>
         <Text style={styles.text}>Please log in to start the simulation.</Text>
       </View>
     );
-  } else {
-    return (
-      <View style={styles.container}>
-        <Text style={styles.title}>Earthquake Simulator</Text>
-        <Text style={{ fontSize: 20, marginVertical: 10 }}>
+  }
+
+  return (
+    <View style={[styles.container, { paddingHorizontal: 16, paddingTop: 40 }]}>
+      <Text style={styles.title}>Earthquake Simulator</Text>
+
+      {/* Visual countdown tracking read-out */}
+      <View style={[styles.colContainer, { marginVertical: 10 }]}>
+        <Text
+          style={[
+            styles.text,
+            {
+              fontSize: 22,
+              fontWeight: "600",
+              color: isSimulatingRef.current ? "#F44336" : theme.text,
+            },
+          ]}
+        >
           Time Remaining: {time}s
         </Text>
+      </View>
 
-        <TouchableOpacity onPress={countDown} style={styles.button}>
+      <View style={styles.colContainer}>
+        <TouchableOpacity
+          onPress={countDown}
+          style={[
+            styles.button,
+            { width: "100%" },
+            isSimulatingRef.current && { backgroundColor: "#F44336" },
+          ]}
+        >
           <Text style={styles.buttonText}>
             {isSimulatingRef.current
               ? "Restart Simulation"
               : "Start Simulation"}
           </Text>
         </TouchableOpacity>
+      </View>
 
-        {stopTest && (
-          <View style={styles.rowContainer}>
-            <Text style={styles.text}>
-              Simulation Completed! Showing Results...
+      {/* Conditional completed outcome panel */}
+      {stopTest && (
+        <View style={styles.colContainer}>
+          <View
+            style={[
+              styles.rowContainer,
+              {
+                borderColor: "#4CAF50",
+                borderWidth: 2,
+                borderRadius: 10,
+                marginTop: 15,
+              },
+            ]}
+          >
+            <Text style={[styles.text, { fontSize: 16, fontWeight: "600" }]}>
+              Simulation Completed!
             </Text>
           </View>
-        )}
-      </View>
-    );
-  }
+
+          <TouchableOpacity
+            style={[
+              styles.button,
+              { backgroundColor: "#4A90E2", width: "100%", marginTop: 15 },
+            ]}
+            onPress={() =>
+              router.push("/EarthquakeResistance/earthquake_results")
+            }
+          >
+            <Text style={styles.buttonText}>Review Analytical Logs</Text>
+          </TouchableOpacity>
+        </View>
+      )}
+    </View>
+  );
 }

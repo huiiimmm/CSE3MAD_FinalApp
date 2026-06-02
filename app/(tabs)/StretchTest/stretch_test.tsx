@@ -1,14 +1,9 @@
-// activate vibration sensor
-// perform movements - circle, figure 8, left and right, up and down
-// record the vibration
-//repeat activity with vibration feedback enabled
-// review speed, smoothness, and rom
+import { auth, uploadVibrationData } from "@/firebase";
 import { globalStyles } from "@/Styles/globalStyles";
 import { darkTheme } from "@/Styles/Themes/dark";
 import { lightTheme } from "@/Styles/Themes/light";
+import { router } from "expo-router";
 import { Accelerometer } from "expo-sensors";
-
-import { auth, uploadVibrationData } from "@/firebase";
 import React, { useEffect, useRef, useState } from "react";
 import {
   Text,
@@ -19,9 +14,6 @@ import {
   View,
 } from "react-native";
 
-import { router } from "expo-router";
-
-// Define TypeScript structure for recording payloads
 interface VibrationSample {
   intensity: number;
   duration: number;
@@ -41,7 +33,7 @@ export default function StretchTest() {
   const styles = globalStyles(theme);
 
   const accelSubRef = useRef<any>(null);
-  // Holds high-frequency samples without triggering expensive React redraws mid-test
+  const vibrationIntervalRef = useRef<any>(null);
   const recordedDataRef = useRef<VibrationSample[]>([]);
   const startTimeRef = useRef<number>(0);
   const user = auth.currentUser;
@@ -58,12 +50,24 @@ export default function StretchTest() {
       setSaveStatus("Please define a stretch type before beginning.");
       return;
     }
+
+    // Reset status and outcome messages from any previous runs
     setSaveStatus("");
+    setSuccessText(false);
+    setErrorText(false);
+
     recordedDataRef.current = [];
     startTimeRef.current = Date.now();
     setIsRecording(true);
 
-    Vibration.vibrate([0, 500], true); // Start with a 500ms vibration to signal recording start
+    // UNINTERRUPTED CONSTANT HUM:
+    // Trigger the initial single-shot raw vibration burst
+    Vibration.vibrate(10000);
+
+    // Create a background heartbeat to refresh the hum before it can drop out
+    vibrationIntervalRef.current = setInterval(() => {
+      Vibration.vibrate(10000);
+    }, 4000);
 
     accelSubRef.current = Accelerometer.addListener((data) => {
       const totalForce = Math.sqrt(
@@ -74,15 +78,23 @@ export default function StretchTest() {
 
       setVibration(dynamicVibration);
 
-      // Log every single microscopic movement tick to our tracking array
       recordedDataRef.current.push({
         intensity: parseFloat(dynamicVibration.toFixed(4)),
-        duration: Date.now() - startTimeRef.current, // Relative time in ms
+        duration: Date.now() - startTimeRef.current,
       });
     });
   };
+
   const stopRecording = async () => {
     setIsRecording(false);
+
+    // Clear our background motor refresh interval loop
+    if (vibrationIntervalRef.current) {
+      clearInterval(vibrationIntervalRef.current);
+      vibrationIntervalRef.current = null;
+    }
+
+    // Silence phone hardware coil immediately
     Vibration.cancel();
 
     if (accelSubRef.current) {
@@ -91,13 +103,12 @@ export default function StretchTest() {
     }
     setVibration(0);
 
-    // Only attempt to process and save if data was collected
     if (recordedDataRef.current.length > 0) {
       if (!stretchType) {
         setSaveStatus("Please define a stretch before saving.");
         return;
       }
-      // Calculate aggregated summary analytics from our recorded data array
+
       const totalSamples = recordedDataRef.current.length;
       const sumIntensity = recordedDataRef.current.reduce(
         (acc, cur) => acc + cur.intensity,
@@ -111,6 +122,7 @@ export default function StretchTest() {
       const durationSeconds = parseFloat(
         ((Date.now() - startTimeRef.current) / 1000).toFixed(2),
       );
+
       try {
         await uploadVibrationData(
           user,
@@ -125,33 +137,58 @@ export default function StretchTest() {
         console.error("Error uploading vibration data: ", e);
         setErrorText(true);
         setSaveStatus("Failed to save data. Please try again.");
-        return;
       }
     }
   };
+
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Stretch Test</Text>
+
+      {/* Realtime Telemetry Display UI HUD */}
+      <View style={{ marginVertical: 10, alignItems: "center" }}>
+        <Text
+          style={[styles.text, { color: isRecording ? "#4A90E2" : "gray" }]}
+        >
+          {isRecording
+            ? `Current Force: ${vibration.toFixed(3)} G`
+            : "Sensors Stopped"}
+        </Text>
+      </View>
+
       <View style={styles.colContainer}>
         <TextInput
           style={styles.sUser}
           placeholder="Enter stretch type"
           onChangeText={setStretchType}
           value={stretchType}
+          editable={!isRecording}
         />
+
         <TouchableOpacity
-          style={styles.button}
-          onPress={() => {
-            isRecording ? stopRecording() : startRecording();
-          }}
+          style={[styles.button, isRecording && { backgroundColor: "#F44336" }]}
+          onPress={isRecording ? stopRecording : startRecording}
         >
           <Text style={styles.buttonText}>
             {isRecording ? "Stop Recording" : "Start Recording"}
           </Text>
         </TouchableOpacity>
+
+        {/* Validation Error/Fallback Messaging */}
+        {saveStatus && !successText && !errorText && (
+          <Text
+            style={[
+              styles.text,
+              { color: "orange", marginTop: 15, fontSize: 14 },
+            ]}
+          >
+            {saveStatus}
+          </Text>
+        )}
+
         {successText && (
-          <>
-            <Text style={[styles.text, { color: "green" }]}>
+          <View style={styles.colContainer}>
+            <Text style={[styles.text, { color: "green", marginBottom: 5 }]}>
               Data saved successfully!
             </Text>
             <TouchableOpacity
@@ -159,11 +196,12 @@ export default function StretchTest() {
               onPress={() => router.push("/StretchTest/stretch_results")}
             >
               <Text style={styles.buttonText}>View Results</Text>
-            </TouchableOpacity>{" "}
-          </>
+            </TouchableOpacity>
+          </View>
         )}
+
         {errorText && (
-          <Text style={[styles.text, { color: "red" }]}>
+          <Text style={[styles.text, { color: "red", marginTop: 15 }]}>
             Failed to save data. Please try again.
           </Text>
         )}

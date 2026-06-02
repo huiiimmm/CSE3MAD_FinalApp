@@ -1,8 +1,7 @@
+import { auth, saveScore } from "@/firebase";
 import { globalStyles } from "@/Styles/globalStyles";
-
 import { darkTheme } from "@/Styles/Themes/dark";
 import { lightTheme } from "@/Styles/Themes/light";
-import { auth, saveScore } from "@/firebase";
 import * as Haptics from "expo-haptics";
 import { router } from "expo-router";
 import React, { useEffect, useRef, useState } from "react";
@@ -36,9 +35,9 @@ export default function Test1() {
   const intervalRef = useRef<any>(null);
   const startRef = useRef<any>(null);
   const randomRef = useRef<any>(null);
+
   const startTimer = () => {
     startRef.current = Date.now();
-
     intervalRef.current = setInterval(() => {
       setTime(Date.now() - startRef.current!);
     }, 10);
@@ -46,12 +45,12 @@ export default function Test1() {
 
   const stopTimer = () => {
     if (startRef.current) {
-      setReactionTime(Date.now() - startRef.current);
-
+      const duration = Date.now() - startRef.current;
+      setReactionTime(duration);
+      setTime(duration);
       if (intervalRef.current) {
         clearInterval(intervalRef.current);
       }
-
       startRef.current = null;
     }
   };
@@ -60,19 +59,24 @@ export default function Test1() {
     const delay = Math.random() * 8000 + 2000;
     setEarlyCheck(true);
     if (restartTest) return;
-    else {
-      randomRef.current = setTimeout(() => {
-        setBgColor("green");
-        setReactionScreen(true);
-        startTimer();
-      }, delay);
-    }
+
+    randomRef.current = setTimeout(() => {
+      setEarlyCheck(false); // Disable early check window once target triggers
+      setBgColor("#4CAF50"); // Using standard green asset color
+      setReactionScreen(true);
+      startTimer();
+    }, delay);
   };
+
   const restart = () => {
     setRestartTest(true);
-
+    setEarlyCheck(false);
+    setReactionScreen(false);
     if (randomRef.current) {
       clearTimeout(randomRef.current);
+    }
+    if (intervalRef.current) {
+      clearInterval(intervalRef.current);
     }
   };
 
@@ -86,120 +90,231 @@ export default function Test1() {
         score: reactionTime,
         timestamp: Date.now(),
       };
-      saveScore(user, scores);
-      console.log("score saved!");
+      await saveScore(user, scores);
+      console.log("Reaction score saved successfully!");
     } catch (error) {
-      console.log(error);
+      console.error("Error committing score down to cloud ledger:", error);
     }
   }
 
   useEffect(() => {
-    if (recordResults) {
+    if (recordResults && reactionTime > 0) {
       saveTestScore();
     }
-  }, [recordResults]);
+  }, [recordResults, reactionTime]);
+
+  // Handle unmount tree teardown routines safely
+  useEffect(() => {
+    return () => {
+      if (randomRef.current) clearTimeout(randomRef.current);
+      if (intervalRef.current) clearInterval(intervalRef.current);
+    };
+  }, []);
 
   return (
     <View
       testID="test1"
-      style={[styles.container, { backgroundColor: bgColor }]}
+      style={[
+        styles.container,
+        {
+          backgroundColor: bgColor,
+          paddingHorizontal: 16,
+          justifyContent: "center",
+        },
+      ]}
     >
-      {readyText && (
-        <>
-          <Text style={styles.title}>Test 1 - Dominant Hand</Text>
-          <Text style={styles.text}>Tap as soon as you see green</Text>
-
-          <TouchableOpacity
-            testID="startButton"
-            style={styles.button}
-            onPress={() => {
-              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-              setReadyText(false);
-              setBgColor("red");
-              startRandomTimer();
-            }}
-          >
-            <Text style={styles.buttonText}>Start</Text>
-          </TouchableOpacity>
-        </>
-      )}
-
-      {!readyText && <Text style={styles.text}>Reaction Speed: {time}ms</Text>}
+      {/* Absolute Layer Interceptors for Input Capture */}
       {earlyCheck && (
         <Pressable
           testID="earlyCheck"
           style={StyleSheet.absoluteFill}
           onPress={() => {
             Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
-            stopTimer();
             restart();
-            setRestartTest(true);
           }}
         />
       )}
-      {restartTest && (
-        <>
-          <Text style={styles.text}>Too early!</Text>
-          <TouchableOpacity
-            testID="restartButton"
-            style={styles.button}
-            onPress={() => {
-              setReadyText(true);
-              setEarlyCheck(false);
-              setRestartTest(false);
-              setBgColor("#1e1e1e");
-            }}
-          >
-            <Text style={styles.buttonText}>Restart Test</Text>
-          </TouchableOpacity>
-        </>
-      )}
+
       {reactionScreen && (
         <Pressable
           testID="reactionScreen"
           style={StyleSheet.absoluteFill}
           onPress={() => {
-            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
             stopTimer();
+            setReactionScreen(false);
             setNextTestButton(true);
             setRecordResults(true);
           }}
         />
       )}
 
-      {nextTestButton && (
-        <>
-          <TouchableOpacity
-            testID="nextTest"
-            style={styles.button}
-            onPress={() => {
-              router.push("/(tabs)/ReactionTest/test2");
-              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-            }}
-          >
-            <Text style={styles.buttonText}>Next Test</Text>
-          </TouchableOpacity>
+      {/* Main Form/Interface Context UI Elements */}
+      <View
+        style={[
+          styles.colContainer,
+          { width: "100%", zIndex: 1, pointerEvents: "box-none" },
+        ]}
+      >
+        {readyText && (
+          <>
+            <Text style={styles.title}>Test 1 - Dominant Hand</Text>
+            <Text style={[styles.text, { marginBottom: 25, opacity: 0.8 }]}>
+              Tap anywhere on the screen as soon as the background color
+              transitions to green.
+            </Text>
 
-          <TouchableOpacity
-            style={styles.button}
-            onPress={() => {
-              router.push("/(tabs)/ReactionTest/directory");
-              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-            }}
+            <TouchableOpacity
+              testID="startButton"
+              style={[styles.button, { width: "100%" }]}
+              onPress={() => {
+                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+                setReadyText(false);
+                setBgColor("#F44336"); // Failsafe hot red warning block
+                startRandomTimer();
+              }}
+            >
+              <Text style={styles.buttonText}>Start Assessment</Text>
+            </TouchableOpacity>
+          </>
+        )}
+
+        {/* Real-time Dynamic Telemetry Value Text */}
+        {!readyText && !restartTest && !nextTestButton && (
+          <Text
+            style={[
+              styles.text,
+              { fontSize: 24, fontWeight: "bold", color: "#fff" },
+            ]}
           >
-            <Text style={styles.buttonText}>All Tests</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.button}
-            onPress={() => {
-              router.push("/(tabs)/ReactionTest/menu");
-              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-            }}
-          >
-            <Text style={styles.buttonText}>Back to Menu</Text>
-          </TouchableOpacity>
-        </>
-      )}
+            {reactionScreen ? "TAP NOW!" : `Time Tracker: ${time} ms`}
+          </Text>
+        )}
+
+        {/* Failed Premature Touch Alert Dashboard */}
+        {restartTest && (
+          <View style={{ width: "100%", alignItems: "center" }}>
+            <Text style={[styles.title, { color: "#fff" }]}>Too Early!</Text>
+            <Text style={[styles.text, { marginBottom: 20, color: "#fff" }]}>
+              You tapped before the environment changed color profiles.
+            </Text>
+
+            <TouchableOpacity
+              testID="restartButton"
+              style={[
+                styles.button,
+                { width: "100%", backgroundColor: "#fff" },
+              ]}
+              onPress={() => {
+                setReadyText(true);
+                setRestartTest(false);
+                setBgColor(theme.background);
+                setTime(0);
+                setReactionTime(0);
+                setRecordResults(false);
+              }}
+            >
+              <Text style={[styles.buttonText, { color: "#000" }]}>
+                Try Again
+              </Text>
+            </TouchableOpacity>
+          </View>
+        )}
+
+        {/* Outcomes & Secondary Navigation Controls */}
+        {nextTestButton && (
+          <View style={{ width: "100%", alignItems: "center" }}>
+            <View
+              style={[
+                styles.dataCard,
+                {
+                  width: "100%",
+                  padding: 20,
+                  marginBottom: 20,
+                  borderColor: "#4CAF50",
+                  borderWidth: 2,
+                },
+              ]}
+            >
+              <Text style={[styles.text, { fontSize: 14, color: "gray" }]}>
+                FINAL RESPONSE TIME
+              </Text>
+              <Text
+                style={[
+                  styles.title,
+                  { fontSize: 32, marginVertical: 4, color: theme.text },
+                ]}
+              >
+                {reactionTime} ms
+              </Text>
+              <Text
+                style={[
+                  styles.text,
+                  { fontSize: 13, color: "#4CAF50", fontWeight: "600" },
+                ]}
+              >
+                Metrics synced successfully with your account profile!
+              </Text>
+            </View>
+
+            <TouchableOpacity
+              testID="nextTest"
+              style={[styles.button, { width: "100%" }]}
+              onPress={() => {
+                router.push("/(tabs)/ReactionTest/test2");
+                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+              }}
+            >
+              <Text style={styles.buttonText}>Proceed to Test 2</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={[
+                styles.button,
+                {
+                  width: "100%",
+                  marginTop: 10,
+                  backgroundColor: theme.card || "#4A90E2",
+                },
+              ]}
+              onPress={() => {
+                router.push("/(tabs)/ReactionTest/directory");
+                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+              }}
+            >
+              <Text
+                style={[
+                  styles.buttonText,
+                  theme.card ? { color: theme.text } : { color: "#fff" },
+                ]}
+              >
+                View All Tests
+              </Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={[
+                styles.button,
+                {
+                  width: "100%",
+                  marginTop: 10,
+                  backgroundColor: "transparent",
+                  borderWidth: 1,
+                  borderColor: theme.border || "#ccc",
+                },
+              ]}
+              onPress={() => {
+                router.push("/(tabs)/ReactionTest/menu");
+                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+              }}
+            >
+              <Text style={[styles.buttonText, { color: theme.text }]}>
+                Back to Menu
+              </Text>
+            </TouchableOpacity>
+          </View>
+        )}
+      </View>
     </View>
   );
 }

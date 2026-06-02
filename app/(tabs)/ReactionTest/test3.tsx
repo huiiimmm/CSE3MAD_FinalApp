@@ -1,8 +1,7 @@
+import { auth, saveScore } from "@/firebase";
 import { globalStyles } from "@/Styles/globalStyles";
-
 import { darkTheme } from "@/Styles/Themes/dark";
 import { lightTheme } from "@/Styles/Themes/light";
-import { auth, saveScore } from "@/firebase";
 import * as Haptics from "expo-haptics";
 import { router } from "expo-router";
 import React, { useEffect, useRef, useState } from "react";
@@ -26,30 +25,6 @@ export default function Test3() {
   const [time, setTime] = useState(10);
   const intervalRef = useRef<any>(null);
 
-  const countDown = () => {
-    setTime(10);
-
-    intervalRef.current = setInterval(() => {
-      setTime((prev) => {
-        if (prev <= 1) {
-          clearInterval(intervalRef.current!);
-          intervalRef.current = null;
-          setStopTest(true);
-          return 0;
-        }
-        return prev - 1;
-      });
-    }, 1000);
-  };
-
-  useEffect(() => {
-    return () => {
-      if (intervalRef.current) {
-        clearInterval(intervalRef.current);
-      }
-    };
-  }, []);
-
   const [startTest, setStartTest] = useState(false);
   const [stopTest, setStopTest] = useState(false);
   const [screenWidth, setScreenWidth] = useState(0);
@@ -67,6 +42,21 @@ export default function Test3() {
   const velX = useRef(0);
   const velY = useRef(0);
 
+  const countDown = () => {
+    setTime(10);
+    intervalRef.current = setInterval(() => {
+      setTime((prev) => {
+        if (prev <= 1) {
+          clearInterval(intervalRef.current!);
+          intervalRef.current = null;
+          setStopTest(true);
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+  };
+
   const randomVelocity = () => {
     const speed = Math.random() * 3 + MIN_SPEED;
     return Math.random() < 0.5 ? -speed : speed;
@@ -77,31 +67,30 @@ export default function Test3() {
     velY.current = randomVelocity();
   };
 
+  // Ball physics engine handler
   useEffect(() => {
     if (!startTest || stopTest) return;
     if (screenWidth === 0 || screenHeight === 0) return;
 
     const interval = setInterval(() => {
-      // Bounce X
+      // Bounce Horizontally
       if (posX.current < 0) {
         posX.current = 0;
         velX.current *= -1;
         velY.current = randomVelocity();
       }
-
       if (posX.current > screenWidth - size) {
         posX.current = screenWidth - size;
         velX.current *= -1;
         velY.current = randomVelocity();
       }
 
-      // Bounce Y
+      // Bounce Vertically
       if (posY.current < 0) {
         posY.current = 0;
         velY.current *= -1;
         velX.current = randomVelocity();
       }
-
       if (posY.current > screenHeight - size) {
         posY.current = screenHeight - size;
         velY.current *= -1;
@@ -128,134 +117,245 @@ export default function Test3() {
         score: clickCount,
         timestamp: Date.now(),
       };
-      saveScore(user, scores);
-      console.log("score saved!");
+      await saveScore(user, scores);
+      console.log("Tracking accuracy score saved successfully!");
     } catch (error) {
-      console.log(error);
+      console.error("Error committing score down to cloud ledger:", error);
     }
   };
+
   useEffect(() => {
     if (stopTest) {
       saveTestScore();
     }
   }, [stopTest]);
 
+  useEffect(() => {
+    return () => {
+      if (intervalRef.current) clearInterval(intervalRef.current);
+    };
+  }, []);
+
+  const calculatedAccuracy = totalClicks
+    ? ((clickCount / totalClicks) * 100).toFixed(1)
+    : "0.0";
+
   return (
     <View
       testID="test3"
-      style={styles.bounceContainer}
-      onLayout={(e) => {
-        const w = e.nativeEvent.layout.width;
-        const h = e.nativeEvent.layout.height;
-
-        setScreenWidth(w);
-        setScreenHeight(h);
-
-        const startX = w / 2 - size / 2;
-        const startY = h / 2 - size / 2;
-
-        posX.current = startX;
-        posY.current = startY;
-
-        xAnim.setValue(startX);
-        yAnim.setValue(startY);
-      }}
+      style={[
+        styles.container,
+        { paddingHorizontal: 16, paddingTop: 20, paddingBottom: 20 },
+      ]}
     >
-      {!startTest && (
-        <>
-          <Text style={styles.title}>Test 3 - Tracking and Tracing</Text>
-          <Text style={styles.text}>
-            Click the moving ball as many times as you can in 10 seconds without
-            missing!
+      {/* Upper Panel HUD Status Bar */}
+      <View style={[styles.colContainer, { width: "100%", marginBottom: 10 }]}>
+        {!startTest && !stopTest && (
+          <>
+            <Text style={styles.title}>Test 3 - Tracking Fluidity</Text>
+            <Text style={[styles.text, { marginBottom: 15, color: "gray" }]}>
+              Click the moving ball target accurately as many times as possible
+              within a rolling 10-second window.
+            </Text>
+          </>
+        )}
+
+        {/* Live Score Metrics Dashboard */}
+        <View
+          style={[
+            styles.rowContainer,
+            { justifyContent: "space-between", paddingHorizontal: 10 },
+          ]}
+        >
+          <Text style={[styles.text, { fontWeight: "700" }]}>
+            Hits: {clickCount}
           </Text>
-        </>
-      )}
-      <Text style={styles.text}>Clicks: {clickCount}</Text>
-      <Text style={styles.text}>
-        Accuracy:{" "}
-        {totalClicks ? ((clickCount / totalClicks) * 100).toFixed(1) : 0}%
-      </Text>
-      <Pressable
-        testID="background"
-        style={{ flex: 1 }}
-        onPress={() => {
-          if (stopTest) return;
-          if (!startTest) return;
-          Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
-          setClickCount((prev) => prev - 1);
-          setTotalClicks((prev) => prev + 1);
+          {startTest && (
+            <Text
+              style={[styles.text, { color: "#4A90E2", fontWeight: "700" }]}
+            >
+              Timer: {time}s
+            </Text>
+          )}
+          <Text style={[styles.text, { fontWeight: "700" }]}>
+            Accuracy: {calculatedAccuracy}%
+          </Text>
+        </View>
+      </View>
+
+      {/* Physics Bound Canvas Overlay Area */}
+      <View
+        style={[
+          styles.bounceContainer,
+          {
+            flex: 1,
+            width: "100%",
+            borderWidth: 1,
+            borderColor: theme.border || "#ccc",
+            borderRadius: 12,
+            overflow: "hidden",
+            backgroundColor: theme.card || "rgba(0,0,0,0.02)",
+          },
+        ]}
+        onLayout={(e) => {
+          const w = e.nativeEvent.layout.width;
+          const h = e.nativeEvent.layout.height;
+          setScreenWidth(w);
+          setScreenHeight(h);
+
+          const startX = w / 2 - size / 2;
+          const startY = h / 2 - size / 2;
+          posX.current = startX;
+          posY.current = startY;
+          xAnim.setValue(startX);
+          yAnim.setValue(startY);
         }}
       >
-        {startTest && (
-          <Text style={styles.buttonText}> {time > 0 ? time : "Stop!"}</Text>
-        )}
-        {!startTest && (
-          <TouchableOpacity
-            style={styles.button}
-            testID="startButton"
-            onPress={() => {
-              setStartTest(true);
-              startPhysics();
-              countDown();
-              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-            }}
-          >
-            <Text style={styles.buttonText}>Start Test</Text>
-          </TouchableOpacity>
-        )}
-        {startTest && (
-          <Animated.View
-            style={{
-              position: "absolute",
-              transform: [{ translateX: xAnim }, { translateY: yAnim }],
-            }}
-          >
-            <Pressable
-              style={styles.ball}
-              testID="ball"
-              onPress={() => {
-                if (stopTest) return;
-                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-                setClickCount((prev) => prev + 1);
-                setTotalClicks((prev) => prev + 1);
+        <Pressable
+          testID="background"
+          style={{ flex: 1 }}
+          onPress={() => {
+            if (!startTest || stopTest) return;
+            Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+            setClickCount((prev) => prev - 1);
+            setTotalClicks((prev) => prev + 1);
+          }}
+        >
+          {/* Pre-Start Canvas State Action CTA */}
+          {!startTest && (
+            <View
+              style={{
+                flex: 1,
+                justifyContent: "center",
+                alignItems: "center",
+                paddingHorizontal: 20,
               }}
-            />
-          </Animated.View>
-        )}
-      </Pressable>
+            >
+              <TouchableOpacity
+                style={[styles.button, { width: "80%" }]}
+                testID="startButton"
+                onPress={() => {
+                  setStartTest(true);
+                  startPhysics();
+                  countDown();
+                  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+                }}
+              >
+                <Text style={styles.buttonText}>Launch Canvas</Text>
+              </TouchableOpacity>
+            </View>
+          )}
 
+          {/* Active Fluid Animating Target Node */}
+          {startTest && !stopTest && (
+            <Animated.View
+              style={{
+                position: "absolute",
+                transform: [{ translateX: xAnim }, { translateY: yAnim }],
+              }}
+            >
+              <Pressable
+                style={styles.ball}
+                testID="ball"
+                onPress={() => {
+                  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+                  setClickCount((prev) => prev + 1);
+                  setTotalClicks((prev) => prev + 1);
+                }}
+              />
+            </Animated.View>
+          )}
+        </Pressable>
+      </View>
+
+      {/* Post-Assessment Success View & Navigation Routes */}
       {stopTest && (
-        <>
+        <View style={[styles.colContainer, { width: "100%", marginTop: 15 }]}>
+          <View
+            style={[
+              styles.dataCard,
+              {
+                width: "100%",
+                padding: 16,
+                marginBottom: 15,
+                borderColor: "#4CAF50",
+                borderWidth: 1,
+              },
+            ]}
+          >
+            <Text style={[styles.text, { fontSize: 13, color: "gray" }]}>
+              TEST COMPLETION RATIO
+            </Text>
+            <Text
+              style={[
+                styles.title,
+                { fontSize: 26, marginVertical: 4, color: theme.text },
+              ]}
+            >
+              {clickCount} Point Hits
+            </Text>
+            <Text style={[styles.text, { fontSize: 13, color: "gray" }]}>
+              Maintained an overall pinpoint accuracy metric of{" "}
+              {calculatedAccuracy}%.
+            </Text>
+          </View>
+
           <TouchableOpacity
             testID="nextTest"
-            style={styles.button}
+            style={[styles.button, { width: "100%" }]}
             onPress={() => {
               router.push("/(tabs)/ReactionTest/test4");
               Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
             }}
           >
-            <Text style={styles.buttonText}>Next Test</Text>
+            <Text style={styles.buttonText}>Proceed to Test 4</Text>
           </TouchableOpacity>
 
           <TouchableOpacity
-            style={styles.button}
+            style={[
+              styles.button,
+              {
+                width: "100%",
+                marginTop: 8,
+                backgroundColor: theme.card || "#4A90E2",
+              },
+            ]}
             onPress={() => {
               router.push("/(tabs)/ReactionTest/directory");
               Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
             }}
           >
-            <Text style={styles.buttonText}>All Tests</Text>
+            <Text
+              style={[
+                styles.buttonText,
+                theme.card ? { color: theme.text } : { color: "#fff" },
+              ]}
+            >
+              View All Tests
+            </Text>
           </TouchableOpacity>
+
           <TouchableOpacity
-            style={styles.button}
+            style={[
+              styles.button,
+              {
+                width: "100%",
+                marginTop: 8,
+                backgroundColor: "transparent",
+                borderWidth: 1,
+                borderColor: theme.border || "#ccc",
+              },
+            ]}
             onPress={() => {
               router.push("/(tabs)/ReactionTest/menu");
               Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
             }}
           >
-            <Text style={styles.buttonText}>Back to Menu</Text>
+            <Text style={[styles.buttonText, { color: theme.text }]}>
+              Back to Menu
+            </Text>
           </TouchableOpacity>
-        </>
+        </View>
       )}
     </View>
   );
