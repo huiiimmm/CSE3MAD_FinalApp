@@ -311,7 +311,7 @@ export default function EarthquakeResults() {
                 },
               ]}
               onPress={() => {
-                router.push("/(tabs)/ReactionTest/menu");
+                router.push("//EarthquakeResistance/");
                 Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
               }}
             >

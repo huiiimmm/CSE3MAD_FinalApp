@@ -14,8 +14,8 @@ const getMarkerColor = (noiseLevel?: number): string => {
   if (noiseLevel === undefined || noiseLevel === null || isNaN(noiseLevel)) {
     return "#9E9E9E"; // Grey if data is missing
   }
-  if (noiseLevel < 55) return "#4CAF50"; // Quiet -> Green
-  if (noiseLevel < 75) return "#FF9800"; // Moderate -> Orange
+  if (noiseLevel < 60) return "#4CAF50"; // Quiet -> Green
+  if (noiseLevel < 90) return "#FF9800"; // Moderate -> Orange
   return "#F44336"; // Loud -> Red
 };
 
@@ -96,12 +96,13 @@ export default function MapScreen() {
         }}
         clusterTextColor="white"
         animationEnabled
-        // Safe injection bypasses the missing/mismatched TypeScript overload types in older map-clustering declaration files
+        // Safe injection bypasses the missing/mismatched TypeScript overload types
         {...({ calculateClusterProps: renderClusterProperties } as any)}
-      >
-        {uniqueLocations.map((loc) => {
+        // 1. Intercept marker injection so the cluster engine handles the layout and coloring
+        renderMarker={(loc: LocationData) => {
           const scores = decibelScores[loc.uid];
-          // Use matching loc.noiseLevel for the pin configuration colors
+
+          // 2. Fetch the correct color for the individual un-clustered square marker
           const pinColor = getMarkerColor(loc.noiseLevel);
 
           return (
@@ -111,14 +112,30 @@ export default function MapScreen() {
                 latitude: loc.latitude,
                 longitude: loc.longitude,
               }}
-              pinColor={pinColor}
-              // Passed exactly as noiseLevel so the cluster leaf parsing works flawlessly
+              tracksViewChanges={false}
               // @ts-ignore
               noiseLevel={loc.noiseLevel}
               onPress={() =>
                 Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)
               }
             >
+              {/* Individual un-clustered square marker */}
+              <View
+                style={{
+                  width: 24,
+                  height: 24,
+                  backgroundColor: pinColor,
+                  borderWidth: 2,
+                  borderColor: "white",
+                  borderRadius: 4,
+                  elevation: 5,
+                  shadowColor: "#000",
+                  shadowOffset: { width: 0, height: 2 },
+                  shadowOpacity: 0.25,
+                  shadowRadius: 3.84,
+                }}
+              />
+
               <Callout>
                 <View style={styles.calloutContainer}>
                   <Text
@@ -167,7 +184,9 @@ export default function MapScreen() {
               </Callout>
             </Marker>
           );
-        })}
+        }}
+      >
+        {/* 3. Empty children block: Keep uniqueLocations array out of here to let renderMarker process it */}
       </MapView>
 
       <TouchableOpacity

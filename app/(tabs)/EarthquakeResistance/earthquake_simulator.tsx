@@ -186,8 +186,7 @@ export default function EarthquakeSimulator() {
   };
 
   const countDown = async () => {
-    // login bypass
-    // if (!user) return;
+    if (!user) return;
     if (!structureName.trim()) {
       setSaveStatus("Please define a structure name before beginning.");
       return;

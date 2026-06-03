@@ -14,22 +14,21 @@ export default function StretchTestMain() {
   const user = auth.currentUser;
 
   // Fallback state if no user context is detected
-  // login bypass
-  // if (!auth.currentUser) {
-  //   return (
-  //     <View
-  //       style={[
-  //         styles.container,
-  //         { justifyContent: "center", paddingHorizontal: 20 },
-  //       ]}
-  //     >
-  //       <Text style={styles.title}>Access Denied</Text>
-  //       <Text style={styles.text}>
-  //         Please log in to capture or analyze stretch telemetries.
-  //       </Text>
-  //     </View>
-  //   );
-  // }
+  if (!auth.currentUser) {
+    return (
+      <View
+        style={[
+          styles.container,
+          { justifyContent: "center", paddingHorizontal: 20 },
+        ]}
+      >
+        <Text style={styles.title}>Access Denied</Text>
+        <Text style={styles.text}>
+          Please log in to capture or analyze stretch telemetries.
+        </Text>
+      </View>
+    );
+  }
 
   return (
     <View

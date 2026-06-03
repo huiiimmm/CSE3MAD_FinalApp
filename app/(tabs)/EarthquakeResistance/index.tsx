@@ -14,23 +14,22 @@ export default function EarthquakeResistanceMain() {
   const user = auth.currentUser;
 
   // Secure auth guard fallback
-  // login bypass
-  // if (!auth.currentUser) {
-  //   return (
-  //     <View
-  //       style={[
-  //         styles.container,
-  //         { justifyContent: "center", paddingHorizontal: 20 },
-  //       ]}
-  //     >
-  //       <Text style={styles.title}>Access Denied</Text>
-  //       <Text style={styles.text}>
-  //         Please log in to execute or evaluate structural seismic response
-  //         simulations.
-  //       </Text>
-  //     </View>
-  //   );
-  // }
+  if (!auth.currentUser) {
+    return (
+      <View
+        style={[
+          styles.container,
+          { justifyContent: "center", paddingHorizontal: 20 },
+        ]}
+      >
+        <Text style={styles.title}>Access Denied</Text>
+        <Text style={styles.text}>
+          Please log in to execute or evaluate structural seismic response
+          simulations.
+        </Text>
+      </View>
+    );
+  }
 
   return (
     <View
