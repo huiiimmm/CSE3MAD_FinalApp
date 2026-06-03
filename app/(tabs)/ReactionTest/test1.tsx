@@ -82,7 +82,8 @@ export default function Test1() {
 
   async function saveTestScore() {
     try {
-      if (!user) return;
+      // login bypass
+      // if (!user) return;
       const scores = {
         testType: "test1",
         userId: user?.uid,

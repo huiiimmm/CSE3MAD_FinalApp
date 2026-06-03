@@ -89,7 +89,6 @@ export default function EarthquakeSimulator() {
 
     // Local snapshot logs to pair coordinates across sensor callbacks
     let currentAcc = 0;
-    let currentGyro = 0;
 
     // 1. Monitor Linear Shaking Forces
     accelSubRef.current = Accelerometer.addListener((data) => {
@@ -110,8 +109,8 @@ export default function EarthquakeSimulator() {
         Math.pow(data.x, 2) + Math.pow(data.y, 2) + Math.pow(data.z, 2),
       );
       let dynamicRotation = totalRotation;
+      let currentGyro = 0;
       if (dynamicRotation < 0.02) dynamicRotation = 0; // Noise gate
-
       currentGyro = dynamicRotation;
       setRotation(dynamicRotation);
 
@@ -187,7 +186,8 @@ export default function EarthquakeSimulator() {
   };
 
   const countDown = async () => {
-    if (!user) return;
+    // login bypass
+    // if (!user) return;
     if (!structureName.trim()) {
       setSaveStatus("Please define a structure name before beginning.");
       return;

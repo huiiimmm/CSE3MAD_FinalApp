@@ -153,14 +153,14 @@ export default function SoundPollutionTest() {
       setIsSubmitting(false);
     }
   }
-
-  if (!user) {
-    return (
-      <View style={styles.container}>
-        <Text style={styles.text}>Please log in to start the simulation.</Text>
-      </View>
-    );
-  }
+  // login bypass
+  // if (!user) {
+  //   return (
+  //     <View style={styles.container}>
+  //       <Text style={styles.text}>Please log in to start the simulation.</Text>
+  //     </View>
+  //   );
+  // }
 
   return (
     <ScrollView contentContainerStyle={{ flexGrow: 1 }}>

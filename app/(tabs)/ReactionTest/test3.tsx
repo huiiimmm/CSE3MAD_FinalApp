@@ -111,15 +111,16 @@ export default function Test3() {
 
   const saveTestScore = async () => {
     // Prevent duplicate uploads from firing during state updates
-    if (isScoreSaved || !user) return;
+    // if (!user) return; // Login bypass
+    if (isScoreSaved) return;
 
     try {
       setIsScoreSaved(true); // Lock the gate immediately before hitting network tasks
 
       const scores = {
         testType: "test3",
-        userId: user.uid,
-        email: user.email,
+        userId: user?.uid,
+        email: user?.email,
         reactionScore: Number(clickCount), // Force explicit numeric assignment
         timestamp: Date.now(),
       };

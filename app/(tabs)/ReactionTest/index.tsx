@@ -20,21 +20,22 @@ export default function ReactionTestIndex() {
   };
 
   // Secure auth guard fallback
-  if (!auth.currentUser) {
-    return (
-      <View
-        style={[
-          styles.container,
-          { justifyContent: "center", paddingHorizontal: 20 },
-        ]}
-      >
-        <Text style={styles.title}>Access Denied</Text>
-        <Text style={styles.text}>
-          Please log in to participate in reflex and attention assessments.
-        </Text>
-      </View>
-    );
-  }
+  // login bypass
+  // if (!auth.currentUser) {
+  //   return (
+  //     <View
+  //       style={[
+  //         styles.container,
+  //         { justifyContent: "center", paddingHorizontal: 20 },
+  //       ]}
+  //     >
+  //       <Text style={styles.title}>Access Denied</Text>
+  //       <Text style={styles.text}>
+  //         Please log in to participate in reflex and attention assessments.
+  //       </Text>
+  //     </View>
+  //   );
+  // }
 
   return (
     <View style={[styles.container, { paddingHorizontal: 16, paddingTop: 40 }]}>

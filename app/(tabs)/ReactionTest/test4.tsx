@@ -151,11 +151,12 @@ export default function Test4() {
 
   const saveTestScore = async () => {
     try {
-      if (!user) return;
+      // login bypass
+      // if (!user) return;
       const scores = {
         testType: "test4",
-        userId: user.uid,
-        email: user.email,
+        userId: user?.uid,
+        email: user?.email,
         reactionScore: reactionTime,
         timestamp: Date.now(),
       };
