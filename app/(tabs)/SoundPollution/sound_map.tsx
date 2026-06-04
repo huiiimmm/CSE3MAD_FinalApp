@@ -43,20 +43,6 @@ export default function MapScreen() {
         const locationData = await getSoundLocation();
         if (!mounted) return;
         setLocations(locationData);
-
-        // CAMERA AUTO-FOCUS: If exactly 1 pin loads, fly the camera directly to it
-        if (locationData && locationData.length === 1 && mapRef.current) {
-          const singlePin = locationData[0];
-          mapRef.current.animateToRegion(
-            {
-              latitude: Number(singlePin.latitude),
-              longitude: Number(singlePin.longitude),
-              latitudeDelta: 0.01,
-              longitudeDelta: 0.01,
-            },
-            1000,
-          ); // 1-second smooth animation transition
-        }
       } catch (e) {
         console.error("Error loading map data: ", e);
       }

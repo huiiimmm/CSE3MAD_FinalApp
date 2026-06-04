@@ -5,11 +5,13 @@ import {
   login,
   logout,
   removeUser,
+  uploadLocation,
 } from "@/firebase";
 import { globalStyles } from "@/Styles/globalStyles";
 import { darkTheme } from "@/Styles/Themes/dark";
 import { lightTheme } from "@/Styles/Themes/light";
 import * as Haptics from "expo-haptics";
+import * as Location from "expo-location";
 import React, { useRef, useState } from "react";
 import {
   SafeAreaView,
@@ -51,6 +53,10 @@ export default function HomeScreen() {
     try {
       const userCredential = await login(email, pword);
       const user = userCredential.user;
+      const locationData = await Location.getCurrentPositionAsync({
+        accuracy: Location.Accuracy.Balanced,
+      });
+      await uploadLocation(user.uid, locationData);
 
       await debug("signinEmailPassword", "success: " + user.email);
       setloginout("Active User: " + user.email);
