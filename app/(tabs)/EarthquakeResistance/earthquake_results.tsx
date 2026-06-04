@@ -6,13 +6,13 @@ import * as Haptics from "expo-haptics";
 import { router } from "expo-router";
 import React, { useEffect, useState } from "react";
 import {
-    ActivityIndicator,
-    FlatList,
-    SafeAreaView,
-    Text,
-    TouchableOpacity,
-    useColorScheme,
-    View,
+  ActivityIndicator,
+  FlatList,
+  SafeAreaView,
+  Text,
+  TouchableOpacity,
+  useColorScheme,
+  View,
 } from "react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 
@@ -104,7 +104,9 @@ export default function EarthquakeResults() {
               ]}
               numberOfLines={1}
             >
-              {item.structureName || "Standard Test Frame"}
+              <Text testID="structureName1">
+                {item.structureName || "Standard Test Frame"}
+              </Text>
             </Text>
             <Text
               style={[
@@ -309,7 +311,7 @@ export default function EarthquakeResults() {
                 },
               ]}
               onPress={() => {
-                router.push("/(tabs)/ReactionTest/menu");
+                router.push("//EarthquakeResistance/");
                 Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
               }}
             >

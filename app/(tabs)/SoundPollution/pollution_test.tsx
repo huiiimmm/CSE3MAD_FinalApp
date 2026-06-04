@@ -105,8 +105,8 @@ export default function SoundPollutionTest() {
   };
 
   const getNoiseLabel = (db: number) => {
-    if (db <= 45) return { text: "Quiet Environment", color: "#4CAF50" };
-    if (db <= 70) return { text: "Moderate Noise", color: "#FF9800" };
+    if (db <= 60) return { text: "Quiet Environment", color: "#4CAF50" };
+    if (db <= 90) return { text: "Moderate Noise", color: "#FF9800" };
     return { text: "High Pollution Danger", color: "#F44336" };
   };
 
@@ -153,7 +153,6 @@ export default function SoundPollutionTest() {
       setIsSubmitting(false);
     }
   }
-
   if (!user) {
     return (
       <View style={styles.container}>

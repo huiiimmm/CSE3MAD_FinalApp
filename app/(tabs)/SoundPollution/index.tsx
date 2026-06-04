@@ -11,6 +11,7 @@ export default function SoundPollutionMain() {
   const scheme = useColorScheme();
   const theme = scheme === "dark" ? darkTheme : lightTheme;
   const styles = globalStyles(theme);
+  const user = auth.currentUser;
 
   // Secure auth guard fallback
   if (!auth.currentUser) {

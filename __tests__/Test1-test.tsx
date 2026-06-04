@@ -1,106 +1,127 @@
-import "jest-styled-components";
-import "jest-styled-components/native";
-
-import {
-  act,
-  fireEvent,
-  render,
-  screen,
-  waitFor,
-} from "@testing-library/react-native";
+import Test1 from "@/app/(tabs)/ReactionTest/test1";
+import { auth, saveReactionScore } from "@/firebase";
+import { act, fireEvent, render, waitFor } from "@testing-library/react-native";
+import * as Haptics from "expo-haptics";
+import { router } from "expo-router";
 import React from "react";
 
-import Test1 from "@/app/(tabs)/test1";
-import { saveScore } from "@/firebase";
-import { impactAsync } from "expo-haptics";
-import { router } from "expo-router";
-
-// ---------------- TESTS ----------------
-
-describe("<Test1 />", () => {
+describe("Reaction Test 1 Dominant Hand Suite", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     jest.useFakeTimers();
-    render(<Test1 />);
+
+    // Set up standard user environment metrics tracking anchors
+    Object.defineProperty(auth, "currentUser", {
+      value: { uid: "reaction-user-id", email: "neuro_speed@test.com" },
+      configurable: true,
+      writable: true,
+    });
   });
 
-  test("uploads score after successful reaction", async () => {
-    (saveScore as jest.Mock).mockResolvedValue(undefined);
+  afterEach(() => {
+    jest.useRealTimers();
+  });
 
-    act(() => {
-      fireEvent.press(screen.getByTestId("startButton"));
+  it("renders the onboarding splash layout cleanly prior to kicking off tests", () => {
+    const { getByText, getByTestId } = render(<Test1 />);
+
+    expect(getByText("Test 1 - Dominant Hand")).toBeTruthy();
+    expect(getByTestId("startButton")).toBeTruthy();
+  });
+
+  it("intercepts early taps and forces a fail layout change state if the user clicks prematurely", async () => {
+    const { getByTestId, getByText, queryByTestId } = render(<Test1 />);
+
+    const startButton = getByTestId("startButton");
+    await act(async () => {
+      fireEvent.press(startButton);
     });
 
-    jest.advanceTimersByTime(2000);
+    // Verify early check interceptor layer loads immediately during the hidden delay period
+    const earlyCheckOverlay = getByTestId("earlyCheck");
+    expect(earlyCheckOverlay).toBeTruthy();
 
-    const reactionScreen = await screen.findByTestId("reactionScreen");
-
-    act(() => {
-      fireEvent.press(reactionScreen);
+    // Simulate clicking the overlay layout before the random timer resolves
+    await act(async () => {
+      fireEvent.press(earlyCheckOverlay);
     });
 
-    await waitFor(() => {
-      expect(saveScore).toHaveBeenCalled();
-    });
-    expect(saveScore).toHaveBeenCalledWith(
-      expect.objectContaining({
-        uid: "test",
-        email: "test@test.com",
-      }),
-      expect.objectContaining({
-        testType: "test1",
-        userId: "test",
-        email: "test@test.com",
-        score: expect.any(Number),
-        timestamp: expect.any(Number),
-      }),
+    expect(Haptics.notificationAsync).toHaveBeenCalledWith(
+      Haptics.NotificationFeedbackType.Error,
     );
+    expect(getByText("Too Early!")).toBeTruthy();
+    expect(queryByTestId("earlyCheck")).toBeNull();
+
+    // Verify reset configuration path execution flow works cleanly
+    const tryAgainButton = getByTestId("restartButton");
+    await act(async () => {
+      fireEvent.press(tryAgainButton);
+    });
+
+    expect(getByText("Test 1 - Dominant Hand")).toBeTruthy();
   });
+  it("calculates elapsed milestones accurately, captures response inputs, and posts logs to cloud storage", async () => {
+    jest.spyOn(Math, "random").mockReturnValue(0.5);
 
-  test("navigates to test2", async () => {
-    (saveScore as jest.Mock).mockResolvedValue(undefined);
+    const { getByTestId, getByText } = render(<Test1 />);
 
-    act(() => {
-      fireEvent.press(screen.getByTestId("startButton"));
+    const startButton = getByTestId("startButton");
+    await act(async () => {
+      fireEvent.press(startButton);
     });
 
-    jest.advanceTimersByTime(2000);
+    // Setup time virtualization parameters *before* hitting the green screen threshold
+    const baselineTime = 1718234000000;
+    let simulatedElapsedTime = 0;
 
-    const reactionScreen = await screen.findByTestId("reactionScreen");
-
-    act(() => {
-      fireEvent.press(reactionScreen);
+    const timeSpy = jest.spyOn(Date, "now").mockImplementation(() => {
+      return baselineTime + simulatedElapsedTime;
     });
-    const nextTestButton = await screen.findByTestId("nextTest");
-    fireEvent.press(nextTestButton);
 
+    // Bring the app right to the edge of the green screen trigger
+    await act(async () => {
+      jest.advanceTimersByTime(6000);
+    });
+
+    expect(getByText("TAP NOW!")).toBeTruthy();
+    const hitOverlay = getByTestId("reactionScreen");
+
+    // Advance time safely, allowing the interval inside startTimer() to run
+    await act(async () => {
+      simulatedElapsedTime = 240;
+      jest.advanceTimersByTime(240);
+    });
+
+    // Press the overlay layout interaction interceptor shell
+    await act(async () => {
+      fireEvent.press(hitOverlay);
+    });
+
+    expect(Haptics.impactAsync).toHaveBeenCalledWith(
+      Haptics.ImpactFeedbackStyle.Heavy,
+    );
+
+    // Assert calculated performance data synced to down to cloud registers
     await waitFor(() => {
-      expect(router.push).toHaveBeenCalledWith("/test2");
+      expect(getByTestId("finalScore")).toBeTruthy();
+      expect(saveReactionScore).toHaveBeenCalledWith(
+        { uid: "reaction-user-id", email: "neuro_speed@test.com" },
+        expect.objectContaining({
+          testType: "test1",
+          userId: "reaction-user-id",
+          reactionScore: 240,
+        }),
+      );
     });
-  });
 
-  test("haptics on reaction", async () => {
-    (saveScore as jest.Mock).mockResolvedValue(undefined);
-
-    act(() => {
-      fireEvent.press(screen.getByTestId("startButton"));
+    // Verify navigation pathways route perfectly
+    const proceedButton = getByTestId("nextTest");
+    await act(async () => {
+      fireEvent.press(proceedButton);
     });
+    expect(router.push).toHaveBeenCalledWith("/(tabs)/ReactionTest/test2");
 
-    jest.advanceTimersByTime(2000);
-
-    const reactionScreen = await screen.findByTestId("reactionScreen");
-
-    act(() => {
-      fireEvent.press(reactionScreen);
-    });
-    await waitFor(() => {
-      expect(impactAsync).toHaveBeenCalledWith("Medium");
-    });
-  });
-
-  test("matches snapshot", () => {
-    const tree = render(<Test1 />).toJSON();
-
-    expect(tree).toMatchSnapshot();
+    // Restore global clock structures safely
+    timeSpy.mockRestore();
   });
 });

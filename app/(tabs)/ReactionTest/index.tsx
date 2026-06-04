@@ -12,6 +12,7 @@ export default function ReactionTestIndex() {
   const theme = scheme === "dark" ? darkTheme : lightTheme;
   const styles = globalStyles(theme);
   const router = useRouter();
+  const user = auth.currentUser;
 
   const handleGoHome = () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);

@@ -11,6 +11,7 @@ export default function StretchTestMain() {
   const scheme = useColorScheme();
   const theme = scheme === "dark" ? darkTheme : lightTheme;
   const styles = globalStyles(theme);
+  const user = auth.currentUser;
 
   // Fallback state if no user context is detected
   if (!auth.currentUser) {

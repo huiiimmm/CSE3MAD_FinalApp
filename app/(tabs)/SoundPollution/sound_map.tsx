@@ -4,19 +4,18 @@ import { darkTheme } from "@/Styles/Themes/dark";
 import { lightTheme } from "@/Styles/Themes/light";
 import * as Haptics from "expo-haptics";
 import { router } from "expo-router";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { Text, TouchableOpacity, useColorScheme, View } from "react-native";
 import MapView from "react-native-map-clustering";
 import { Callout, Marker, PROVIDER_GOOGLE } from "react-native-maps";
 
-// Helper to filter markers by color based on noise/decibel levels
 const getMarkerColor = (noiseLevel?: number): string => {
   if (noiseLevel === undefined || noiseLevel === null || isNaN(noiseLevel)) {
-    return "#9E9E9E"; // Grey if data is missing
+    return "#9E9E9E";
   }
-  if (noiseLevel < 55) return "#4CAF50"; // Quiet -> Green
-  if (noiseLevel < 75) return "#FF9800"; // Moderate -> Orange
-  return "#F44336"; // Loud -> Red
+  if (noiseLevel < 60) return "#4CAF50";
+  if (noiseLevel < 90) return "#FF9800";
+  return "#F44336";
 };
 
 export default function MapScreen() {
@@ -24,14 +23,14 @@ export default function MapScreen() {
   const theme = scheme === "dark" ? darkTheme : lightTheme;
   const styles = globalStyles(theme);
 
+  const mapRef = useRef<any>(null); // Anchor reference to control map camera positions
+
   const [locations, setLocations] = useState<LocationData[]>([]);
   const [decibelScores, setDecibelScores] = useState<Record<string, any>>({});
 
-  // LTU Bundoora Coordinates
   const initialLatitude = -37.7217;
   const initialLongitude = 145.0479;
 
-  // Deduplicate locations safely using useMemo so it doesn't recalculate on every render
   const uniqueLocations = useMemo(() => {
     const uniqueMap = new Map(locations.map((loc) => [loc.uid, loc]));
     return Array.from(uniqueMap.values());
@@ -39,130 +38,107 @@ export default function MapScreen() {
 
   useEffect(() => {
     let mounted = true;
-
     async function loadData() {
       try {
         const locationData = await getSoundLocation();
         if (!mounted) return;
-
         setLocations(locationData);
+
+        // CAMERA AUTO-FOCUS: If exactly 1 pin loads, fly the camera directly to it
+        if (locationData && locationData.length === 1 && mapRef.current) {
+          const singlePin = locationData[0];
+          mapRef.current.animateToRegion(
+            {
+              latitude: Number(singlePin.latitude),
+              longitude: Number(singlePin.longitude),
+              latitudeDelta: 0.01,
+              longitudeDelta: 0.01,
+            },
+            1000,
+          ); // 1-second smooth animation transition
+        }
       } catch (e) {
         console.error("Error loading map data: ", e);
       }
     }
     loadData();
-
     return () => {
       mounted = false;
     };
   }, []);
 
-  /**
-   * Calculates the average noise level of markers within a cluster
-   * and assigns the corresponding noise color dynamically.
-   */
-  const renderClusterProperties = (cluster: any) => {
-    const leaves = cluster.properties.cluster_id ? cluster.leaves : [];
-
-    let totalNoise = 0;
-    let validCount = 0;
-
-    leaves.forEach((leaf: any) => {
-      const level = leaf.properties?.noiseLevel;
-      if (level !== undefined && level !== null) {
-        totalNoise += level;
-        validCount++;
-      }
-    });
-
-    const averageNoise = validCount > 0 ? totalNoise / validCount : 0;
-    const clusterColor = getMarkerColor(averageNoise);
-
-    return {
-      clusterColor,
-    };
-  };
-
   return (
-    <View style={styles.mapContainer}>
+    <View style={{ flex: 1, width: "100%", height: "100%" }}>
+      {/* Debug Banner - Safely tracks array length updates */}
+      <Text
+        style={{
+          position: "absolute",
+          top: 50,
+          left: 0,
+          right: 0,
+          textAlign: "center",
+          zIndex: 999,
+          color: "red",
+          fontWeight: "bold",
+          backgroundColor: "rgba(255,255,255,0.8)",
+          padding: 4,
+        }}
+      >
+        Loaded Pins: {uniqueLocations.length}
+      </Text>
+
       <MapView
+        ref={mapRef}
+        key={uniqueLocations.length}
         provider={PROVIDER_GOOGLE}
-        style={styles.map}
+        style={{ flex: 1, width: "100%", height: "100%" }}
         initialRegion={{
           latitude: initialLatitude,
           longitude: initialLongitude,
-          latitudeDelta: 0.01,
-          longitudeDelta: 0.01,
+          latitudeDelta: 0.03,
+          longitudeDelta: 0.03,
         }}
         clusterTextColor="white"
         animationEnabled
-        // Safe injection bypasses the missing/mismatched TypeScript overload types in older map-clustering declaration files
-        {...({ calculateClusterProps: renderClusterProperties } as any)}
       >
         {uniqueLocations.map((loc) => {
-          const scores = decibelScores[loc.uid];
-          // Use matching loc.noiseLevel for the pin configuration colors
-          const pinColor = getMarkerColor(loc.noiseLevel);
+          const lat = Number(loc.latitude);
+          const lng = Number(loc.longitude);
+
+          // Skip rendering if data conversion results in invalid numbers
+          if (isNaN(lat) || isNaN(lng)) return null;
 
           return (
             <Marker
               key={loc.uid}
-              coordinate={{
-                latitude: loc.latitude,
-                longitude: loc.longitude,
-              }}
-              pinColor={pinColor}
-              // Passed exactly as noiseLevel so the cluster leaf parsing works flawlessly
-              // @ts-ignore
-              noiseLevel={loc.noiseLevel}
+              coordinate={{ latitude: lat, longitude: lng }}
+              tracksViewChanges={true}
               onPress={() =>
                 Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)
               }
             >
+              <View
+                style={{
+                  width: 24,
+                  height: 24,
+                  backgroundColor: getMarkerColor(loc.noiseLevel),
+                  borderWidth: 2,
+                  borderColor: "white",
+                  borderRadius: 4,
+                  elevation: 5,
+                }}
+              />
               <Callout>
-                <View style={styles.calloutContainer}>
-                  <Text
-                    style={{
-                      color: "black",
-                      fontWeight: "bold",
-                      marginBottom: 4,
-                    }}
-                  >
+                <View style={{ padding: 6, minWidth: 120 }}>
+                  <Text style={{ color: "black", fontWeight: "bold" }}>
                     {loc.email}
                   </Text>
-
-                  {loc.noiseLevel !== undefined && loc.noiseLevel !== null && (
-                    <Text style={{ color: "black", marginBottom: 6 }}>
-                      Noise Level: {loc.noiseLevel} dB{" "}
-                      {loc.noiseType ? `(${loc.noiseType})` : ""}
-                    </Text>
-                  )}
-
-                  {scores ? (
-                    <>
-                      <Text
-                        style={{ color: "gray", fontSize: 12, marginBottom: 2 }}
-                      >
-                        Best Reaction Scores:
-                      </Text>
-                      <Text style={{ color: "black" }}>
-                        Test 1: {scores.test1 ?? "N/A"} ms
-                      </Text>
-                      <Text style={{ color: "black" }}>
-                        Test 2: {scores.test2 ?? "N/A"} ms
-                      </Text>
-                      <Text style={{ color: "black" }}>
-                        Test 3: {scores.test3 ?? "N/A"} clicks
-                      </Text>
-                      <Text style={{ color: "black" }}>
-                        Test 4: {scores.test4 ?? "N/A"} ms
-                      </Text>
-                    </>
-                  ) : (
-                    <Text style={{ color: "gray", fontStyle: "italic" }}>
-                      No score data available
-                    </Text>
-                  )}
+                  <Text style={{ color: "black" }}>
+                    Noise: {loc.noiseLevel} dB
+                  </Text>
+                  <Text style={{ color: "black" }}>
+                    Noise Source: {loc.noiseType}
+                  </Text>
                 </View>
               </Callout>
             </Marker>
@@ -171,11 +147,11 @@ export default function MapScreen() {
       </MapView>
 
       <TouchableOpacity
-        style={styles.button}
-        onPress={() => {
-          router.push("/(tabs)/ReactionTest/menu");
-          Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-        }}
+        style={[
+          styles.button,
+          { position: "absolute", bottom: 30, left: 20, right: 20 },
+        ]}
+        onPress={() => router.push("/SoundPollution")}
       >
         <Text style={styles.buttonText}>Back to Menu</Text>
       </TouchableOpacity>

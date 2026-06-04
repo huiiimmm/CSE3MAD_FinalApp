@@ -6,13 +6,13 @@ import * as Haptics from "expo-haptics";
 import { router } from "expo-router";
 import React, { useEffect, useMemo, useState } from "react";
 import {
-    ActivityIndicator,
-    FlatList,
-    RefreshControl,
-    Text,
-    TouchableOpacity,
-    useColorScheme,
-    View,
+  ActivityIndicator,
+  FlatList,
+  RefreshControl,
+  Text,
+  TouchableOpacity,
+  useColorScheme,
+  View,
 } from "react-native";
 
 interface VibrationRecord {
@@ -177,11 +177,11 @@ export default function VibrationResultsScreen() {
           { marginTop: 15, width: "100%", marginBottom: 10 },
         ]}
         onPress={() => {
-          router.back();
+          router.push("/StretchTest");
           Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
         }}
       >
-        <Text style={styles.buttonText}>Return to Dashboard</Text>
+        <Text style={styles.buttonText}>Return Menu</Text>
       </TouchableOpacity>
     </View>
   );

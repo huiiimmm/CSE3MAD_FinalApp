@@ -240,6 +240,7 @@ export default function Test1() {
                 FINAL RESPONSE TIME
               </Text>
               <Text
+                testID="finalScore"
                 style={[
                   styles.title,
                   { fontSize: 32, marginVertical: 4, color: theme.text },
